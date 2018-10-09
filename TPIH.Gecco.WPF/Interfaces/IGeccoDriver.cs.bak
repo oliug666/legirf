@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using TPIH.Gecco.WPF.Drivers;
+using TPIH.Gecco.WPF.Models;
+
+namespace TPIH.Gecco.WPF.Interfaces
+{
+    public interface IGeccoDriver
+    {
+        bool IsConnected { get; }
+
+        IList<MeasurePoint> MbData { get; }
+
+        void Connect(string ipa, int port, string dbname, string username, string password);
+
+        void Disconnect();
+
+        void GetDataFromLastXDays(string tableName, int lastDays);
+
+        
+    }
+}
