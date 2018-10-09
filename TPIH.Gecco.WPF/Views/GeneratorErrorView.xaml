@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="TPIH.Gecco.WPF.Views.GeneratorErrorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:TPIH.Gecco.WPF.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <viewModels:GeneratorErrorViewModel/>
+    </UserControl.DataContext>
+    <Grid> 
+        <ListView ItemsSource="{Binding Errors}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date, StringFormat='yyyy-MM-dd HH:mm:ss.fff'}" Width="120"/>
+                    <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="120"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

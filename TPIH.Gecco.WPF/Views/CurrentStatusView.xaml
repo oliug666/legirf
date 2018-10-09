@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="TPIH.Gecco.WPF.Views.CurrentStatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:TPIH.Gecco.WPF.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <viewModels:CurrentStatusViewModel/>
+    </UserControl.DataContext>
+    <Grid Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal"  DockPanel.Dock="Bottom">
+                <Label DockPanel.Dock="Bottom" Height="23" Content="Last Updated:"/>
+                <Label DockPanel.Dock="Bottom" Height="23" Content="{Binding LastRefreshed}"/>
+            </StackPanel>
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"></ColumnDefinition>
+                        <ColumnDefinition Width="120"></ColumnDefinition>
+                        <ColumnDefinition Width="80"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" x:Name="LabelsStackPanel"></StackPanel>
+                    <StackPanel Grid.Column="1" x:Name="ValuesStackPanel"></StackPanel>
+                    <StackPanel Grid.Column="2" x:Name="UnitStackPanel"></StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</UserControl>

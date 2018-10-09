@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="TPIH.Gecco.WPF.Views.ArchiveView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:TPIH.Gecco.WPF.ViewModels"
+             xmlns:views="clr-namespace:TPIH.Gecco.WPF.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600"
+             d:DataContext="{d:DesignInstance viewModels:ArchiveViewModel}">
+    <UserControl.DataContext>
+        <viewModels:ArchiveViewModel/>
+    </UserControl.DataContext>
+    <Grid Margin="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ListView ItemsSource="{Binding PulseMeasurements}" SelectedItem="{Binding SelectedMeasurement}" Margin="2">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="120"/>
+                        <GridViewColumn Header="Points" DisplayMemberBinding="{Binding Points.Count}" Width="40"/>
+                        <GridViewColumn Header="Actions">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Store" IsEnabled="False"/>
+                                        <Button Content="Delete" IsEnabled="False"/>
+                                        <Button Content="E-Mail" IsEnabled="False"/>
+                                        <Button Content="Copy" IsEnabled="False"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                <Button Content="Clear List" Width="75" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Command="{Binding ClearCommand}"/>
+            </StackPanel>
+        </Grid>
+        <views:PulseGraphView Grid.Column="1" DataContext="{Binding PulseGraphViewModel}"/>
+    </Grid>
+</UserControl>
