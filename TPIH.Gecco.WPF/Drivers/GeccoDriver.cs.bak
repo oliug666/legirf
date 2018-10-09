@@ -1,0 +1,137 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO.Ports;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.Sockets;
+using MySql.Data.MySqlClient;
+using TPIH.Gecco.WPF.Interfaces;
+using TPIH.Gecco.WPF.Models;
+using System.Net;
+using System.Data;
+using TPIH.Gecco.WPF.Settings;
+using TPIH.Gecco.WPF.Core;
+
+namespace TPIH.Gecco.WPF.Drivers
+{
+    public class GeccoDriver : IGeccoDriver
+    {       
+        private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
+        public bool IsConnected { get { return (_connection != null && (_connection.State == ConnectionState.Open)); } }        
+        public string Status;
+
+        private MySqlConnection _connection;
+
+        private static IList<MeasurePoint> _mbData;
+        public IList<MeasurePoint> MbData
+        {
+            get
+            {
+                if (IsConnected && _mbData.Count > 0)
+                {
+                    return _mbData;
+                }
+                else
+                {
+                    GlobalCommands.ShowError.Execute(new Exception("Failed to retrieve data from server. Check network connection and try to re-connect."));
+                    return null;
+                }
+            }
+            private set { }
+        }
+
+        public GeccoDriver()
+        {
+        }
+
+        private void Initialize(string ipAddress, int port, string dbname, string username, string password)
+        {
+            string connectionString = "SERVER=" + ipAddress + ";" + "PORT=" + port.ToString() + ";" + "DATABASE=" +
+                dbname + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
+            _connection = new MySqlConnection(connectionString);
+        }
+        
+        public void Connect(string ipAddress, int port, string dbname, string username, string password)
+        {
+            Initialize(ipAddress, port, dbname, username, password);
+
+            if (!IsConnected)
+            {
+                try
+                {
+                    _connection.Open();
+                }
+                catch (MySqlException ex)
+                {
+                    //When handling errors, you can your application's response based 
+                    //on the error number.
+                    //The two most common error numbers when connecting are as follows:
+                    //0: Cannot connect to server.
+                    //1045: Invalid user name and/or password.
+                    switch (ex.Number)
+                    {
+                        case 0:
+                            Status = "Cannot connect to server.  Contact administrator";
+                            break;
+
+                        case 1045:
+                            Status = "Invalid username/password, please try again";
+                            break;
+                    }
+                }
+            }
+
+            if (_connection.State == ConnectionState.Open)
+            {
+                _mbData = new List<MeasurePoint>();
+            }
+        }
+
+        //Close connection
+        public void Disconnect()
+        {
+            if (IsConnected)
+            {
+                try
+                {
+                    _connection.Close();
+                }
+                catch (MySqlException ex)
+                {
+                    Status = ex.Message;
+                }
+            }
+        }
+
+        public void GetDataFromLastXDays(string tableName, int lastDays)
+        {
+            // Get day today and calculate time interval
+            DateTime right_now = DateTime.Now;
+            string right_now_s = right_now.ToString("yyyy-MM-dd HH:mm:ss");
+            DateTime long_ago = DateTime.Now.AddDays(-lastDays);
+            string long_ago_s = long_ago.ToString("yyyy-MM-dd HH:mm:ss");
+
+            string selectQuery = "SELECT * FROM " + tableName + " WHERE DATE BETWEEN '" + long_ago_s + "' AND '" + right_now_s + "'";
+            // Read
+            if (IsConnected)
+            {
+                MySqlCommand cmd = new MySqlCommand(selectQuery, _connection);
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    _mbData.Add(new MeasurePoint
+                    {
+                        Date = DateTime.ParseExact(dataReader["DATE"] + "", "dd/MM/yyyy HH:mm:ss",
+                            System.Globalization.CultureInfo.InvariantCulture),
+                        Reg_Name = dataReader["REG_NAME"] + "",
+                        i_val = Convert.ToInt32(dataReader["I_VAL"]+""),
+                        ui_val = Convert.ToInt32(dataReader["UI_VAL"] + ""),
+                        b_val = Convert.ToBoolean(dataReader["B_VAL"] + "")
+                    });
+                }
+            }                                
+        }        
+    }
+}
