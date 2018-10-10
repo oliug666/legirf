@@ -138,7 +138,6 @@
     <Compile Include="Drivers\DriverContainer.cs" />
     <Compile Include="Drivers\GeccoDriverArgs.cs" />
     <Compile Include="Drivers\InfoEnum.cs" />
-    <Compile Include="Helpers\Calculator.cs" />
     <Compile Include="Helpers\CheckedListItem.cs" />
     <Compile Include="Helpers\EventAggregator.cs" />
     <Compile Include="Helpers\ItemCheckedEvent.cs" />
@@ -151,7 +150,6 @@
     <Compile Include="Models\MeasurePoint.cs" />
     <Compile Include="Core\MvvmExtensions.cs" />
     <Compile Include="Core\PlotModelExtensions.cs" />
-    <Compile Include="Core\TestResultSeries.cs" />
     <Compile Include="Models\PulseMeasurement.cs" />
     <Compile Include="Models\PulseSummary.cs" />
     <Compile Include="Models\TestSequence.cs" />
