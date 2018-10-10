@@ -34,7 +34,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             else
             {
                 EnablePlottableObjects = false;
-            }
+            }            
         }
     }    
 }

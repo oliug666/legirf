@@ -79,21 +79,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     {
                         int idx = N3PR_Data.REG_NAMES.IndexOf(DriverContainer.Driver.LatestData[i].Reg_Name);
                         int div_factor = Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
-                        switch (N3PR_Data.REG_TYPES[idx])
-                        {
-                            case "Int":
-                                LatestValues[idx] = (DriverContainer.Driver.LatestData[i].i_val / div_factor).ToString();
-                                break;
-                            case "UInt":
-                                LatestValues[idx] = (DriverContainer.Driver.LatestData[i].ui_val / div_factor).ToString();
-                                break;
-                            case "Bool":
-                                LatestValues[idx] = DriverContainer.Driver.LatestData[i].b_val.ToString();
-                                break;
-                            default:
-                                LatestValues[idx] = "";
-                                break;
-                        }                        
+                        LatestValues[idx] = (DriverContainer.Driver.LatestData[i].val).ToString();                                    
                     }
                 }
                 else

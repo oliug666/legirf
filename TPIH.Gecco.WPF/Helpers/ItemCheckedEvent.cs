@@ -9,12 +9,10 @@ namespace TPIH.Gecco.WPF.Helpers
     {
         public string name { get; set; }
         public bool value { get; set; }
-        public string data_type { get; set; }
-        public ItemCheckedEvent(string n, bool v, string d)
+        public ItemCheckedEvent(string n, bool v)
         {
             name = n;
             value = v;
-            data_type = d;
         }
     }
 }

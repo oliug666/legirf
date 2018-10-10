@@ -18,8 +18,8 @@ using TPIH.Gecco.WPF.Helpers;
 namespace TPIH.Gecco.WPF.Drivers
 {
     public class GeccoDriver : IGeccoDriver
-    {       
-        private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());        
+    {
+        private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
         private MySqlConnection _connection;
         private MySqlCommand _cmd;
         private static IList<MeasurePoint> _mbData;
@@ -27,7 +27,7 @@ namespace TPIH.Gecco.WPF.Drivers
         private static IList<MeasurePoint> _latestData;
         private bool _isRetrieving = false;
 
-        public bool IsConnected { get { return (_connection != null && (_connection.State == ConnectionState.Open)); } }        
+        public bool IsConnected { get { return (_connection != null && (_connection.State == ConnectionState.Open)); } }
         public string Status;
         public event EventHandler OnDataRetrievalCompleted;
         public event EventHandler OnLatestDataRetrievalCompleted;
@@ -53,7 +53,7 @@ namespace TPIH.Gecco.WPF.Drivers
         {
             get
             {
-                if (IsConnected) 
+                if (IsConnected)
                 {
                     return _mbAlarm;
                 }
@@ -97,7 +97,7 @@ namespace TPIH.Gecco.WPF.Drivers
             _mbAlarm = new List<MeasurePoint>();
             _latestData = new List<MeasurePoint>();
         }
-        
+
         public void Connect(string ipAddress, int port, string dbname, string username, string password)
         {
             Initialize(ipAddress, port, dbname, username, password);
@@ -142,7 +142,7 @@ namespace TPIH.Gecco.WPF.Drivers
             {
                 try
                 {
-                    _connection.Close();                    
+                    _connection.Close();
                 }
                 catch (MySqlException ex)
                 {
@@ -170,16 +170,16 @@ namespace TPIH.Gecco.WPF.Drivers
             DateTime LatestDate = new DateTime();
             Thread.Sleep(1000);
             while (_isRetrieving) ;
-            
+
             if (IsConnected & _latestData != null)
             {
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(DATE) FROM " + tableName;
                 try
                 {
-                    _isRetrieving = true;                    
+                    _isRetrieving = true;
                     _cmd = new MySqlCommand(dateQuery, _connection);
-                    var date = _cmd.ExecuteScalar();                      
+                    var date = _cmd.ExecuteScalar();
                     try
                     {
                         LatestDate = DateTime.ParseExact(date + "", N3PR_Data.DATA_FORMAT,
@@ -190,12 +190,12 @@ namespace TPIH.Gecco.WPF.Drivers
                         LatestDate = DateTime.ParseExact(date + "", N3PR_Data.DATA_FORMAT,
                             System.Globalization.CultureInfo.CurrentCulture);
                     }
-                    
+
                     _cmd.Dispose();
                 }
                 catch (Exception e)
-                {                    
-                    GlobalCommands.ShowError.Execute(e);                    
+                {
+                    GlobalCommands.ShowError.Execute(e);
                     return;
                 }
 
@@ -209,36 +209,14 @@ namespace TPIH.Gecco.WPF.Drivers
                     {
                         _cmd = new MySqlCommand(selectQuery, _connection);
                         _dataReader = _cmd.ExecuteReader();
+
                         _latestData.Clear();
-                        while (_dataReader.Read())
-                        {
-                            DateTime dd;
-                            try
-                            {
-                                dd = DateTime.ParseExact(_dataReader["DATE"] + "", N3PR_Data.DATA_FORMAT,
-                                    System.Globalization.CultureInfo.InvariantCulture);
-                            }
-                            catch
-                            {
-                                dd = DateTime.ParseExact(_dataReader["DATE"] + "", N3PR_Data.DATA_FORMAT,
-                                    System.Globalization.CultureInfo.CurrentCulture);
-                            }
-                            if (N3PR_Data.REG_NAMES.Contains(_dataReader["REG_NAME"]))
-                            {
-                                _latestData.Add(new MeasurePoint
-                                {
-                                    Date = dd,
-                                    Reg_Name = _dataReader["REG_NAME"] + "",
-                                    i_val = Convert.ToInt32(_dataReader["I_VAL"] + ""),
-                                    ui_val = Convert.ToInt32(_dataReader["UI_VAL"] + ""),
-                                    b_val = (_dataReader["B_VAL"] + "") == "1"
-                                });
-                            }
-                        }
+                        _latestData = ParseDataReader(_dataReader);
+                        
                         _cmd.Dispose();
                         _dataReader.Close();
                         _dataReader.Dispose();
-                    }                 
+                    }
                 }
                 catch (Exception e)
                 {
@@ -272,37 +250,28 @@ namespace TPIH.Gecco.WPF.Drivers
                     _mbData.Clear();
                     _mbAlarm.Clear();
 
-                    MySqlDataReader _dataReader;                    
+                    MySqlDataReader _dataReader;
                     _cmd = new MySqlCommand(selectQuery, _connection);
                     _dataReader = _cmd.ExecuteReader();
-                    List<MeasurePoint> _allData = new List<MeasurePoint>();
 
-                    while (_dataReader.Read())
-                    {
-                        _allData.Add(new MeasurePoint
-                        {
-                            Date = DateTime.ParseExact(_dataReader["DATE"] + "", N3PR_Data.DATA_FORMAT,
-                                System.Globalization.CultureInfo.InvariantCulture),
-                            Reg_Name = _dataReader["REG_NAME"] + "",
-                            i_val = Convert.ToInt32(_dataReader["I_VAL"] + ""),
-                            ui_val = Convert.ToInt32(_dataReader["UI_VAL"] + ""),
-                            b_val = (_dataReader["B_VAL"] + "") == "1"
-                        });
-                    }
+                    // Parse data reader
+                    List<MeasurePoint> _allData = ParseDataReader(_dataReader);                    
+
                     _cmd.Dispose();
                     _dataReader.Close();
                     _dataReader.Dispose();
                     _dataReader = null;
 
+                    // Sort the retrieved entries (alarms or data?)
                     if (_allData.Count() > 0 & _allData != null)
                     {
-                        // Process the data
+                        // data
                         foreach (MeasurePoint _mbp in _allData)
                         {
                             if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
                                 _mbData.Add(_mbp);
                         }
-                        // Process the alarms
+                        // alarms
                         foreach (MeasurePoint _mbp in _allData)
                         {
                             if (N3PR_Data.ALARM_NAMES.Contains(_mbp.Reg_Name))
@@ -313,12 +282,51 @@ namespace TPIH.Gecco.WPF.Drivers
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(e);
-                }                
+                }
             }
 
             _isRetrieving = false;
             // Fire the event
             OnDataRetrievalCompleted?.Invoke(this, null);
-        }        
-    }
+        }
+
+        private List<MeasurePoint> ParseDataReader(IDataReader _dataReader)
+        {
+            List<MeasurePoint> _allData = new List<MeasurePoint>();
+            while (_dataReader.Read())
+            {
+                int idx = N3PR_Data.REG_NAMES.IndexOf(_dataReader["REG_NAME"] + "");
+                double value;
+                switch (N3PR_Data.REG_TYPES[idx])
+                {
+                    case "Int":
+                        value = Convert.ToInt32(_dataReader["I_VAL"] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
+                        break;
+                    case "UInt":
+                        value = Convert.ToUInt32(_dataReader["UI_VAL"] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
+                        break;
+                    case "Bool":
+                        value = Convert.ToDouble(_dataReader["B_VAL"] + "");
+                        break;
+                    default:
+                        value = Convert.ToInt32(_dataReader["I_VAL"] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
+                        break;
+                }
+
+                if (N3PR_Data.REG_NAMES.Contains(_dataReader["REG_NAME"]+""))
+                {
+                    _allData.Add(new MeasurePoint
+                    {
+                        Date = DateTime.ParseExact(_dataReader["DATE"] + "", N3PR_Data.DATA_FORMAT,
+                                            System.Globalization.CultureInfo.InvariantCulture),
+                        Reg_Name = _dataReader["REG_NAME"] + "",
+                        val = value,
+                        data_type = N3PR_Data.REG_TYPES[idx],
+                        unit = N3PR_Data.REG_MEASUNIT[idx]
+                    });
+                }            
+            }
+            return _allData;
+        }
+    }    
 }

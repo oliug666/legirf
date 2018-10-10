@@ -7,8 +7,8 @@ namespace TPIH.Gecco.WPF.Models
     {
         public DateTime Date { get; set; }
         public string Reg_Name { get; set; }
-        public bool b_val { get; set; }
-        public double i_val { get; set; }
-        public double ui_val { get; set; }
+        public double val { get; set; }
+        public string data_type { get; set; }
+        public string unit { get; set; }
     }
 }

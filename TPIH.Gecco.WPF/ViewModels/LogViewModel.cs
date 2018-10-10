@@ -70,8 +70,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         #endregion
 
 
-        private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
-        private readonly Calculator _calculator = new Calculator();
+        private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());        
         private readonly PulseLogger _logger;
 
         public LogViewModel()
@@ -115,7 +114,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 LinesWritten++;
                 try
                 {
-                    _logger.Write(_calculator.CalculateSummary(e.MeasurePoints, e.SetDuration));
+                    //_logger.Write(_calculator.CalculateSummary(e.MeasurePoints, e.SetDuration));
                 }
                 catch (Exception exp)
                 {

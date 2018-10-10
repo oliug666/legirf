@@ -236,29 +236,9 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     LineSeries newSerie = new LineSeries();
                     newSerie.Title = points[0].Reg_Name;
+                    newSerie.CanTrackerInterpolatePoints = false;
+                    AddPoints(newSerie, points);
 
-                    newSerie.Points.Clear();
-                    int idx = N3PR_Data.REG_NAMES.IndexOf(points[0].Reg_Name);
-                    string unit = N3PR_Data.REG_MEASUNIT[idx];
-                    int div_factor = Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
-                    foreach (var measPoint in points)
-                    {
-                        switch (data_type)
-                        {
-                            case "Int":
-                                newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), measPoint.i_val / div_factor));
-                                break;
-                            case "UInt":
-                                newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), measPoint.ui_val / div_factor));
-                                break;
-                            case "Bool":
-                                newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), Convert.ToDouble(measPoint.b_val)));
-                                break;
-                            default:
-                                newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), measPoint.i_val / div_factor));
-                                break;
-                        }
-                    }
                     pM.Series.Add(newSerie);
 
                     if (DriverContainer.Driver.MbAlarm != null)
@@ -268,8 +248,8 @@ namespace TPIH.Gecco.WPF.ViewModels
                         foreach (string name in alarmNames)
                         {
                             var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
-                            var where_active = toPlot.Where(x => x.b_val == true).ToList();
-                            var where_inactive = toPlot.Where(x => x.b_val == false).ToList();
+                            var where_active = toPlot.Where(x => x.val == 1).ToList();
+                            var where_inactive = toPlot.Where(x => x.val == 0).ToList();
                             foreach (MeasurePoint MP in where_active)
                             {
                                 pM.Annotations.Add(new LineAnnotation
@@ -300,6 +280,17 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
         }
 
+        private void AddPoints(LineSeries ls, IList<MeasurePoint> myPoints)
+        {
+            if (myPoints != null && myPoints.Any() && myPoints.All(p => p != null))
+            {
+                ls.Points.Clear();
+                foreach (MeasurePoint mp in myPoints)
+                {
+                    ls.Points.Add(new DataPoint(DateTimeAxis.ToDouble(mp.Date), mp.val));
+                }
+            }
+        }
         private string ParseXmlElement(IEnumerable<XNode> nodes)
         {
             List<string> myS = new List<string>();

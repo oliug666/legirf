@@ -28,8 +28,6 @@ namespace TPIH.Gecco.WPF.ViewModels
         private int _selectedDataFormat;
         private bool _isExportDataEnabled;
 
-        public readonly TestResultSeries DataSeries = new TestResultSeries();
-
         public ICommand ExportDataCommand { get; private set; }
         public List<string> DataFormat { get { return _dataFormat; } set { _dataFormat = value; OnPropertyChanged(() => DataFormat); } }
         public int SelectedDataFormat { get { return _selectedDataFormat; } set { _selectedDataFormat = value; OnPropertyChanged(() => SelectedDataFormat); } }
@@ -160,47 +158,29 @@ namespace TPIH.Gecco.WPF.ViewModels
             DataFormat = new List<string> { "Csv", "Excel" };
             ExportDataCommand = new DelegateCommand(obj => ExportDataCommand_Execution(), obj => _isExportDataEnabled);
 
-            // Subscribe to event
+            // Subscribe to event(s)
             EventAggregator.OnMessageTransmitted += OnMessageReceived;
-        }
+            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(RefreshPlotsEventHandler);
+        }        
 
-        public void ShowPoints(IList<MeasurePoint> points, string data_type)
+        public void ShowPoints(IList<MeasurePoint> points)
         {
             if (points != null && points.Any() && points.All(p => p != null))
             {
                 LineSeries newSerie = new LineSeries();
                 newSerie.Title = points[0].Reg_Name;
+                newSerie.CanTrackerInterpolatePoints = false;
 
-                newSerie.Points.Clear();
-                int idx = N3PR_Data.REG_NAMES.IndexOf(points[0].Reg_Name);
-                string unit = N3PR_Data.REG_MEASUNIT[idx];
-                int div_factor = Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
-                foreach (var measPoint in points)
-                {
-                    switch (data_type)
-                    {
-                        case "Int":
-                            newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), measPoint.i_val / div_factor));
-                            break;
-                        case "UInt":
-                            newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), measPoint.ui_val / div_factor));
-                            break;
-                        case "Bool":
-                            newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), Convert.ToDouble(measPoint.b_val)));
-                            break;
-                        default:
-                            newSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(measPoint.Date), measPoint.i_val / div_factor));
-                            break;
-                    }
-                }
-                if (data_type == "Bool")
+                AddPoints(newSerie, points);                
+
+                if (points[0].data_type == "Bool")
                 {
                     PlotBool.Series.Add(newSerie);
                     PlotBool.InvalidatePlot(true);
                 }
                 else
                 {
-                    if (unit == "%")
+                    if (points[0].unit == "%")
                         newSerie.YAxisKey = "Secondary";
                     else
                         newSerie.YAxisKey = "Primary";
@@ -216,8 +196,8 @@ namespace TPIH.Gecco.WPF.ViewModels
                     foreach (string name in alarmNames)
                     {
                         var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
-                        var where_active = toPlot.Where(x => x.b_val == true).ToList();
-                        var where_inactive = toPlot.Where(x => x.b_val == false).ToList();
+                        var where_active = toPlot.Where(x => x.val == 1).ToList();
+                        var where_inactive = toPlot.Where(x => x.val == 0).ToList();
                         foreach (MeasurePoint MP in where_active)
                         {
                             Plot.Annotations.Add(new LineAnnotation
@@ -260,6 +240,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
             }
         }
+
         public void UnshowPoints(string name)
         {
             List<Series> tdbSerie = Plot.Series.Where(x => x.Title == name).ToList();
@@ -284,6 +265,45 @@ namespace TPIH.Gecco.WPF.ViewModels
                 PlotBool.InvalidatePlot(true); 
             }
         }
+        private void RefreshPlotsEventHandler(object sender, EventArgs e)
+        {
+            List<Series> tbrSeries = Plot.Series.ToList();
+            List<Series> tbrSeriesBool = PlotBool.Series.ToList();
+            // If there are some plots on the graph
+            if (tbrSeries.Count != 0)
+            {   
+                foreach(Series tbrSerie in tbrSeries)
+                {
+                    var ls = (LineSeries)tbrSerie;
+                    var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == ls.Title).ToList();
+                    AddPoints(ls, myPoints);                                                            
+                }
+                Plot.InvalidatePlot(true);
+            }
+
+            if (tbrSeriesBool.Count != 0)
+            {
+                foreach (Series tbrSerie in tbrSeriesBool)
+                {
+                    var ls = (LineSeries)tbrSerie;
+                    var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == ls.Title).ToList();
+                    AddPoints(ls, myPoints);
+                }
+                PlotBool.InvalidatePlot(true);
+            }
+        }
+
+        private void AddPoints(LineSeries ls, IList<MeasurePoint> myPoints)
+        {
+            if (myPoints != null && myPoints.Any() && myPoints.All(p => p != null))
+            {
+                ls.Points.Clear();
+                foreach (MeasurePoint mp in myPoints)
+                {
+                    ls.Points.Add(new DataPoint(DateTimeAxis.ToDouble(mp.Date), mp.val));
+                }
+            }
+        }
 
         public void OnMessageReceived(ItemCheckedEvent e)
         {
@@ -294,7 +314,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 if (e.value)
                 {
                     myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == e.name).ToList();
-                    ShowPoints(myPoints, e.data_type);
+                    ShowPoints(myPoints);
                 }
                 else // The item was unchecked
                 {
@@ -320,7 +340,6 @@ namespace TPIH.Gecco.WPF.ViewModels
                     break;
             }
         }
-
         private void ExportExcel_Execution()
         {
             // Create SaveFileDialog 
