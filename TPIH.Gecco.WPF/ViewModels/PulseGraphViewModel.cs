@@ -161,81 +161,38 @@ namespace TPIH.Gecco.WPF.ViewModels
             // Subscribe to event(s)
             EventAggregator.OnMessageTransmitted += OnMessageReceived;
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(RefreshPlotsEventHandler);
-        }        
+        }
 
         public void ShowPoints(IList<MeasurePoint> points)
         {
             if (points != null && points.Any() && points.All(p => p != null))
             {
-                LineSeries newSerie = new LineSeries();
-                newSerie.Title = points[0].Reg_Name;
-                newSerie.CanTrackerInterpolatePoints = false;
-
-                AddPoints(newSerie, points);                
-
                 if (points[0].data_type == "Bool")
                 {
-                    PlotBool.Series.Add(newSerie);
-                    PlotBool.InvalidatePlot(true);
+                    Plotter.ShowPoints(points, PlotBool, Plotter.PRIMARY_AXIS);
                 }
                 else
                 {
                     if (points[0].unit == "%")
-                        newSerie.YAxisKey = "Secondary";
+                        Plotter.ShowPoints(points, PlotBool, Plotter.SECONDARY_AXIS);
                     else
-                        newSerie.YAxisKey = "Primary";
-                    
-                    Plot.Series.Add(newSerie);
-                    Plot.InvalidatePlot(true);                    
+                        Plotter.ShowPoints(points, PlotBool, Plotter.PRIMARY_AXIS);
                 }
 
-                // Now check the alarms            
+                // Now check the alarms
                 if (DriverContainer.Driver.MbAlarm != null)
                 {
                     List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
                     foreach (string name in alarmNames)
                     {
-                        var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
-                        var where_active = toPlot.Where(x => x.val == 1).ToList();
-                        var where_inactive = toPlot.Where(x => x.val == 0).ToList();
-                        foreach (MeasurePoint MP in where_active)
-                        {
-                            Plot.Annotations.Add(new LineAnnotation
-                            {
-                                Type = LineAnnotationType.Vertical,
-                                X = DateTimeAxis.ToDouble(MP.Date),
-                                Color = OxyColors.Red,
-                                Text = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)],
-                                ClipByXAxis = true
-                            });
-                            PlotBool.Annotations.Add(new LineAnnotation
-                            {
-                                Type = LineAnnotationType.Vertical,
-                                X = DateTimeAxis.ToDouble(MP.Date),
-                                Color = OxyColors.Red,
-                                ClipByXAxis = true
-                            });
-                        }
-                        foreach (MeasurePoint MP in where_inactive)
-                        {
-                            Plot.Annotations.Add(new LineAnnotation
-                            {
-                                Type = LineAnnotationType.Vertical,
-                                X = DateTimeAxis.ToDouble(MP.Date),
-                                Color = OxyColors.Green,
-                                Text = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)],
-                                ClipByXAxis = true
-                            });
-                            PlotBool.Annotations.Add(new LineAnnotation
-                            {
-                                Type = LineAnnotationType.Vertical,
-                                X = DateTimeAxis.ToDouble(MP.Date),
-                                Color = OxyColors.Green,
-                                ClipByXAxis = true
-                            });
-                        }
-                        Plot.InvalidatePlot(true);
-                        PlotBool.InvalidatePlot(true);
+                        Plotter.AnnotateAlarms(
+                            Plot,
+                            DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                            N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)]);
+                        Plotter.AnnotateAlarms(
+                            PlotBool,
+                            DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                            "");
                     }
                 }
             }

@@ -180,17 +180,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     _isRetrieving = true;
                     _cmd = new MySqlCommand(dateQuery, _connection);
                     var date = _cmd.ExecuteScalar();
-                    try
-                    {
-                        LatestDate = DateTime.ParseExact(date + "", N3PR_Data.DATA_FORMAT,
-                            System.Globalization.CultureInfo.InvariantCulture);
-                    }
-                    catch
-                    {
-                        LatestDate = DateTime.ParseExact(date + "", N3PR_Data.DATA_FORMAT,
-                            System.Globalization.CultureInfo.CurrentCulture);
-                    }
-
+                    LatestDate = ParseDate(date + "");
                     _cmd.Dispose();
                 }
                 catch (Exception e)
@@ -317,8 +307,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 {
                     _allData.Add(new MeasurePoint
                     {
-                        Date = DateTime.ParseExact(_dataReader["DATE"] + "", N3PR_Data.DATA_FORMAT,
-                                            System.Globalization.CultureInfo.InvariantCulture),
+                        Date = ParseDate(_dataReader["DATA"] + ""),
                         Reg_Name = _dataReader["REG_NAME"] + "",
                         val = value,
                         data_type = N3PR_Data.REG_TYPES[idx],
@@ -327,6 +316,22 @@ namespace TPIH.Gecco.WPF.Drivers
                 }            
             }
             return _allData;
+        }
+
+        private DateTime ParseDate(string sDate)
+        {
+            DateTime ParsedDate;
+            try
+            {
+                ParsedDate = DateTime.ParseExact(sDate, N3PR_Data.DATA_FORMAT,
+                    System.Globalization.CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                ParsedDate = DateTime.ParseExact(sDate, N3PR_Data.DATA_FORMAT,
+                    System.Globalization.CultureInfo.CurrentCulture);
+            }
+            return ParsedDate;
         }
     }    
 }
