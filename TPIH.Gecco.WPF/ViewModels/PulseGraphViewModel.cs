@@ -69,7 +69,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         {
             Plot = new PlotModel("N3PR Data");
             Plot.Axes.Clear();
-            var axis1 = new DateTimeAxis(AxisPosition.Bottom, "Time [m]")
+            var axis1 = new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",
@@ -105,7 +105,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
             PlotBool = new PlotModel("N3PR Logic Data");
             PlotBool.Axes.Clear();
-            var axis2 = new DateTimeAxis(AxisPosition.Bottom, "Time [m]")
+            var axis2 = new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",

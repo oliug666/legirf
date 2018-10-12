@@ -107,7 +107,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
             Plot00 = new PlotModel(_t00);
             Plot00.Axes.Clear();            
-            Plot00.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time [m]")
+            Plot00.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",
@@ -129,7 +129,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             //
             Plot01 = new PlotModel(_t01);
             Plot01.Axes.Clear();
-            Plot01.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time [m]")
+            Plot01.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",
@@ -151,7 +151,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             //
             Plot10 = new PlotModel(_t10);
             Plot10.Axes.Clear();
-            Plot10.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time [m]")
+            Plot10.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",
@@ -173,7 +173,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             //
             Plot11 = new PlotModel(_t11);
             Plot11.Axes.Clear();
-            Plot11.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time [m]")
+            Plot11.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",

@@ -49,6 +49,7 @@ namespace TPIH.Gecco.WPF.Views
 
                 tb.Height = _height;
                 tb.Width = 100;
+                tb.IsReadOnly = true;
                 ValuesStackPanel.Children.Add(tb);
             }
 
