@@ -174,7 +174,7 @@ namespace TPIH.Gecco.WPF.Drivers
             if (IsConnected & _latestData != null)
             {
                 // First find the latest date            
-                string dateQuery = "SELECT MAX(DATE) FROM " + tableName;
+                string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
                 try
                 {
                     _isRetrieving = true;
@@ -189,7 +189,8 @@ namespace TPIH.Gecco.WPF.Drivers
                     return;
                 }
 
-                string selectQuery = "SELECT * FROM " + tableName + " WHERE " + tableName + ".DATE >= '" + LatestDate.AddSeconds(-10).ToString(N3PR_Data.DATA_FORMAT) + "'";
+                string selectQuery = "SELECT * FROM " + tableName + " WHERE " + tableName + "."+ N3PR_DB.DATE 
+                    + " >= '" + LatestDate.AddSeconds(-10).ToString(N3PR_Data.DATA_FORMAT) + "'";
 
                 try
                 {
@@ -221,6 +222,9 @@ namespace TPIH.Gecco.WPF.Drivers
 
         public void GetDataFromLastXDays(string tableName, int lastDays)
         {
+            MySqlCommand _cmd = new MySqlCommand();
+            MySqlDataReader _dataReader = null;
+
             while (_isRetrieving) ;
 
             // Get day today and calculate time interval
@@ -229,7 +233,8 @@ namespace TPIH.Gecco.WPF.Drivers
             DateTime long_ago = DateTime.Now.AddDays(-lastDays);
             string long_ago_s = long_ago.ToString(N3PR_Data.DATA_FORMAT);
 
-            string selectQuery = "SELECT * FROM " + tableName + " WHERE DATE BETWEEN '" + long_ago_s + "' AND '" + right_now_s + "'";
+            string selectQuery = "SELECT * FROM " + tableName + " WHERE "+ N3PR_DB.DATE +
+                " BETWEEN '" + long_ago_s + "' AND '" + right_now_s + "'";
             // Read
             if (IsConnected)
             {
@@ -239,18 +244,12 @@ namespace TPIH.Gecco.WPF.Drivers
                     // Clear the previous data
                     _mbData.Clear();
                     _mbAlarm.Clear();
-
-                    MySqlDataReader _dataReader;
+                    
                     _cmd = new MySqlCommand(selectQuery, _connection);
                     _dataReader = _cmd.ExecuteReader();
 
                     // Parse data reader
-                    List<MeasurePoint> _allData = ParseDataReader(_dataReader);                    
-
-                    _cmd.Dispose();
-                    _dataReader.Close();
-                    _dataReader.Dispose();
-                    _dataReader = null;
+                    List<MeasurePoint> _allData = ParseDataReader(_dataReader);                                       
 
                     // Sort the retrieved entries (alarms or data?)
                     if (_allData.Count() > 0 & _allData != null)
@@ -275,6 +274,14 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
             }
 
+            _cmd.Dispose();
+            if (_dataReader != null)
+            {
+                _dataReader.Close();
+                _dataReader.Dispose();
+            }
+            _dataReader = null;
+
             _isRetrieving = false;
             // Fire the event
             OnDataRetrievalCompleted?.Invoke(this, null);
@@ -285,30 +292,30 @@ namespace TPIH.Gecco.WPF.Drivers
             List<MeasurePoint> _allData = new List<MeasurePoint>();
             while (_dataReader.Read())
             {
-                int idx = N3PR_Data.REG_NAMES.IndexOf(_dataReader["REG_NAME"] + "");
+                int idx = N3PR_Data.REG_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
                 double value;
                 switch (N3PR_Data.REG_TYPES[idx])
                 {
-                    case "Int":
-                        value = Convert.ToInt32(_dataReader["I_VAL"] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
+                    case N3PR_Data.INT:
+                        value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
                         break;
-                    case "UInt":
-                        value = Convert.ToUInt32(_dataReader["UI_VAL"] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
+                    case N3PR_Data.UINT:
+                        value = Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
                         break;
-                    case "Bool":
-                        value = Convert.ToDouble(_dataReader["B_VAL"] + "");
+                    case N3PR_Data.BOOL:
+                        value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
                         break;
                     default:
-                        value = Convert.ToInt32(_dataReader["I_VAL"] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
+                        value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
                         break;
                 }
 
-                if (N3PR_Data.REG_NAMES.Contains(_dataReader["REG_NAME"]+""))
+                if (N3PR_Data.REG_NAMES.Contains(_dataReader[N3PR_DB.REG_NAME] +""))
                 {
                     _allData.Add(new MeasurePoint
                     {
-                        Date = ParseDate(_dataReader["DATA"] + ""),
-                        Reg_Name = _dataReader["REG_NAME"] + "",
+                        Date = ParseDate(_dataReader[N3PR_DB.DATE] + ""),
+                        Reg_Name = _dataReader[N3PR_DB.REG_NAME] + "",
                         val = value,
                         data_type = N3PR_Data.REG_TYPES[idx],
                         unit = N3PR_Data.REG_MEASUNIT[idx]

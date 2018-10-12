@@ -27,6 +27,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         private List<string> _dataFormat;
         private int _selectedDataFormat;
         private bool _isExportDataEnabled;
+        private bool _isEventAlreadySubscribed;
 
         public ICommand ExportDataCommand { get; private set; }
         public List<string> DataFormat { get { return _dataFormat; } set { _dataFormat = value; OnPropertyChanged(() => DataFormat); } }
@@ -159,24 +160,29 @@ namespace TPIH.Gecco.WPF.ViewModels
             ExportDataCommand = new DelegateCommand(obj => ExportDataCommand_Execution(), obj => _isExportDataEnabled);
 
             // Subscribe to event(s)
-            EventAggregator.OnMessageTransmitted += OnMessageReceived;
-            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(RefreshPlotsEventHandler);
+            if (EventAggregator.OnMessageTransmitted == null)
+                EventAggregator.OnMessageTransmitted += OnMessageReceived;
+            if (!_isEventAlreadySubscribed)
+            {
+                DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(RefreshPlotsEventHandler);
+                _isEventAlreadySubscribed = true;
+            }
         }
-
+    
         public void ShowPoints(IList<MeasurePoint> points)
         {
             if (points != null && points.Any() && points.All(p => p != null))
             {
-                if (points[0].data_type == "Bool")
+                if (points[0].data_type == N3PR_Data.BOOL)
                 {
                     Plotter.ShowPoints(points, PlotBool, Plotter.PRIMARY_AXIS);
                 }
                 else
                 {
                     if (points[0].unit == "%")
-                        Plotter.ShowPoints(points, PlotBool, Plotter.SECONDARY_AXIS);
+                        Plotter.ShowPoints(points, Plot, Plotter.SECONDARY_AXIS);
                     else
-                        Plotter.ShowPoints(points, PlotBool, Plotter.PRIMARY_AXIS);
+                        Plotter.ShowPoints(points, Plot, Plotter.PRIMARY_AXIS);
                 }
 
                 // Now check the alarms

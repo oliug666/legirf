@@ -20,6 +20,8 @@ namespace TPIH.Gecco.WPF.ViewModels
     {
         private string _r00, _r01, _r10, _r11;
         private string _t00, _t01, _t10, _t11;
+        private bool _isEventAlreadySubscribed;
+
         private Visibility _isFileLoaded;
         public Visibility IsFileLoaded { get { return _isFileLoaded; } set { _isFileLoaded = value; OnPropertyChanged(() => IsFileLoaded); } }
         private PlotModel _p00, _p01, _p10, _p11;
@@ -191,7 +193,11 @@ namespace TPIH.Gecco.WPF.ViewModels
             });
 
             // Subscribe to event (data retrieved)
-            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+            if (!_isEventAlreadySubscribed)
+            {
+                DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+                _isEventAlreadySubscribed = true;
+            }
         }
 
         private void DataRetrievedEventHandler(object sender, EventArgs e)
@@ -234,48 +240,20 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 if (points != null && points.Any() && points.All(p => p != null))
                 {
-                    LineSeries newSerie = new LineSeries();
-                    newSerie.Title = points[0].Reg_Name;
-                    newSerie.CanTrackerInterpolatePoints = false;
-                    AddPoints(newSerie, points);
-
-                    pM.Series.Add(newSerie);
-
+                    // Draw plot
+                    Plotter.ShowPoints(points, pM, Plotter.PRIMARY_AXIS);
+                    // Annotate Alarms
                     if (DriverContainer.Driver.MbAlarm != null)
                     {
-                        // Now check the alarms                
                         List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
                         foreach (string name in alarmNames)
                         {
-                            var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
-                            var where_active = toPlot.Where(x => x.val == 1).ToList();
-                            var where_inactive = toPlot.Where(x => x.val == 0).ToList();
-                            foreach (MeasurePoint MP in where_active)
-                            {
-                                pM.Annotations.Add(new LineAnnotation
-                                {
-                                    Type = LineAnnotationType.Vertical,
-                                    X = DateTimeAxis.ToDouble(MP.Date),
-                                    Color = OxyColors.Red,
-                                    Text = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)],
-                                    ClipByXAxis = true
-                                });
-                            }
-                            foreach (MeasurePoint MP in where_inactive)
-                            {
-                                pM.Annotations.Add(new LineAnnotation
-                                {
-                                    Type = LineAnnotationType.Vertical,
-                                    X = DateTimeAxis.ToDouble(MP.Date),
-                                    Color = OxyColors.Green,
-                                    Text = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)],
-                                    ClipByXAxis = true
-                                });
-                            }
-                        }
-                    }
-
-                    pM.InvalidatePlot(true);
+                            Plotter.AnnotateAlarms(
+                                pM,
+                                DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                                N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)]);                            
+                        }                        
+                    }     
                 }
             }
         }

@@ -18,6 +18,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private List<int> _lastDays;
         private string _status;
+        private bool _isLoading;
 
         public List<string> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
         public int SelectedTimeInterval { get { return _selectedTimeInterval; } set { _selectedTimeInterval = value; OnPropertyChanged(() => SelectedTimeInterval); } }
@@ -26,7 +27,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public GetDataViewModel()
         {
-            GetDataCommand = new DelegateCommand(obj => GetDataCommand_Execution(), obj => DriverContainer.Driver.IsConnected);
+            GetDataCommand = new DelegateCommand(obj => GetDataCommand_Execution(), obj => (DriverContainer.Driver.IsConnected && !_isLoading));
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
 
             _lastDays = new List<int> { 2, 7, 15, 30, 60, 90 };
@@ -44,7 +45,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         {
             if (DriverContainer.Driver.IsConnected)
             {
-                Status = "Loading...";
+                Status = "Loading..."; _isLoading = true;
                 try
                 {
                     Thread loadDataThread = new Thread( tt => DriverContainer.Driver.GetDataFromLastXDays(_settings.TableName, _lastDays[SelectedTimeInterval]));
@@ -74,6 +75,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 // There is no shit
                 Status = "No entries retrieved from database.";
             }
+            _isLoading = false;
         }
     }
 }
