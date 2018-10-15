@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:core="clr-namespace:TPIH.Gecco.WPF.Core"
              xmlns:models="clr-namespace:TPIH.Gecco.WPF.Models"
+             Startup="App_Startup"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!--Tetra Pak Colors-->

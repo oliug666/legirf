@@ -136,6 +136,9 @@ namespace TPIH.Gecco.WPF.ViewModels
                     return;
                 }
 
+                if (Plot.Series.Count == 0)
+                    return; //tobetested
+
                 _isInternalChange = true;
                 axis2.Zoom(axis1.ActualMinimum, axis1.ActualMaximum);
                 this.PlotBool.InvalidatePlot(false);
@@ -149,11 +152,14 @@ namespace TPIH.Gecco.WPF.ViewModels
                     return;
                 }
 
+                if (PlotBool.Series.Count == 0)
+                    return; //tobetested
+
                 _isInternalChange = true;
                 axis1.Zoom(axis2.ActualMinimum, axis2.ActualMaximum);
                 this.Plot.InvalidatePlot(false);
                 _isInternalChange = false;
-            };
+            };            
 
             // Initialize data-export fields
             DataFormat = new List<string> { "Csv", "Excel" };

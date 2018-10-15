@@ -5,12 +5,13 @@ using System.Text;
 
 namespace TPIH.Gecco.WPF.Helpers
 {
-    public static class N3PR_Data
+    public class N3PR_Data
     {
         public const string DATA_FORMAT = "yyyy-MM-dd HH:mm:ss";
         public const string INT = "Int";
         public const string UINT = "UInt";
         public const string BOOL = "Bool";
+
 
         // Data registers
         public static List<string> REG_NAMES = new List<string> {
