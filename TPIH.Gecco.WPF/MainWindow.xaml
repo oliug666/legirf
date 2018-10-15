@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:TPIH.Gecco.WPF.ViewModels"
         xmlns:views="clr-namespace:TPIH.Gecco.WPF.Views"
-        Title="Gecco" Height="853" Width="1211"
+        Title="Frigel N3PR Data Viewer" Height="853" Width="1211"
         BorderThickness="0"
         WindowStyle="SingleBorderWindow"
         Icon="Resources/Gecco.ico"
@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -96,7 +97,7 @@
         <TabControl Grid.Column="0" Grid.Row="1" Margin="10,0,5,5" Background="Transparent" IsEnabled="{Binding IsErrorVisible, Converter={StaticResource InvertConverter }}">
             <TabItem Header="MODBUS_Viewer">
                 <StackPanel>
-                    <!-- <views:LogView Margin="0 5 0 0"></views:LogView> -->
+                    <!-- <views:LogView Margin="0 5 0 0"></views:LogView> -->                    
                     <views:GetDataView />
                     <views:SelectDataView/>
                     <views:ExportDataView/>
@@ -119,7 +120,8 @@
                 <views:CurrentStatusView/>
             </TabItem>
         </TabControl>
-        <TextBlock Grid.Column="0" Grid.Row="2" Width="150" HorizontalAlignment="Left" Margin="12,0,0,0" Text="{Binding VersionNr}"></TextBlock>
+        <Image Grid.Column="0" Grid.Row="2" Source="Resources/Image.png" Height="80"></Image>
+        <TextBlock Grid.Column="0" Grid.Row="3" Width="150" HorizontalAlignment="Left" Margin="12,0,0,0" Text="{Binding VersionNr}"></TextBlock>
         <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Grid.Column="0" Opacity="50" Background="Transparent" Visibility="{Binding IsErrorVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.25*"/>
