@@ -22,6 +22,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         //        OnPropertyChanged("PropertiesViewModel");
         //    }
         //}
+        private string _versionNr;
         private bool _isErrorVisible;
         public bool IsErrorVisible
         {
@@ -32,6 +33,8 @@ namespace TPIH.Gecco.WPF.ViewModels
                 OnPropertyChanged(() => IsErrorVisible);
             }
         }
+
+        public string VersionNr { get { return _versionNr; } set { _versionNr = value; OnPropertyChanged(() => VersionNr); } }
 
         private Exception _error;
         public Exception Error
@@ -97,6 +100,11 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public MainWindowViewModel()
         {
+            // Display version
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            // Version increases each day, since 10/10/2018
+            VersionNr = "Version: " + $"{version.Major}.{version.MajorRevision}.{version.Build}";
+
             GraphViewModel = new PulseGraphViewModel();
             OverViewModel = new OverviewViewModel();
             IsFileLoaded = OverViewModel.IsFileLoaded;

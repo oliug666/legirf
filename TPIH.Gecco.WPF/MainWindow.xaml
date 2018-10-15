@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="285"/>
@@ -107,9 +108,9 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <TabControl Grid.Column="1" Grid.Row="1" Margin="10,0,5,5" Background="Transparent" IsEnabled="{Binding IsErrorVisible, Converter={StaticResource InvertConverter }}">
+        <TabControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Margin="10,0,5,5" Background="Transparent" IsEnabled="{Binding IsErrorVisible, Converter={StaticResource InvertConverter }}">
             <TabItem Header="Overview" Visibility="{Binding IsFileLoaded}">
-                <views:OverviewView DataContext="{Binding OverViewModel}"/>                
+                <views:OverviewView DataContext="{Binding OverViewModel}"/>
             </TabItem>
             <TabItem Header="Graph">
                 <views:PulseGraphView DataContext="{Binding GraphViewModel}"/>
@@ -118,6 +119,7 @@
                 <views:CurrentStatusView/>
             </TabItem>
         </TabControl>
+        <TextBlock Grid.Column="0" Grid.Row="2" Width="150" HorizontalAlignment="Left" Margin="12,0,0,0" Text="{Binding VersionNr}"></TextBlock>
         <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Grid.Column="0" Opacity="50" Background="Transparent" Visibility="{Binding IsErrorVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.25*"/>
