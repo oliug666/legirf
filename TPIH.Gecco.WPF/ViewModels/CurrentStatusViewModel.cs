@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -78,8 +79,11 @@ namespace TPIH.Gecco.WPF.ViewModels
                     for (int i = 0; i < DriverContainer.Driver.LatestData.Count(); i++)
                     {
                         int idx = N3PR_Data.REG_NAMES.IndexOf(DriverContainer.Driver.LatestData[i].Reg_Name);
-                        int div_factor = Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
-                        LatestValues[idx] = (DriverContainer.Driver.LatestData[i].val).ToString();                                    
+                        if (idx != -1)
+                        {
+                            double div_factor = Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            LatestValues[idx] = (DriverContainer.Driver.LatestData[i].val).ToString();
+                        }                               
                     }
                 }
                 else

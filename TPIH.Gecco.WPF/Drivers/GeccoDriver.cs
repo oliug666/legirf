@@ -171,6 +171,9 @@ namespace TPIH.Gecco.WPF.Drivers
             Thread.Sleep(1000);
             while (_isRetrieving) ;
 
+            MySqlCommand _cmd = new MySqlCommand();
+            MySqlDataReader _dataReader = null;
+
             if (IsConnected & _latestData != null)
             {
                 // First find the latest date            
@@ -195,7 +198,6 @@ namespace TPIH.Gecco.WPF.Drivers
                 try
                 {
                     _isRetrieving = true;
-                    MySqlDataReader _dataReader;
                     lock (_latestData)
                     {
                         _cmd = new MySqlCommand(selectQuery, _connection);
@@ -203,10 +205,6 @@ namespace TPIH.Gecco.WPF.Drivers
 
                         _latestData.Clear();
                         _latestData = ParseDataReader(_dataReader);
-                        
-                        _cmd.Dispose();
-                        _dataReader.Close();
-                        _dataReader.Dispose();
                     }
                 }
                 catch (Exception e)
@@ -214,6 +212,14 @@ namespace TPIH.Gecco.WPF.Drivers
                     GlobalCommands.ShowError.Execute(e);
                 }
             }
+
+            _cmd.Dispose();
+            if (_dataReader != null)
+            {
+                _dataReader.Close();
+                _dataReader.Dispose();
+            }
+            _dataReader = null;
 
             _isRetrieving = false;
             // Fire the event
@@ -357,32 +363,35 @@ namespace TPIH.Gecco.WPF.Drivers
             {
                 int idx = N3PR_Data.REG_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
                 double value;
-                switch (N3PR_Data.REG_TYPES[idx])
+                if (idx != -1)
                 {
-                    case N3PR_Data.INT:
-                        value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
-                        break;
-                    case N3PR_Data.UINT:
-                        value = Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
-                        break;
-                    case N3PR_Data.BOOL:
-                        value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
-                        break;
-                    default:
-                        value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToInt32(N3PR_Data.REG_DIVFACTORS[idx]);
-                        break;
-                }
-
-                if (N3PR_Data.REG_NAMES.Contains(_dataReader[N3PR_DB.REG_NAME] +""))
-                {
-                    _allData.Add(new MeasurePoint
+                    switch (N3PR_Data.REG_TYPES[idx])
                     {
-                        Date = ParseDate(_dataReader[N3PR_DB.DATE] + ""),
-                        Reg_Name = _dataReader[N3PR_DB.REG_NAME] + "",
-                        val = value,
-                        data_type = N3PR_Data.REG_TYPES[idx],
-                        unit = N3PR_Data.REG_MEASUNIT[idx]
-                    });
+                        case N3PR_Data.INT:
+                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            break;
+                        case N3PR_Data.UINT:
+                            value = Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            break;
+                        case N3PR_Data.BOOL:
+                            value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
+                            break;
+                        default:
+                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            break;
+                    }
+
+                    if (N3PR_Data.REG_NAMES.Contains(_dataReader[N3PR_DB.REG_NAME] + ""))
+                    {
+                        _allData.Add(new MeasurePoint
+                        {
+                            Date = ParseDate(_dataReader[N3PR_DB.DATE] + ""),
+                            Reg_Name = _dataReader[N3PR_DB.REG_NAME] + "",
+                            val = value,
+                            data_type = N3PR_Data.REG_TYPES[idx],
+                            unit = N3PR_Data.REG_MEASUNIT[idx]
+                        });
+                    }
                 }            
             }
             return _allData;
