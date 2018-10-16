@@ -121,7 +121,16 @@
             </TabItem>
         </TabControl>
         <Image Grid.Column="0" Grid.Row="2" Source="Resources/Image.png" Height="80"></Image>
-        <TextBlock Grid.Column="0" Grid.Row="3" Width="150" HorizontalAlignment="Left" Margin="12,0,0,0" Text="{Binding VersionNr}"></TextBlock>
+        <Grid Grid.Column="0" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Width="138" Margin="12,0,0,0" HorizontalAlignment="Left" Grid.Column="0" Text="{Binding VersionNr}"></TextBlock>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="1" Text="Connection: "></TextBlock>
+            <Ellipse Width="15" Height="15" Grid.Column="2" Fill="{Binding ConnectionStatusColor}"/>
+        </Grid>
         <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Grid.Column="0" Opacity="50" Background="Transparent" Visibility="{Binding IsErrorVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.25*"/>

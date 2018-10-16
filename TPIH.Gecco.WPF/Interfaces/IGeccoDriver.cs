@@ -25,5 +25,6 @@ namespace TPIH.Gecco.WPF.Interfaces
         void GetDataFromLastXDays(string tableName, int lastDays);
 
         void GetLatestData(string tableName);
+        void GetDataFromCalendarDays(string tableName, DateTime from, DateTime to);
     }
 }

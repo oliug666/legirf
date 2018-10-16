@@ -23,7 +23,8 @@ namespace TPIH.Gecco.WPF.ViewModels
         //    }
         //}
         private string _versionNr;
-        private bool _isErrorVisible;
+        private bool _isErrorVisible;        
+
         public bool IsErrorVisible
         {
             get { return _isErrorVisible; }
@@ -35,6 +36,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         }
 
         public string VersionNr { get { return _versionNr; } set { _versionNr = value; OnPropertyChanged(() => VersionNr); } }
+        public string ConnectionStatusColor { get { if (DriverContainer.Driver.IsConnected) return "Green"; else return "Red"; } }
 
         private Exception _error;
         public Exception Error

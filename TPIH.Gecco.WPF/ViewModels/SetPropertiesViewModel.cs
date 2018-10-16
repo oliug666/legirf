@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Configuration;
 using System.Text;
 using System.Timers;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -115,7 +116,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public SetPropertiesViewModel()
         {
-            ToggleConnectionCommand = new DelegateCommand(obj => ToggleConnection(), obj => !IsConnected);
+            ToggleConnectionCommand = new DelegateCommand(obj => ToggleConnection()); //, obj => !IsConnected);
             IsPropertiesEnabled = false;
             // Load last used settings
             _ipaddress = _settings.IPAddress;
@@ -130,6 +131,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         {
             if (IsConnected)
             {
+
                 Disconnect();
             }
             else
@@ -164,16 +166,21 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void Disconnect()
         {
-            try
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Close connection to DB?", "Closing Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
             {
-                DriverContainer.Driver.Disconnect();
-                IsPropertiesEnabled = DriverContainer.Driver.IsConnected;
-            }
-            catch (Exception e)
-            {
-                IsPropertiesEnabled = false;
-                GlobalCommands.ShowError.Execute(e);
-            }
+                try
+                {
+                    DriverContainer.Driver.Disconnect();
+                    DriverContainer.Driver.Dispose();
+                    IsPropertiesEnabled = DriverContainer.Driver.IsConnected;
+                }
+                catch (Exception e)
+                {
+                    IsPropertiesEnabled = false;
+                    GlobalCommands.ShowError.Execute(e);
+                }
+            }            
         }
     }
 }

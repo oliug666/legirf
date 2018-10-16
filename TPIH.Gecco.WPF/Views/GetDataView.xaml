@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:TPIH.Gecco.WPF.Views"
              xmlns:viewModels="clr-namespace:TPIH.Gecco.WPF.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -15,21 +14,37 @@
             <Label Content="Time Interval" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </StackPanel>
         <Border BorderBrush="{StaticResource TetraDarkBlueBrush05}"  BorderThickness="1,0,1,1">
-            <Grid IsSharedSizeScope="True">
+            <Grid IsSharedSizeScope="False">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" SharedSizeGroup="Properties"/>
-                    <RowDefinition Height="Auto" SharedSizeGroup="Properties"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="2"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="2"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="2"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="65"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="70"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Time Span" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
-                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding TimeIntervals}" SelectedIndex="{Binding SelectedTimeInterval}"></ComboBox>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Time Span" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <ComboBox Grid.Column="1" Grid.Row="0" Width="50" HorizontalAlignment="Left" ItemsSource="{Binding TimeIntervals}" SelectedIndex="{Binding SelectedTimeInterval}"/>
                 <Button Grid.Column="2" Grid.Row="0" Height="24" Width="60" HorizontalAlignment="Right" Content="Get Data" Command="{Binding GetDataCommand}"></Button>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="Status:" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Status}" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+                <Grid Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="From:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" IsEnabled="{Binding IsCalendarEnabled}"/>
+                    <DatePicker Grid.Column="1" Width="95" HorizontalAlignment="Left" IsEnabled="{Binding IsCalendarEnabled}" SelectedDate="{Binding From}"/>
+                    <TextBlock Text="To:" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" IsEnabled="{Binding IsCalendarEnabled}"/>
+                    <DatePicker Grid.Column="3" Width="95" HorizontalAlignment="Left" IsEnabled="{Binding IsCalendarEnabled}" SelectedDate="{Binding To}"/>
+                </Grid>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Status:" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding Status}" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
             </Grid>
         </Border>
     </StackPanel>

@@ -287,6 +287,69 @@ namespace TPIH.Gecco.WPF.Drivers
             OnDataRetrievalCompleted?.Invoke(this, null);
         }
 
+        public void GetDataFromCalendarDays(string tableName, DateTime From, DateTime To)
+        {
+            MySqlCommand _cmd = new MySqlCommand();
+            MySqlDataReader _dataReader = null;
+
+            while (_isRetrieving) ;
+
+            // Create query     
+            string selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
+                " BETWEEN '" + From.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + To.ToString(N3PR_Data.DATA_FORMAT) + "'";
+
+            // Read
+            if (IsConnected)
+            {
+                try
+                {
+                    _isRetrieving = true;
+                    // Clear the previous data
+                    _mbData.Clear();
+                    _mbAlarm.Clear();
+
+                    _cmd = new MySqlCommand(selectQuery, _connection);
+                    _dataReader = _cmd.ExecuteReader();
+
+                    // Parse data reader
+                    List<MeasurePoint> _allData = ParseDataReader(_dataReader);
+
+                    // Sort the retrieved entries (alarms or data?)
+                    if (_allData.Count() > 0 & _allData != null)
+                    {
+                        // data
+                        foreach (MeasurePoint _mbp in _allData)
+                        {
+                            if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
+                                _mbData.Add(_mbp);
+                        }
+                        // alarms
+                        foreach (MeasurePoint _mbp in _allData)
+                        {
+                            if (N3PR_Data.ALARM_NAMES.Contains(_mbp.Reg_Name))
+                                _mbAlarm.Add(_mbp);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    GlobalCommands.ShowError.Execute(e);
+                }
+            }
+
+            _cmd.Dispose();
+            if (_dataReader != null)
+            {
+                _dataReader.Close();
+                _dataReader.Dispose();
+            }
+            _dataReader = null;
+
+            _isRetrieving = false;
+            // Fire the event
+            OnDataRetrievalCompleted?.Invoke(this, null);
+        }
+
         private List<MeasurePoint> ParseDataReader(IDataReader _dataReader)
         {
             List<MeasurePoint> _allData = new List<MeasurePoint>();
