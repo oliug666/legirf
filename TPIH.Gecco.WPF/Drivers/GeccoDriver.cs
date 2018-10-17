@@ -22,6 +22,8 @@ namespace TPIH.Gecco.WPF.Drivers
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
         private MySqlConnection _connection;
         private MySqlCommand _cmd;
+        private MySqlDataReader _dataReader;
+
         private static IList<MeasurePoint> _mbData;
         private static IList<MeasurePoint> _mbAlarm;
         private static IList<MeasurePoint> _latestData;
@@ -31,6 +33,7 @@ namespace TPIH.Gecco.WPF.Drivers
         public string Status;
         public event EventHandler OnDataRetrievalCompleted;
         public event EventHandler OnLatestDataRetrievalCompleted;
+        public event EventHandler OnConnectionStatusChanged;
 
         public IList<MeasurePoint> MbData
         {
@@ -128,11 +131,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
             }
 
-            //if (_connection.State == ConnectionState.Open)
-            //{
-            //    _mbData = new List<MeasurePoint>();
-            //    _latestData = new List<MeasurePoint>();
-            //}
+            OnConnectionStatusChanged?.Invoke(this, null);
         }
 
         //Close connection
@@ -142,18 +141,18 @@ namespace TPIH.Gecco.WPF.Drivers
             {
                 try
                 {
-                    _connection.Close();
+                    _connection.Close();                    
                 }
                 catch (MySqlException ex)
                 {
                     Status = ex.Message;
                 }
             }
+            OnConnectionStatusChanged?.Invoke(this, null);
         }
 
         public void Dispose()
         {
-
             try
             {
                 if (_connection != null)
@@ -169,18 +168,19 @@ namespace TPIH.Gecco.WPF.Drivers
         {
             DateTime LatestDate = new DateTime();
             Thread.Sleep(1000);
-            while (_isRetrieving) ;
 
-            MySqlCommand _cmd = new MySqlCommand();
-            MySqlDataReader _dataReader = null;
+            while (_isRetrieving) ; // Pause if there is someone already retrieving data
 
+            _cmd = new MySqlCommand();
+            _dataReader = null;
+
+            _isRetrieving = true;
             if (IsConnected & _latestData != null)
             {
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
                 try
-                {
-                    _isRetrieving = true;
+                {                    
                     _cmd = new MySqlCommand(dateQuery, _connection);
                     var date = _cmd.ExecuteScalar();
                     LatestDate = ParseDate(date + "");
@@ -222,16 +222,17 @@ namespace TPIH.Gecco.WPF.Drivers
             _dataReader = null;
 
             _isRetrieving = false;
+
             // Fire the event
             OnLatestDataRetrievalCompleted?.Invoke(this, null);
         }
 
         public void GetDataFromLastXDays(string tableName, int lastDays)
         {
-            MySqlCommand _cmd = new MySqlCommand();
-            MySqlDataReader _dataReader = null;
+            _cmd = new MySqlCommand();
+            _dataReader = null;
 
-            while (_isRetrieving) ;
+            while (_isRetrieving) ; // Pause if there is someone already retrieving data
 
             // Get day today and calculate time interval
             DateTime right_now = DateTime.Now;
@@ -239,77 +240,44 @@ namespace TPIH.Gecco.WPF.Drivers
             DateTime long_ago = DateTime.Now.AddDays(-lastDays);
             string long_ago_s = long_ago.ToString(N3PR_Data.DATA_FORMAT);
 
+            // Create query
             string selectQuery = "SELECT * FROM " + tableName + " WHERE "+ N3PR_DB.DATE +
                 " BETWEEN '" + long_ago_s + "' AND '" + right_now_s + "'";
+            
             // Read
-            if (IsConnected)
-            {
-                try
-                {
-                    _isRetrieving = true;
-                    // Clear the previous data
-                    _mbData.Clear();
-                    _mbAlarm.Clear();
-                    
-                    _cmd = new MySqlCommand(selectQuery, _connection);
-                    _dataReader = _cmd.ExecuteReader();
-
-                    // Parse data reader
-                    List<MeasurePoint> _allData = ParseDataReader(_dataReader);                                       
-
-                    // Sort the retrieved entries (alarms or data?)
-                    if (_allData.Count() > 0 & _allData != null)
-                    {
-                        // data
-                        foreach (MeasurePoint _mbp in _allData)
-                        {
-                            if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
-                                _mbData.Add(_mbp);
-                        }
-                        // alarms
-                        foreach (MeasurePoint _mbp in _allData)
-                        {
-                            if (N3PR_Data.ALARM_NAMES.Contains(_mbp.Reg_Name))
-                                _mbAlarm.Add(_mbp);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    GlobalCommands.ShowError.Execute(e);
-                }
-            }
-
-            _cmd.Dispose();
-            if (_dataReader != null)
-            {
-                _dataReader.Close();
-                _dataReader.Dispose();
-            }
-            _dataReader = null;
-
-            _isRetrieving = false;
+            ExecuteQuery(selectQuery);
+            
             // Fire the event
             OnDataRetrievalCompleted?.Invoke(this, null);
         }
 
         public void GetDataFromCalendarDays(string tableName, DateTime From, DateTime To)
         {
-            MySqlCommand _cmd = new MySqlCommand();
-            MySqlDataReader _dataReader = null;
+            _cmd = new MySqlCommand();
+            _dataReader = null;
 
-            while (_isRetrieving) ;
+            while (_isRetrieving) ; // Pause if there is someone already retrieving data
 
             // Create query     
             string selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
                 " BETWEEN '" + From.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + To.ToString(N3PR_Data.DATA_FORMAT) + "'";
 
             // Read
+            ExecuteQuery(selectQuery);
+                        
+            // Fire the event
+            OnDataRetrievalCompleted?.Invoke(this, null);
+        }
+
+        private void ExecuteQuery(string selectQuery)
+        {
+            _isRetrieving = true;
+
+            // Read
             if (IsConnected)
             {
                 try
-                {
-                    _isRetrieving = true;
+                {                    
                     // Clear the previous data
                     _mbData.Clear();
                     _mbAlarm.Clear();
@@ -343,6 +311,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
             }
 
+            // Dispose connection objects
             _cmd.Dispose();
             if (_dataReader != null)
             {
@@ -352,8 +321,6 @@ namespace TPIH.Gecco.WPF.Drivers
             _dataReader = null;
 
             _isRetrieving = false;
-            // Fire the event
-            OnDataRetrievalCompleted?.Invoke(this, null);
         }
 
         private List<MeasurePoint> ParseDataReader(IDataReader _dataReader)

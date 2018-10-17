@@ -12,6 +12,7 @@ namespace TPIH.Gecco.WPF.Interfaces
         bool IsConnected { get; }
         event EventHandler OnDataRetrievalCompleted;
         event EventHandler OnLatestDataRetrievalCompleted;
+        event EventHandler OnConnectionStatusChanged;
 
         IList<MeasurePoint> MbAlarm { get; }
         IList<MeasurePoint> MbData { get; }

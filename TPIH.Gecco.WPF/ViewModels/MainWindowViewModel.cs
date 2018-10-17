@@ -22,7 +22,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         //        OnPropertyChanged("PropertiesViewModel");
         //    }
         //}
-        private string _versionNr;
+        private string _versionNr, _connectionStatusColor;
         private bool _isErrorVisible;        
 
         public bool IsErrorVisible
@@ -36,7 +36,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         }
 
         public string VersionNr { get { return _versionNr; } set { _versionNr = value; OnPropertyChanged(() => VersionNr); } }
-        public string ConnectionStatusColor { get { if (DriverContainer.Driver.IsConnected) return "Green"; else return "Red"; } }
+        public string ConnectionStatusColor { get { return _connectionStatusColor; } set { _connectionStatusColor = value; OnPropertyChanged(()=> ConnectionStatusColor) } }
 
         private Exception _error;
         public Exception Error
@@ -64,7 +64,8 @@ namespace TPIH.Gecco.WPF.ViewModels
         private Visibility _isFileLoaded;
         public Visibility IsFileLoaded { get { return _isFileLoaded; } set { _isFileLoaded = value; OnPropertyChanged(() => IsFileLoaded); } }
 
-        private OverviewViewModel _overviewViewModel;
+        private OverviewViewModel _overviewViewModel;        
+
         public OverviewViewModel OverViewModel
         {
             get { return _overviewViewModel; }
@@ -129,6 +130,16 @@ namespace TPIH.Gecco.WPF.ViewModels
                     ? WindowState.Normal
                     : WindowState.Maximized;
             });
+
+            DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(UpdateConnectionStatusIndicator);
+        }
+
+        private void UpdateConnectionStatusIndicator(object sender, EventArgs e)
+        {
+            if (DriverContainer.Driver.IsConnected)
+                ConnectionStatusColor = "Green";
+            else
+                ConnectionStatusColor = "Red";
         }
 
         private void ShowError(object obj)
