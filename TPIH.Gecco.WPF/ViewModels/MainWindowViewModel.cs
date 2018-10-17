@@ -36,7 +36,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         }
 
         public string VersionNr { get { return _versionNr; } set { _versionNr = value; OnPropertyChanged(() => VersionNr); } }
-        public string ConnectionStatusColor { get { return _connectionStatusColor; } set { _connectionStatusColor = value; OnPropertyChanged(()=> ConnectionStatusColor) } }
+        public string ConnectionStatusColor { get { return _connectionStatusColor; } set { _connectionStatusColor = value; OnPropertyChanged(() => ConnectionStatusColor); } }
 
         private Exception _error;
         public Exception Error
@@ -131,6 +131,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     : WindowState.Maximized;
             });
 
+            ConnectionStatusColor = "Red";
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(UpdateConnectionStatusIndicator);
         }
 
