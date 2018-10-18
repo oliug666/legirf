@@ -139,6 +139,8 @@ namespace TPIH.Gecco.WPF.Drivers
         {
             if (IsConnected)
             {
+                while (_isRetrieving) ;
+                
                 try
                 {
                     _connection.Close();                    
@@ -260,7 +262,8 @@ namespace TPIH.Gecco.WPF.Drivers
 
             // Create query     
             string selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
-                " BETWEEN '" + From.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + To.ToString(N3PR_Data.DATA_FORMAT) + "'";
+                " BETWEEN '" + From.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + 
+                To.AddHours(23).AddMinutes(59).AddSeconds(59).ToString(N3PR_Data.DATA_FORMAT) + "'";
 
             // Read
             ExecuteQuery(selectQuery);

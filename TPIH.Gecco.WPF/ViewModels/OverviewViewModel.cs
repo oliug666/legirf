@@ -208,33 +208,33 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     Plot00.Series.Clear();
                     var myPoints00 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r00).ToList();
-                    ShowPoints(myPoints00, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r00)], Plot00);
+                    ShowPoints(myPoints00, Plot00);
                 }
 
                 if (_t01 != " ")
                 {
                     Plot01.Series.Clear();
                     var myPoints01 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r01).ToList();
-                    ShowPoints(myPoints01, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r01)], Plot01);
+                    ShowPoints(myPoints01, Plot01);
                 }
 
                 if (_t10 != " ")
                 {
                     Plot10.Series.Clear();
                     var myPoints10 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r10).ToList();
-                    ShowPoints(myPoints10, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r10)], Plot10);
+                    ShowPoints(myPoints10, Plot10);
                 }
 
                 if (_t11 != " ")
                 {
                     Plot11.Series.Clear();
                     var myPoints11 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r11).ToList();
-                    ShowPoints(myPoints11, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r11)], Plot11);
+                    ShowPoints(myPoints11, Plot11);
                 }
             }
         }
 
-        public void ShowPoints(IList<MeasurePoint> points, string data_type, PlotModel pM)
+        public void ShowPoints(IList<MeasurePoint> points, PlotModel pM)
         {
             if (IsFileLoaded == Visibility.Visible)
             {
