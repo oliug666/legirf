@@ -7,12 +7,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TPIH Gecco")]
-[assembly: AssemblyDescription("TPIH Gecco software to interface the the generator control unit hardware")]
+[assembly: AssemblyTitle("Frigel N3PR Viewer")]
+[assembly: AssemblyDescription("Frigel Viewer to plot process data from N3PR")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Tetra Pak")]
-[assembly: AssemblyProduct("TPIH Gecco")]
-[assembly: AssemblyCopyright("Copyright © Tetra Pak 2014")]
+[assembly: AssemblyCompany("Frigel Spa")]
+[assembly: AssemblyProduct("N3PR Viewer")]
+[assembly: AssemblyCopyright("Copyright © Frigel 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -52,4 +52,4 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.3")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.3")]

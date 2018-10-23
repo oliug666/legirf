@@ -90,7 +90,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 Maximum = 50,
                 IsZoomEnabled = true
             });
-            Plot.Axes.Add(new LinearAxis(AxisPosition.Right, "%")
+            Plot.Axes.Add(new LinearAxis(AxisPosition.Right, N3PR_Data.PERCENTAGE)
             {
                 Key = "Secondary",
                 MajorGridlineStyle = LineStyle.Solid,
@@ -185,7 +185,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 else
                 {
-                    if (points[0].unit == "%")
+                    if (points[0].unit == N3PR_Data.PERCENTAGE)
                         Plotter.ShowPoints(points, Plot, Plotter.SECONDARY_AXIS);
                     else
                         Plotter.ShowPoints(points, Plot, Plotter.PRIMARY_AXIS);

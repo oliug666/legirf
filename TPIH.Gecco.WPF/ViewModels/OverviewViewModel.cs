@@ -18,8 +18,9 @@ namespace TPIH.Gecco.WPF.ViewModels
 {
     public class OverviewViewModel : ViewModelBase
     {
-        private string _r00, _r01, _r10, _r11;
-        private string _t00, _t01, _t10, _t11;
+        private List<string> _regNames00, _regNames01, _regNames10, _regNames11;
+        private List<string> _regDescriptions00, _regDescriptions01, _regDescriptions10, _regDescriptions11;
+        private List<string> _regUnits00, _regUnits01, _regUnits10, _regUnits11;
         private bool _isEventAlreadySubscribed;
 
         private Visibility _isFileLoaded;
@@ -77,120 +78,31 @@ namespace TPIH.Gecco.WPF.ViewModels
                 return;
             }
 
-            var p00 = doc.Root.Descendants("Plot00");
-            _r00 = ParseXmlElement(p00.Elements("reg_name").Nodes());
-            if (N3PR_Data.REG_NAMES.IndexOf(_r00) != -1)
-                _t00 = N3PR_Data.REG_DESCRIPTION[N3PR_Data.REG_NAMES.IndexOf(_r00)];
-            else
-                _t00 = " ";
+            var p00 = doc.Root.Descendants("Plot00");            
+            _regNames00 = ParseXmlElement(p00.Elements("reg_name").Nodes());
+            _regDescriptions00 = GetRegDescription(_regNames00);
+            _regUnits00 = GetRegUnits(_regNames00);
 
             var p01 = doc.Root.Descendants("Plot01");
-            _r01 = ParseXmlElement(p01.Elements("reg_name").Nodes());
-            if (N3PR_Data.REG_NAMES.IndexOf(_r01) != -1)
-                _t01 = N3PR_Data.REG_DESCRIPTION[N3PR_Data.REG_NAMES.IndexOf(_r01)];
-            else
-                _t01 = " ";
+            _regNames01 = ParseXmlElement(p01.Elements("reg_name").Nodes());
+            _regDescriptions01 = GetRegDescription(_regNames01);
+            _regUnits01 = GetRegUnits(_regNames01);
 
             var p10 = doc.Root.Descendants("Plot10");
-            _r10 = ParseXmlElement(p10.Elements("reg_name").Nodes());
-            if (N3PR_Data.REG_NAMES.IndexOf(_r10) != -1)
-                _t10 = N3PR_Data.REG_DESCRIPTION[N3PR_Data.REG_NAMES.IndexOf(_r10)];
-            else
-                _t10 = " ";
+            _regNames10 = ParseXmlElement(p10.Elements("reg_name").Nodes());
+            _regDescriptions10 = GetRegDescription(_regNames10);
+            _regUnits10 = GetRegUnits(_regNames10);
 
             var p11 = doc.Root.Descendants("Plot11");
-            _r11 = ParseXmlElement(p11.Elements("reg_name").Nodes());
-            if (N3PR_Data.REG_NAMES.IndexOf(_r11) != -1)
-                _t11 = N3PR_Data.REG_DESCRIPTION[N3PR_Data.REG_NAMES.IndexOf(_r11)];
-            else
-                _t11 = " ";            
+            _regNames11 = ParseXmlElement(p11.Elements("reg_name").Nodes());
+            _regDescriptions11 = GetRegDescription(_regNames11);
+            _regUnits11 = GetRegUnits(_regNames11);
 
-            Plot00 = new PlotModel(_t00);
-            Plot00.Axes.Clear();            
-            Plot00.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
-            {
-                Key = "X",
-                StringFormat = "dd-MM-yyyy hh:mm",
-                IsZoomEnabled = true,
-                IntervalLength = 100,
-                MinorIntervalType = DateTimeIntervalType.Days,
-                IntervalType = DateTimeIntervalType.Days,
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.None,
-                IsPanEnabled = false
-            });
-            Plot00.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
-            {
-                Key = "Primary",
-                MajorGridlineStyle = LineStyle.Solid,
-                IsZoomEnabled = false
-            });
-
-            //
-            Plot01 = new PlotModel(_t01);
-            Plot01.Axes.Clear();
-            Plot01.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
-            {
-                Key = "X",
-                StringFormat = "dd-MM-yyyy hh:mm",
-                IsZoomEnabled = true,
-                IntervalLength = 100,
-                MinorIntervalType = DateTimeIntervalType.Days,
-                IntervalType = DateTimeIntervalType.Days,
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.None,
-                IsPanEnabled = false
-            });
-            Plot01.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
-            {
-                Key = "Primary",
-                MajorGridlineStyle = LineStyle.Solid,
-                IsZoomEnabled = false
-            });
-
-            //
-            Plot10 = new PlotModel(_t10);
-            Plot10.Axes.Clear();
-            Plot10.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
-            {
-                Key = "X",
-                StringFormat = "dd-MM-yyyy hh:mm",
-                IsZoomEnabled = true,
-                IntervalLength = 100,
-                MinorIntervalType = DateTimeIntervalType.Days,
-                IntervalType = DateTimeIntervalType.Days,
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.None,
-                IsPanEnabled = false
-            });
-            Plot10.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
-            {
-                Key = "Primary",
-                MajorGridlineStyle = LineStyle.Solid,
-                IsZoomEnabled = false
-            });
-
-            //
-            Plot11 = new PlotModel(_t11);
-            Plot11.Axes.Clear();
-            Plot11.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
-            {
-                Key = "X",
-                StringFormat = "dd-MM-yyyy hh:mm",
-                IsZoomEnabled = true,
-                IntervalLength = 100,
-                MinorIntervalType = DateTimeIntervalType.Days,
-                IntervalType = DateTimeIntervalType.Days,
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.None,
-                IsPanEnabled = false
-            });
-            Plot11.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
-            {
-                Key = "Primary",
-                MajorGridlineStyle = LineStyle.Solid,
-                IsZoomEnabled = false
-            });
+            // Create Plots
+            Plot00 = CreatePlotModel(_regDescriptions00, _regUnits00);
+            Plot01 = CreatePlotModel(_regDescriptions01, _regUnits01);
+            Plot10 = CreatePlotModel(_regDescriptions10, _regUnits10);
+            Plot11 = CreatePlotModel(_regDescriptions11, _regUnits11);            
 
             // Subscribe to event (data retrieved)
             if (!_isEventAlreadySubscribed)
@@ -198,39 +110,16 @@ namespace TPIH.Gecco.WPF.ViewModels
                 DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
                 _isEventAlreadySubscribed = true;
             }
-        }
+        }        
 
         private void DataRetrievedEventHandler(object sender, EventArgs e)
         {
             if (IsFileLoaded == Visibility.Visible)
             {
-                if (_t00 != " ")
-                {
-                    Plot00.Series.Clear();
-                    var myPoints00 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r00).ToList();
-                    ShowPoints(myPoints00, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r00)], Plot00);
-                }
-
-                if (_t01 != " ")
-                {
-                    Plot01.Series.Clear();
-                    var myPoints01 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r01).ToList();
-                    ShowPoints(myPoints01, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r01)], Plot01);
-                }
-
-                if (_t10 != " ")
-                {
-                    Plot10.Series.Clear();
-                    var myPoints10 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r10).ToList();
-                    ShowPoints(myPoints10, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r10)], Plot10);
-                }
-
-                if (_t11 != " ")
-                {
-                    Plot11.Series.Clear();
-                    var myPoints11 = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == _r11).ToList();
-                    ShowPoints(myPoints11, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(_r11)], Plot11);
-                }
+                AddSeries(Plot00, _regNames00);
+                AddSeries(Plot01, _regNames01);
+                AddSeries(Plot10, _regNames10);
+                AddSeries(Plot11, _regNames11);
             }
         }
 
@@ -241,7 +130,11 @@ namespace TPIH.Gecco.WPF.ViewModels
                 if (points != null && points.Any() && points.All(p => p != null))
                 {
                     // Draw plot
-                    Plotter.ShowPoints(points, pM, Plotter.PRIMARY_AXIS);
+                    if (points[0].unit == N3PR_Data.PERCENTAGE)
+                        Plotter.ShowPoints(points, pM, Plotter.PRIMARY_AXIS);
+                    else
+                        Plotter.ShowPoints(points, pM, Plotter.SECONDARY_AXIS);
+
                     // Annotate Alarms
                     if (DriverContainer.Driver.MbAlarm != null)
                     {
@@ -269,17 +162,125 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
             }
         }
-        private string ParseXmlElement(IEnumerable<XNode> nodes)
+        private List<string> ParseXmlElement(IEnumerable<XNode> nodes)
         {
             List<string> myS = new List<string>();
             foreach (XNode xn in nodes)
                 myS.Add(xn.ToString());
 
             if (myS.Count > 0)
-                return myS[0];
+                return myS;
             else
-                return "";
+                return null;
         }
 
+        private List<string> GetRegDescription(List<string> RegNames)
+        {
+            List<string> RegDescriptions = new List<string>();
+            if (RegNames != null)
+            {
+                foreach (string st in RegNames)
+                {
+                    if (N3PR_Data.REG_NAMES.IndexOf(st) != -1)
+                        RegDescriptions.Add(N3PR_Data.REG_DESCRIPTION[N3PR_Data.REG_NAMES.IndexOf(st)]);
+                    else
+                        RegDescriptions.Add(" ");
+                }
+            }
+            return RegDescriptions;
+        }
+
+        private List<string> GetRegUnits(List<string> RegNames)
+        {
+            List<string> RegUnits = new List<string>();
+            if (RegNames != null)
+            {
+                foreach (string st in RegNames)
+                {
+                    if (N3PR_Data.REG_NAMES.IndexOf(st) != -1)
+                        RegUnits.Add(N3PR_Data.REG_MEASUNIT[N3PR_Data.REG_NAMES.IndexOf(st)]);
+                    else
+                        RegUnits.Add(" ");
+                }
+            }
+            return RegUnits;
+        }
+
+        private PlotModel CreatePlotModel(List<string> RegDescriptions, List<string> RegUnits)
+        {
+            PlotModel pM;
+
+            if (RegDescriptions != null)
+            {
+                if (RegDescriptions.Count() > 0)
+                {
+                    if (RegDescriptions.Count() == 1)
+                        pM = new PlotModel(RegDescriptions[0]);
+                    else
+                        pM = new PlotModel();
+                }
+                else
+                    return null;
+            }
+            else
+                return null;
+
+            pM.Axes.Clear();
+            pM.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
+            {
+                Key = "X",
+                StringFormat = "dd-MM-yyyy hh:mm",
+                IsZoomEnabled = true,
+                IntervalLength = 100,
+                MinorIntervalType = DateTimeIntervalType.Days,
+                IntervalType = DateTimeIntervalType.Days,
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.None,
+                IsPanEnabled = false
+            });
+            pM.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
+            {
+                Key = "Primary",
+                MajorGridlineStyle = LineStyle.Solid,
+                IsZoomEnabled = true
+            });
+
+            if (RegUnits != null)
+            {
+                if (RegUnits.Contains(N3PR_Data.PERCENTAGE))
+                    pM.Axes.Add(new LinearAxis(AxisPosition.Right, N3PR_Data.PERCENTAGE)
+                    {
+                        Key = "Secondary",
+                        MajorGridlineStyle = LineStyle.Solid,
+                        Minimum = 0,
+                        Maximum = 100,
+                        MajorGridlineColor = OxyColors.LightBlue,
+                        TicklineColor = OxyColors.LightBlue,
+                        TitleColor = OxyColors.Blue,
+                        TextColor = OxyColors.Blue,
+                        IsZoomEnabled = true
+                    });
+            }
+            return pM;
+        }
+
+        private void AddSeries(PlotModel pM, List<string> RegNames)
+        {
+            if (RegNames != null)
+            {
+                if (RegNames.Count > 0)
+                {
+                    pM.Series.Clear();
+                    foreach (string regName in RegNames)
+                    {
+                        if (regName != " ")
+                        {
+                            var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == regName).ToList();
+                            ShowPoints(myPoints, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(regName)], pM);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

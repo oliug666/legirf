@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <Configuration>
     <Plot00>
-    	<reg_name>STE_PTA</reg_name>    	
+    	<reg_name>STE_PTA</reg_name>
+    	<reg_name>STE_PTE</reg_name>
+    	<reg_name>STE_PTR</reg_name>    	
     </Plot00>
     <Plot01>
     	<reg_name>STE_PTE</reg_name> 

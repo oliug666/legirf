@@ -26,7 +26,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"></ColumnDefinition>
                         <ColumnDefinition Width="120"></ColumnDefinition>
-                        <ColumnDefinition Width="250"></ColumnDefinition>
+                        <ColumnDefinition Width="350"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" x:Name="LabelsStackPanel"></StackPanel>
                     <StackPanel Grid.Column="1" x:Name="ValuesStackPanel"></StackPanel>

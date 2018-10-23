@@ -11,7 +11,7 @@ namespace TPIH.Gecco.WPF.Helpers
         public const string INT = "Int";
         public const string UINT = "UInt";
         public const string BOOL = "Bool";
-
+        public const string PERCENTAGE = "%";
 
         // Data registers
         public static List<string> REG_NAMES = new List<string> {
