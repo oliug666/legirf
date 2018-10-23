@@ -48,33 +48,10 @@ namespace TPIH.Gecco.WPF.ViewModels
                 IsErrorVisible = value != null;
                 OnPropertyChanged(() => Error);
             }
-        }
-
-        private PulseGraphViewModel _graphViewModel;
-        public PulseGraphViewModel GraphViewModel
-        {
-            get { return _graphViewModel; }
-            set
-            {
-                _graphViewModel = value;
-                OnPropertyChanged(() => GraphViewModel);
-            }
-        }
+        }        
 
         private Visibility _isFileLoaded;
         public Visibility IsFileLoaded { get { return _isFileLoaded; } set { _isFileLoaded = value; OnPropertyChanged(() => IsFileLoaded); } }
-
-        private OverviewViewModel _overviewViewModel;        
-
-        public OverviewViewModel OverViewModel
-        {
-            get { return _overviewViewModel; }
-            set
-            {
-                _overviewViewModel = value;
-                OnPropertyChanged(() => OverViewModel);
-            }
-        }
 
         public void TerminateExecutionAndCloseConnections()
         {
@@ -107,10 +84,6 @@ namespace TPIH.Gecco.WPF.ViewModels
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             // Version increases each day, since 10/10/2018
             VersionNr = "Version: " + $"{version.Major}.{version.MajorRevision}.{version.Build}";
-
-            GraphViewModel = new PulseGraphViewModel();
-            OverViewModel = new OverviewViewModel();
-            IsFileLoaded = OverViewModel.IsFileLoaded;
 
             CloseErrorCommand = new DelegateCommand(param =>
             {

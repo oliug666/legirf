@@ -84,7 +84,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             Plot.Axes.Add(axis1);
             Plot.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
             {
-                Key = "Primary",
+                Key = Plotter.PRIMARY_AXIS,
                 MajorGridlineStyle = LineStyle.Solid,
                 Minimum = 0,
                 Maximum = 50,
@@ -92,7 +92,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             });
             Plot.Axes.Add(new LinearAxis(AxisPosition.Right, N3PR_Data.PERCENTAGE)
             {
-                Key = "Secondary",
+                Key = Plotter.SECONDARY_AXIS,
                 MajorGridlineStyle = LineStyle.Solid,
                 Minimum = 0,
                 Maximum = 100,
@@ -120,7 +120,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             PlotBool.Axes.Add(axis2);
             PlotBool.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
             {
-                Key = "Primary",
+                Key = Plotter.PRIMARY_AXIS,
                 MajorGridlineStyle = LineStyle.Solid,
                 Minimum = 0,
                 Maximum = 2,
@@ -159,7 +159,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 axis1.Zoom(axis2.ActualMinimum, axis2.ActualMaximum);
                 this.Plot.InvalidatePlot(false);
                 _isInternalChange = false;
-            };            
+            };
 
             // Initialize data-export fields
             DataFormat = new List<string> { "Csv", "Excel" };
@@ -190,7 +190,6 @@ namespace TPIH.Gecco.WPF.ViewModels
                     else
                         Plotter.ShowPoints(points, Plot, Plotter.PRIMARY_AXIS);
                 }
-
                 // Now check the alarms
                 if (DriverContainer.Driver.MbAlarm != null)
                 {
@@ -291,7 +290,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     UnshowPoints(e.name);
                 }
 
-                IsExportDataEnabled = (_plot.Series.Count() != 0) ? true : false;
+                IsExportDataEnabled = ((_plot.Series.Count() + _plotBool.Series.Count()) != 0) ? true : false;
             }
         }
 
