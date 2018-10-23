@@ -362,7 +362,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                         ws.Cells[1, 2 + 2 * seriesOffset].Value = _ls.Title;                                                
                         for (int i = 0; i < _ls.Points.Count(); i++)
                         {
-                            ws.Cells[i + 2, 1 + 2 * seriesOffset].Value = DateTime.FromOADate(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss");
+                            ws.Cells[i + 2, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss");
                             ws.Cells[i + 2, 2 + 2 * seriesOffset].Value = _ls.Points[i].Y;
                         }
                         seriesOffset++;
@@ -375,7 +375,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                         ws.Cells[1, 2 + 2 * seriesOffset].Value = _ls.Title;
                         for (int i = 0; i < _ls.Points.Count(); i++)
                         {
-                            ws.Cells[i + 2, 1 + 2 * seriesOffset].Value = DateTime.FromOADate(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss");
+                            ws.Cells[i + 2, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss");
                             ws.Cells[i + 2, 2 + 2 * seriesOffset].Value = _ls.Points[i].Y;
                         }
                         seriesOffset++;
@@ -386,7 +386,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                         // Headers
                         ws.Cells[1, 1 + 2 * seriesOffset].Value = "Date";
                         ws.Cells[1, 2 + 2 * seriesOffset].Value = _as.Text;
-                        ws.Cells[2, 1 + 2 * seriesOffset].Value = DateTime.FromOADate(_as.X).ToString("dd/MM/yyyy, HH: mm:ss");
+                        ws.Cells[2, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_as.X).ToString("dd/MM/yyyy, HH: mm:ss");
                         ws.Cells[2, 2 + 2 * seriesOffset].Value = 1;
                         seriesOffset++; 
                     }
@@ -446,7 +446,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     for (int i = 0; i < _ls.Points.Count(); i++)
                     {
-                        var line = string.Format("{0},{1},{2}", DateTime.FromOADate(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss"), _ls.Title, _ls.Points[i].Y);
+                        var line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss"), _ls.Title, _ls.Points[i].Y);
                         fs.WriteLine(line);
                         fs.Flush();                       
                     }
@@ -455,7 +455,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     for (int i = 0; i < _ls.Points.Count(); i++)
                     {
-                        var line = string.Format("{0},{1},{2}", DateTime.FromOADate(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss"), _ls.Title, _ls.Points[i].Y);
+                        var line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss"), _ls.Title, _ls.Points[i].Y);
                         fs.WriteLine(line);
                         fs.Flush();
                     }
@@ -463,7 +463,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 foreach (Annotation _as in _plot.Annotations)
                 {
                     var _aas = (LineAnnotation)_as;
-                    var line = string.Format("{0},{1},{2}", DateTime.FromOADate(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.Text, (1).ToString());
+                    var line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.Text, (1).ToString());
                     fs.WriteLine(line);
                     fs.Flush();                    
                 }

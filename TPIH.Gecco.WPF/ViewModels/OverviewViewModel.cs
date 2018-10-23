@@ -264,7 +264,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             return pM;
         }
 
-        private void AddSeries(PlotModel pM, List<string> RegNames)
+        private void AddSeries(PlotModel pM, IList<string> RegNames)
         {
             if (RegNames != null)
             {
