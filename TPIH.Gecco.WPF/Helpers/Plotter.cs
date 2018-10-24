@@ -31,7 +31,6 @@ namespace TPIH.Gecco.WPF.Helpers
                 newSerie.YAxisKey = AxisKey;
 
                 wPlot.Series.Add(newSerie);
-                wPlot.InvalidatePlot(true);
             }
         }
 
@@ -62,8 +61,7 @@ namespace TPIH.Gecco.WPF.Helpers
                     Text = Annotation,
                     ClipByXAxis = true
                 });
-            }
-            WPlot.InvalidatePlot(true);
+            }            
         }
     
         private static void AddPoints(LineSeries ls, IList<MeasurePoint> myPoints)

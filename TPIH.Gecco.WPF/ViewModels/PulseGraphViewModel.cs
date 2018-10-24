@@ -182,6 +182,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 if (points[0].data_type == N3PR_Data.BOOL)
                 {
                     Plotter.ShowPoints(points, PlotBool, Plotter.PRIMARY_AXIS);
+                    PlotBool.InvalidatePlot(true);
                 }
                 else
                 {
@@ -189,21 +190,27 @@ namespace TPIH.Gecco.WPF.ViewModels
                         Plotter.ShowPoints(points, Plot, Plotter.SECONDARY_AXIS);
                     else
                         Plotter.ShowPoints(points, Plot, Plotter.PRIMARY_AXIS);
+                    Plot.InvalidatePlot(true);
                 }
                 // Now check the alarms
                 if (DriverContainer.Driver.MbAlarm != null)
                 {
                     List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                    foreach (string name in alarmNames)
+                    if (alarmNames.Count > 0)
                     {
-                        Plotter.AnnotateAlarms(
-                            Plot,
-                            DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
-                            N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)]);
-                        Plotter.AnnotateAlarms(
-                            PlotBool,
-                            DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
-                            "");
+                        foreach (string name in alarmNames)
+                        {
+                            Plotter.AnnotateAlarms(
+                                Plot,
+                                DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                                N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)]);
+                            Plotter.AnnotateAlarms(
+                                PlotBool,
+                                DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                                "");
+                        }
+                        Plot.InvalidatePlot(true);
+                        PlotBool.InvalidatePlot(true);
                     }
                 }
             }

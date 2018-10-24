@@ -12,16 +12,6 @@ namespace TPIH.Gecco.WPF.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        //private SetPropertiesViewModel _propertiesViewModel;
-        //public SetPropertiesViewModel PropertiesViewModel
-        //{
-        //    get { return _propertiesViewModel; }
-        //    set
-        //    {
-        //        _propertiesViewModel = value;
-        //        OnPropertyChanged("PropertiesViewModel");
-        //    }
-        //}
         private string _versionNr, _connectionStatusColor;
         private bool _isErrorVisible;        
 

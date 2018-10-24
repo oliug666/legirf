@@ -123,7 +123,26 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
         }
 
-        public void ShowPoints(IList<MeasurePoint> points, string data_type, PlotModel pM)
+        private void AddSeries(PlotModel pM, IList<string> RegNames)
+        {
+            if (RegNames != null)
+            {
+                if (RegNames.Count > 0)
+                {
+                    pM.Series.Clear();
+                    foreach (string regName in RegNames)
+                    {
+                        if (regName != " ")
+                        {
+                            var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == regName).ToList();
+                            ShowPoints(myPoints, pM);
+                        }
+                    }
+                    pM.InvalidatePlot(true);
+                }
+            }
+        }
+        public void ShowPoints(IList<MeasurePoint> points, PlotModel pM)
         {
             if (IsFileLoaded == Visibility.Visible)
             {
@@ -131,37 +150,29 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     // Draw plot
                     if (points[0].unit == N3PR_Data.PERCENTAGE)
-                        Plotter.ShowPoints(points, pM, Plotter.PRIMARY_AXIS);
-                    else
                         Plotter.ShowPoints(points, pM, Plotter.SECONDARY_AXIS);
+                    else
+                        Plotter.ShowPoints(points, pM, Plotter.PRIMARY_AXIS);
 
                     // Annotate Alarms
                     if (DriverContainer.Driver.MbAlarm != null)
                     {
                         List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                        foreach (string name in alarmNames)
+                        if (alarmNames.Count > 0)
                         {
-                            Plotter.AnnotateAlarms(
-                                pM,
-                                DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
-                                N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)]);                            
-                        }                        
+                            foreach (string name in alarmNames)
+                            {
+                                Plotter.AnnotateAlarms(
+                                    pM,
+                                    DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                                    N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)]);
+                            }
+                        }            
                     }     
                 }
             }
         }
-
-        private void AddPoints(LineSeries ls, IList<MeasurePoint> myPoints)
-        {
-            if (myPoints != null && myPoints.Any() && myPoints.All(p => p != null))
-            {
-                ls.Points.Clear();
-                foreach (MeasurePoint mp in myPoints)
-                {
-                    ls.Points.Add(new DataPoint(DateTimeAxis.ToDouble(mp.Date), mp.val));
-                }
-            }
-        }
+        
         private List<string> ParseXmlElement(IEnumerable<XNode> nodes)
         {
             List<string> myS = new List<string>();
@@ -217,7 +228,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     if (RegDescriptions.Count() == 1)
                         pM = new PlotModel(RegDescriptions[0]);
                     else
-                        pM = new PlotModel();
+                        pM = new PlotModel("");
                 }
                 else
                     return null;
@@ -262,25 +273,6 @@ namespace TPIH.Gecco.WPF.ViewModels
                     });
             }
             return pM;
-        }
-
-        private void AddSeries(PlotModel pM, IList<string> RegNames)
-        {
-            if (RegNames != null)
-            {
-                if (RegNames.Count > 0)
-                {
-                    pM.Series.Clear();
-                    foreach (string regName in RegNames)
-                    {
-                        if (regName != " ")
-                        {
-                            var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == regName).ToList();
-                            ShowPoints(myPoints, N3PR_Data.REG_TYPES[N3PR_Data.REG_NAMES.IndexOf(regName)], pM);
-                        }
-                    }
-                }
-            }
-        }
+        }        
     }
 }
