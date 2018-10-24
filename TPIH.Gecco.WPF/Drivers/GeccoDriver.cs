@@ -328,23 +328,25 @@ namespace TPIH.Gecco.WPF.Drivers
             List<MeasurePoint> _allData = new List<MeasurePoint>();
             while (_dataReader.Read())
             {
-                int idx = N3PR_Data.REG_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
+                int idxD = N3PR_Data.REG_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
+                int idxA = N3PR_Data.ALARM_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
+
                 double value;
-                if (idx != -1)
+                if (idxD != -1)
                 {
-                    switch (N3PR_Data.REG_TYPES[idx])
+                    switch (N3PR_Data.REG_TYPES[idxD])
                     {
                         case N3PR_Data.INT:
-                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture);
                             break;
                         case N3PR_Data.UINT:
-                            value = Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            value = Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture);
                             break;
                         case N3PR_Data.BOOL:
                             value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
                             break;
                         default:
-                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture);
                             break;
                     }
 
@@ -355,8 +357,23 @@ namespace TPIH.Gecco.WPF.Drivers
                             Date = ParseDate(_dataReader[N3PR_DB.DATE] + ""),
                             Reg_Name = _dataReader[N3PR_DB.REG_NAME] + "",
                             val = value,
-                            data_type = N3PR_Data.REG_TYPES[idx],
-                            unit = N3PR_Data.REG_MEASUNIT[idx]
+                            data_type = N3PR_Data.REG_TYPES[idxD],
+                            unit = N3PR_Data.REG_MEASUNIT[idxD]
+                        });
+                    }
+                }
+                else if (idxA != -1)
+                {
+                    value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
+                    if (N3PR_Data.ALARM_NAMES.Contains(_dataReader[N3PR_DB.REG_NAME] + ""))
+                    {
+                        _allData.Add(new MeasurePoint
+                        {
+                            Date = ParseDate(_dataReader[N3PR_DB.DATE] + ""),
+                            Reg_Name = _dataReader[N3PR_DB.REG_NAME] + "",
+                            val = value,
+                            data_type = N3PR_Data.BOOL,
+                            unit = ""
                         });
                     }
                 }            

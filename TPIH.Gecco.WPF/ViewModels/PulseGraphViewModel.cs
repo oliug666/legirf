@@ -387,16 +387,24 @@ namespace TPIH.Gecco.WPF.ViewModels
                         }
                         seriesOffset++;
                     }
-                    for (int j = 0; j < _plot.Annotations.Count(); j++)
+                    if (_plot.Annotations.Count() != 0)
                     {
-                        LineAnnotation _as = (LineAnnotation)_plot.Annotations[j];
-                        // Headers
-                        ws.Cells[1, 1 + 2 * seriesOffset].Value = "Date";
-                        ws.Cells[1, 2 + 2 * seriesOffset].Value = _as.Text;
-                        ws.Cells[2, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_as.X).ToString("dd/MM/yyyy, HH: mm:ss");
-                        ws.Cells[2, 2 + 2 * seriesOffset].Value = 1;
-                        seriesOffset++; 
+                        ws.Cells[1, 1 + 2 * seriesOffset].Value = "Alarm Date";
+                        ws.Cells[1, 2 + 2 * seriesOffset].Value = "Alarm Value";
+                        ws.Cells[1, 3 + 2 * seriesOffset].Value = "Alarm Description";
+                        for (int j = 0; j < _plot.Annotations.Count(); j++)
+                        {
+                            LineAnnotation _as = (LineAnnotation)_plot.Annotations[j];
+                            // Headers                        
+                            ws.Cells[2 + j, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_as.X).ToString("dd/MM/yyyy, HH: mm:ss");
+                            if (_as.Color.Equals(OxyColors.Green))
+                                ws.Cells[2 + j, 2 + 2 * seriesOffset].Value = 0;
+                            else
+                                ws.Cells[2 + j, 2 + 2 * seriesOffset].Value = 1;
+                            ws.Cells[2 + j, 3 + 2 * seriesOffset].Value = _as.Text;
+                        }
                     }
+                    seriesOffset++;
 
                     p.Save();
                     Status = "Done.";
@@ -470,7 +478,12 @@ namespace TPIH.Gecco.WPF.ViewModels
                 foreach (Annotation _as in _plot.Annotations)
                 {
                     var _aas = (LineAnnotation)_as;
-                    var line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.Text, (1).ToString());
+                    string line;
+                    if (_aas.Color.Equals(OxyColors.Green))
+                        line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.Text, (0).ToString());
+                    else
+                        line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.Text, (1).ToString());
+
                     fs.WriteLine(line);
                     fs.Flush();                    
                 }
