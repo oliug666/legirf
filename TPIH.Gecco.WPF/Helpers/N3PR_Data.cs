@@ -13,6 +13,9 @@ namespace TPIH.Gecco.WPF.Helpers
         public const string BOOL = "Bool";
         public const string PERCENTAGE = "%";
 
+        public static List<string> TITLES = new List<string>();
+        public static List<string> WHERE_SPLIT = new List<string>();
+
         // Data registers
         public static List<string> REG_NAMES = new List<string> {
         "STE_PTA",

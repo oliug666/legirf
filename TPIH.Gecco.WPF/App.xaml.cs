@@ -28,39 +28,52 @@ namespace TPIH.Gecco.WPF
                 using (var reader = new StreamReader(@"system_config.csv", Encoding.GetEncoding("iso-8859-1")))
                 {
                     // Skip first header line
+                    bool _titleAtFirst = false;
                     reader.ReadLine();
                     while (!reader.EndOfStream)
-                    {
-                        var line = reader.ReadLine();
+                    {                        
+                        var line = reader.ReadLine();                        
                         var values = line.Split(';');
-
-                        // Name
-                        n3pr_Names.Add(values[0]);
-                        // Description
-                        n3pr_Desc.Add(values[1]);
-                        // Data type
-                        n3pr_Unit.Add(values[2]);
-                        if (values[3] == N3PR_Data.INT ||
-                            values[3] == N3PR_Data.UINT ||
-                            values[3] == N3PR_Data.BOOL)
+                        if (values[0] != "TITLE")
                         {
-                            n3pr_Type.Add(values[3]);
+                            // Name
+                            n3pr_Names.Add(values[0]);
+                            // Description
+                            n3pr_Desc.Add(values[1]);
+                            // Data type
+                            n3pr_Unit.Add(values[2]);
+                            if (values[3] == N3PR_Data.INT ||
+                                values[3] == N3PR_Data.UINT ||
+                                values[3] == N3PR_Data.BOOL)
+                            {
+                                n3pr_Type.Add(values[3]);
+                            }
+                            else
+                            {
+                                n3pr_Type.Add(N3PR_Data.INT);
+                            }
+                            // Div factor
+                            if (Convert.ToDouble(values[4]) != 0)
+                                n3pr_DivFactor.Add(values[4]);
+                            else
+                                n3pr_DivFactor.Add("1");
+                            // Present
+                            if (values[5] == "1" || values[5] == "0")
+                                n3pr_Present.Add(values[5]);
+                            else
+                                n3pr_Present.Add("0");
                         }
                         else
                         {
-                            n3pr_Type.Add(N3PR_Data.INT);
+                            N3PR_Data.TITLES.Add(values[1]);
+                            if (n3pr_Names.Count != 0)
+                                N3PR_Data.WHERE_SPLIT.Add(n3pr_Names.Last());
+                            else
+                                _titleAtFirst = true;
                         }
-                        // Div factor
-                        if (Convert.ToDouble(values[4]) != 0)
-                            n3pr_DivFactor.Add(values[4]);
-                        else
-                            n3pr_DivFactor.Add("1");
-                        // Present
-                        if (values[5] == "1" || values[5] == "0")
-                            n3pr_Present.Add(values[5]);
-                        else
-                            n3pr_Present.Add("0");
                     }
+                    if (_titleAtFirst)
+                        N3PR_Data.WHERE_SPLIT.Insert(0, n3pr_Names.First());
                 }
 
                 if ((n3pr_Names.Count == n3pr_Desc.Count) &&
