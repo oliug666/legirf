@@ -138,11 +138,13 @@
     <Compile Include="Drivers\DriverContainer.cs" />
     <Compile Include="Drivers\GeccoDriverArgs.cs" />
     <Compile Include="Drivers\InfoEnum.cs" />
+    <Compile Include="Helpers\CheckedAlarmItem.cs" />
     <Compile Include="Helpers\CheckedListItem.cs" />
     <Compile Include="Helpers\EventAggregator.cs" />
     <Compile Include="Helpers\ItemCheckedEvent.cs" />
     <Compile Include="Helpers\N3PR_Data.cs" />
     <Compile Include="Helpers\N3PR_DB.cs" />
+    <Compile Include="Helpers\Parser.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Helpers\Plotter.cs" />
     <Compile Include="Helpers\PulseLogger.cs" />
@@ -160,6 +162,7 @@
     <Compile Include="Settings\GlobalSettings.cs" />
     <Compile Include="Settings\IGlobalSettings.cs" />
     <Compile Include="Settings\ISettings.cs" />
+    <Compile Include="ViewModels\ActionButtonViewModel.cs" />
     <Compile Include="ViewModels\CurrentStatusViewModel.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\GetDataViewModel.cs" />
@@ -174,6 +177,9 @@
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\CurrentStatusView.xaml.cs">
       <DependentUpon>CurrentStatusView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ActionButtonView.xaml.cs">
+      <DependentUpon>ActionButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ExportDataView.xaml.cs">
       <DependentUpon>ExportDataView.xaml</DependentUpon>
@@ -205,6 +211,10 @@
     <Page Include="Views\CurrentStatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ActionButtonView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ExportDataView.xaml">
       <SubType>Designer</SubType>
@@ -280,7 +290,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="config_demo.csv">
+    <None Include="system_config.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -352,7 +362,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="default_graph_config.xml">
+    <Content Include="config.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Frigel.png" />

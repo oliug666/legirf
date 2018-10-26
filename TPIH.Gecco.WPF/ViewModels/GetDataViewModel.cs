@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml.Linq;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
+using TPIH.Gecco.WPF.Helpers;
 using TPIH.Gecco.WPF.Settings;
 
 namespace TPIH.Gecco.WPF.ViewModels
@@ -21,6 +21,8 @@ namespace TPIH.Gecco.WPF.ViewModels
         private string _status;
         private bool _isLoading, _isCalendarEnabled;
         private DateTime _to, _from;
+        private bool _isAutoGetDataEnabled;
+        private int _autoGetDataRefreshTime;
 
         public List<string> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
         public int SelectedTimeInterval
@@ -61,14 +63,49 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             TimeIntervals.Add("Custom");            
 
-            SelectedTimeInterval = 0;            
+            SelectedTimeInterval = 0;
+
+            // Auto get-data
+            XDocument doc = new XDocument();
+            try
+            {
+                doc = XDocument.Load("config.xml");
+                var p00 = doc.Root.Descendants("Auto_GetData");
+                _isAutoGetDataEnabled = (Parser.ParseXmlElement(p00.Elements("Enabled").Nodes()).First() == "1") ? true : false;
+                _autoGetDataRefreshTime = Convert.ToInt32(Parser.ParseXmlElement(p00.Elements("Time_Period_Min").Nodes()).First());
+            }
+            catch
+            {
+                _isAutoGetDataEnabled = false;
+            }         
+            
+            if (_isAutoGetDataEnabled)
+            {
+                Thread AutoGetDataThread = new Thread(tt => AutoGetDataThread_Execution(_autoGetDataRefreshTime));
+                AutoGetDataThread.IsBackground = true;
+                AutoGetDataThread.Start();
+            }       
+        }
+
+        private void AutoGetDataThread_Execution(int interval_min)
+        {
+            while(true)
+            {
+                Thread.Sleep(1000 * 60 * interval_min);
+                if (DriverContainer.Driver.IsConnected && !_isLoading)
+                {
+                    //
+                    GetDataCommand_Execution();
+                }
+            }
         }
 
         private void GetDataCommand_Execution()
         {
             if (DriverContainer.Driver.IsConnected)
             {
-                Status = "Loading..."; _isLoading = true;
+                Status = "Loading...";
+                _isLoading = true;
                 if (!_isCalendarEnabled)
                 {
                     try

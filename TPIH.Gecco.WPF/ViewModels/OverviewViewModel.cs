@@ -21,7 +21,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         private List<string> _regNames00, _regNames01, _regNames10, _regNames11;
         private List<string> _regDescriptions00, _regDescriptions01, _regDescriptions10, _regDescriptions11;
         private List<string> _regUnits00, _regUnits01, _regUnits10, _regUnits11;
-        private bool _isEventAlreadySubscribed;
+        private bool _showAlarms = true;
 
         private Visibility _isFileLoaded;
         public Visibility IsFileLoaded { get { return _isFileLoaded; } set { _isFileLoaded = value; OnPropertyChanged(() => IsFileLoaded); } }
@@ -68,7 +68,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             XDocument doc = new XDocument();
             try
             {
-                doc = XDocument.Load("default_graph_config.xml");
+                doc = XDocument.Load("config.xml");
                 IsFileLoaded = Visibility.Visible;
             }
             catch
@@ -79,22 +79,22 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
 
             var p00 = doc.Root.Descendants("Plot00");            
-            _regNames00 = ParseXmlElement(p00.Elements("reg_name").Nodes());
+            _regNames00 = Parser.ParseXmlElement(p00.Elements("reg_name").Nodes());
             _regDescriptions00 = GetRegDescription(_regNames00);
             _regUnits00 = GetRegUnits(_regNames00);
 
             var p01 = doc.Root.Descendants("Plot01");
-            _regNames01 = ParseXmlElement(p01.Elements("reg_name").Nodes());
+            _regNames01 = Parser.ParseXmlElement(p01.Elements("reg_name").Nodes());
             _regDescriptions01 = GetRegDescription(_regNames01);
             _regUnits01 = GetRegUnits(_regNames01);
 
             var p10 = doc.Root.Descendants("Plot10");
-            _regNames10 = ParseXmlElement(p10.Elements("reg_name").Nodes());
+            _regNames10 = Parser.ParseXmlElement(p10.Elements("reg_name").Nodes());
             _regDescriptions10 = GetRegDescription(_regNames10);
             _regUnits10 = GetRegUnits(_regNames10);
 
             var p11 = doc.Root.Descendants("Plot11");
-            _regNames11 = ParseXmlElement(p11.Elements("reg_name").Nodes());
+            _regNames11 = Parser.ParseXmlElement(p11.Elements("reg_name").Nodes());
             _regDescriptions11 = GetRegDescription(_regNames11);
             _regUnits11 = GetRegUnits(_regNames11);
 
@@ -102,14 +102,11 @@ namespace TPIH.Gecco.WPF.ViewModels
             Plot00 = CreatePlotModel(_regDescriptions00, _regUnits00);
             Plot01 = CreatePlotModel(_regDescriptions01, _regUnits01);
             Plot10 = CreatePlotModel(_regDescriptions10, _regUnits10);
-            Plot11 = CreatePlotModel(_regDescriptions11, _regUnits11);            
+            Plot11 = CreatePlotModel(_regDescriptions11, _regUnits11);
 
-            // Subscribe to event (data retrieved)
-            if (!_isEventAlreadySubscribed)
-            {
-                DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
-                _isEventAlreadySubscribed = true;
-            }
+            // Subscribe to event(s)
+            EventAggregator.OnAlarmMessageTransmitted += OnFlaggedAlarmMessageReceived;
+            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
         }        
 
         private void DataRetrievedEventHandler(object sender, EventArgs e)
@@ -130,6 +127,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 if (RegNames.Count > 0)
                 {
                     pM.Series.Clear();
+                    pM.Annotations.Clear();
                     foreach (string regName in RegNames)
                     {
                         if (regName != " ")
@@ -155,35 +153,17 @@ namespace TPIH.Gecco.WPF.ViewModels
                         Plotter.ShowPoints(points, pM, Plotter.PRIMARY_AXIS);
 
                     // Annotate Alarms
-                    if (DriverContainer.Driver.MbAlarm != null)
+                    if (_showAlarms)
                     {
-                        List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                        if (alarmNames.Count > 0)
+                        if (DriverContainer.Driver.MbAlarm != null)
                         {
-                            foreach (string name in alarmNames)
-                            {
-                                Plotter.AnnotateAlarms(
-                                    pM,
-                                    DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
-                                    N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)]);
-                            }
-                        }            
-                    }     
+                            List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                            Plotter.ShowAnnotations(alarmNames, pM, true);
+                        }
+                    }
                 }
             }
-        }
-        
-        private List<string> ParseXmlElement(IEnumerable<XNode> nodes)
-        {
-            List<string> myS = new List<string>();
-            foreach (XNode xn in nodes)
-                myS.Add(xn.ToString());
-
-            if (myS.Count > 0)
-                return myS;
-            else
-                return null;
-        }
+        }               
 
         private List<string> GetRegDescription(List<string> RegNames)
         {
@@ -273,6 +253,35 @@ namespace TPIH.Gecco.WPF.ViewModels
                     });
             }
             return pM;
-        }        
+        }
+
+        public void OnFlaggedAlarmMessageReceived(ItemCheckedEvent e)
+        {
+            if (e.value) // show annotations
+            {
+                _showAlarms = true;
+                // Refresh Annotations
+                Plotter.UnshowAnnotations(Plot00);
+                Plotter.UnshowAnnotations(Plot01);
+                Plotter.UnshowAnnotations(Plot10);
+                Plotter.UnshowAnnotations(Plot11);
+                if (DriverContainer.Driver.MbAlarm != null)
+                {
+                    List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                    Plotter.ShowAnnotations(alarmNames, Plot00, true);
+                    Plotter.ShowAnnotations(alarmNames, Plot01, true);
+                    Plotter.ShowAnnotations(alarmNames, Plot10, true);
+                    Plotter.ShowAnnotations(alarmNames, Plot11, true);
+                }
+            }
+            else // unshow annotations
+            {
+                _showAlarms = false;
+                Plotter.UnshowAnnotations(Plot00);
+                Plotter.UnshowAnnotations(Plot01);
+                Plotter.UnshowAnnotations(Plot10);
+                Plotter.UnshowAnnotations(Plot11);
+            }
+        }
     }
 }

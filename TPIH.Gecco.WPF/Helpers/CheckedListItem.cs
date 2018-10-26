@@ -29,7 +29,7 @@ namespace TPIH.Gecco.WPF.Helpers
 
         private void SendMessage()
         {
-            EventAggregator.Broadcast(this.RegName, this.IsChecked);
+            EventAggregator.SignalItemChecked(this.RegName, this.IsChecked);
         }
     }
 }

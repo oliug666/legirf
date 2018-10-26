@@ -9,11 +9,17 @@ namespace TPIH.Gecco.WPF.Helpers
 {
     public class EventAggregator
     {
-        public static void Broadcast(string message, bool value)
+        public static void SignalItemChecked(string message, bool value)
         {
-            OnMessageTransmitted?.Invoke(new ItemCheckedEvent(message, value));
+            OnCheckedItemTransmitted?.Invoke(new ItemCheckedEvent(message, value));
         }
 
-        public static Action<ItemCheckedEvent> OnMessageTransmitted;
+        public static void SignalShowUnshowAlarms(bool value)
+        {
+            OnAlarmMessageTransmitted?.Invoke(new ItemCheckedEvent("", value));
+        }
+
+        public static Action<ItemCheckedEvent> OnCheckedItemTransmitted;
+        public static Action<ItemCheckedEvent> OnAlarmMessageTransmitted;
     }
 }

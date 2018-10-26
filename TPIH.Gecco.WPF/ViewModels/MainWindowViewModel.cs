@@ -113,16 +113,6 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 Error = err;
             }
-        }
-
-        void Driver_OnCommandReceived(object sender, GeccoDriverArgs e)
-        {
-            /*
-            if (e.Info == InfoEnum.PulseDisabled)
-            {
-                GraphViewModel.ShowPoints(e.MeasurePoints);
-            }
-            */
-        }
+        }        
     }
 }

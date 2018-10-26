@@ -17,7 +17,7 @@ namespace TPIH.Gecco.WPF
     {
         void App_Startup(object sender, StartupEventArgs e)
         {
-            if (File.Exists("config_demo.csv"))
+            if (File.Exists("system_config.csv"))
             {
                 List<string> n3pr_Names = new List<string>();
                 List<string> n3pr_Desc = new List<string>();
@@ -25,7 +25,7 @@ namespace TPIH.Gecco.WPF
                 List<string> n3pr_Type = new List<string>();
                 List<string> n3pr_DivFactor = new List<string>();
                 List<string> n3pr_Present = new List<string>();
-                using (var reader = new StreamReader(@"config_demo.csv", Encoding.GetEncoding("iso-8859-1")))
+                using (var reader = new StreamReader(@"system_config.csv", Encoding.GetEncoding("iso-8859-1")))
                 {
                     // Skip first header line
                     reader.ReadLine();

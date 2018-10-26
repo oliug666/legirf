@@ -1,0 +1,158 @@
+N3PR_RegName;N3PR_RegDescription;N3PR_RegUnit;N3PR_RegType;N3PR_DivFactors;Present
+STE_PTA;Ambient Dry Bulb - TaE;°C;Int;100;1
+STE_PTE;Ecodry Outlet Temperature - TsE;°C;Int;100;1
+STE_PTR;Ecodry Inlet Temperature - TrE;°C;Int;100;1
+STE_ASP;Actual Set Point Temp.;°C;Int;100;1
+STE_IPS;Ecodry Inlet Pressure - Pin;bar;Int;1000;1
+STE_OPS;Ecodry Outlet Pressure - Pout;bar;Int;1000;1
+STE_SPS;Fans Set Speed;%;Int;1;1
+STE_POW;Total Fans Power;kW;UInt;100;1
+STE_ADB;Adiabatic Mode ;false/true;Bool;1;1
+STE_ADC;Adiabatic Capacity;%;Int;10;1
+STE_BST;Booster Mode;false/true;Bool;1;1
+STE_BSP;Booster Percentage;%;Int;1;1
+STW_WPS;BWR Pump;on/off;Bool;1;1
+STW_WDV;BWR Drain Valve;on/off;Bool;1;1
+STE_FCL;Free Cooling Mode;false/true;Bool;1;1
+STE_SDV;SSD Drain Valve;on/off;Bool;1;1
+STE_SBV;SSD Bypass Valve;on/off;Bool;1;1
+STE_TER;SD Inlet Temperature - TeR;°C;Int;100;1
+STE_TSR;SD Outlet Temperature - TsR;°C;Int;100;1
+STE_PSR;Delivery Pressure - PsR;bar;Int;100;1
+STE_TLP;Tank Level Percentage LtR;%;Int;1;1
+STE_SDS;SD Status;Off/Starting/Forced/Running/Stopping;Int;1;1
+STE_SD1;SD Pump 1;on/off;Bool;1;1
+STE_SD2;SD Pump 2;on/off;Bool;1;1
+STE_SD3;SD Pump 3;on/off;Bool;1;1
+STE_SD4;SD Pump 4;on/off;Bool;1;1
+STE_SD5;SD Pump 5;on/off;Bool;1;1
+STE_SD6;SD Pump 6;on/off;Bool;1;1
+STE_SD7;SD Pump 7;on/off;Bool;1;1
+STE_SD8;SD Pump 8;on/off;Bool;1;1
+STE_RFV;Refill Valve;on/off;Bool;1;1
+STA_PTS;Delivery Temperature - TsA;°C;Int;100;1
+STA_RTR;Return Temperature - TrA;°C;Int;100;1
+STA_DPS;Delivery Pressure - PsA;bar;Int;100;1
+STA_SPT;Suction Pressure - PrA;bar;UInt;100;1
+STA_LCK;Pumps in Locked Configuration;no/yes;Bool;1;1
+STA_PP1;Pump 1;on/off;Bool;1;1
+STA_PP2;Pump 2;on/off;Bool;1;1
+STA_PP3;Pump 3;on/off;Bool;1;1
+STA_PP4;Pump 4;on/off;Bool;1;1
+STA_PP5;Pump 5;on/off;Bool;1;1
+STA_PP6;Pump 6;on/off;Bool;1;1
+STA_PP7;Pump 7;on/off;Bool;1;1
+STA_PP8;Pump 8;on/off;Bool;1;1
+STA_PMP;Available Pumps No.;Num;Int;1;1
+STA_PSP;Pumps Set Speed;Hz;Int;1;1
+STA_MF1;Pump 1 Motor Frequency;Hz;Int;10;1
+STA_MF2;Pump 2 Motor Frequency;Hz;Int;10;1
+STA_MF3;Pump 3 Motor Frequency;Hz;Int;10;1
+STA_MF4;Pump 4 Motor Frequency;Hz;Int;10;1
+STA_MF5;Pump 5 Motor Frequency;Hz;Int;10;1
+STA_MF6;Pump 6 Motor Frequency;Hz;Int;10;1
+STA_RSV;Return Line Shut off Valve;on/off;Bool;1;1
+STA_FLM;Flow Meter Reading;m3/h;Int;100;1
+STA_TLP;Tank Level Percentage;%;Int;1;1
+STA_RFV;Refill Valve;on/off;Bool;1;1
+STA_FIN;Filter In Pressure - Fina;bar;Int;100;1
+STA_FOU;Filter Out Pressure - Fouta;bar;Int;100;1
+STB_PTS;Delivery Temperature - TsB;°C;Int;100;1
+STB_RTR;Return Temperature - TrB;°C;Int;100;1
+STB_DPS;Delivery Pressure - PsB;bar;Int;100;1
+STB_SPT;Suction Pressure - PrB;bar;UInt;100;1
+STB_LCK;Pumps in Locked Configuration;no/yes;Bool;1;1
+STB_PP1;Pump 1;on/off;Bool;1;1
+STB_PP2;Pump 2;on/off;Bool;1;1
+STB_PP3;Pump 3;on/off;Bool;1;1
+STB_PP4;Pump 4;on/off;Bool;1;1
+STB_PP5;Pump 5;on/off;Bool;1;1
+STB_PP6;Pump 6;on/off;Bool;1;1
+STB_PP7;Pump 7;on/off;Bool;1;1
+STB_PP8;Pump 8;on/off;Bool;1;1
+STB_PMP;Available Pumps No.;Num;Int;1;1
+STB_PSP;Pumps Speed;Hz;Int;1;1
+STB_MF1;Pump 1 Motor Frequency;Hz;Int;10;1
+STB_MF2;Pump 2 Motor Frequency;Hz;Int;10;1
+STB_MF3;Pump 3 Motor Frequency;Hz;Int;10;1
+STB_MF4;Pump 4 Motor Frequency;Hz;Int;10;1
+STB_MF5;Pump 5 Motor Frequency;Hz;Int;10;1
+STB_MF6;Pump 6 Motor Frequency;Hz;Int;10;1
+STB_RSV;Return Line Shut off Valve;on/off;Bool;1;1
+STB_FLM;Flow Meter Reading;m3/h;Int;100;1
+STB_TLP;Tank Level Percentage;%;Int;1;1
+STB_RFV;Refill Valve;on/off;Bool;1;1
+STB_FIN;Filter In Pressure - Finb;bar;Int;100;1
+STB_FOU;Filter Out Pressure - Foutb;bar;Int;100;1
+STC_PTS;Delivery Temperature - TsC;°C;Int;100;1
+STC_RTR;Return Temperature - TrC;°C;Int;100;1
+STC_DPS;Delivery Pressure - PsC;bar;Int;100;1
+STC_SPT;Suction Pressure - PrC;bar;UInt;100;1
+STC_LCK;Pumps in Locked Configuration;no/yes;Bool;1;1
+STC_PP1;Pump 1;on/off;Bool;1;1
+STC_PP2;Pump 2;on/off;Bool;1;1
+STC_PP3;Pump 3;on/off;Bool;1;1
+STC_PP4;Pump 4;on/off;Bool;1;1
+STC_PP5;Pump 5;on/off;Bool;1;1
+STC_PP6;Pump 6;on/off;Bool;1;1
+STC_PMP;Available Pumps No.;Num;Int;1;1
+STC_PSP;Pumps Speed;Hz;Int;1;1
+STC_MF1;Pump 1 Motor Frequency;Hz;Int;10;1
+STC_MF2;Pump 2 Motor Frequency;Hz;Int;10;1
+STC_MF3;Pump 3 Motor Frequency;Hz;Int;10;1
+STC_MF4;Pump 4 Motor Frequency;Hz;Int;10;1
+STC_MF5;Pump 5 Motor Frequency;Hz;Int;10;1
+STC_MF6;Pump 6 Motor Frequency;Hz;Int;10;1
+STC_RSV;Return Line Shut off Valve;on/off;Bool;1;1
+STC_FLM;Flow Meter Reading;m3/h;Int;100;1
+STC_TLP;Tank Level Percentage;%;Int;1;1
+STC_RFV;Refill Valve;on/off;Bool;1;1
+STC_FIN;Filter In Pressure - FinC;bar;Int;100;1
+STC_FOU;Filter Out Pressure - FoutC;bar;Int;100;1
+STD_PTS;Delivery Temperature - TsD;°C;Int;100;1
+STD_RTR;Return Temperature - TrD;°C;Int;100;1
+STD_DPS;Delivery Pressure - PsD;bar;Int;100;1
+STD_SPT;Suction Pressure - PrD;bar;UInt;100;1
+STD_LCK;Pumps in Locked Configuration;no/yes;Bool;1;1
+STD_PP1;Pump 1;on/off;Bool;1;1
+STD_PP2;Pump 2;on/off;Bool;1;1
+STD_PP3;Pump 3;on/off;Bool;1;1
+STD_PP4;Pump 4;on/off;Bool;1;1
+STD_PP5;Pump 5;on/off;Bool;1;1
+STD_PP6;Pump 6;on/off;Bool;1;1
+STD_PMP;Available Pumps No.;Num;Int;1;1
+STD_PSP;Pumps Speed;Hz;Int;1;1
+STD_MF1;Pump 1 Motor Frequency;Hz;Int;10;1
+STD_MF2;Pump 2 Motor Frequency;Hz;Int;10;1
+STD_MF3;Pump 3 Motor Frequency;Hz;Int;10;1
+STD_MF4;Pump 4 Motor Frequency;Hz;Int;10;1
+STD_MF5;Pump 5 Motor Frequency;Hz;Int;10;1
+STD_MF6;Pump 6 Motor Frequency;Hz;Int;10;1
+STD_RSV;Return Line Shut off Valve;on/off;Bool;1;1
+STD_FLM;Flow Meter Reading;m3/h;Int;100;1
+STD_TLP;Tank Level Percentage;%;Int;1;1
+STD_RFV;Refill Valve;on/off;Bool;1;1
+STD_FIN;Filter In Pressure - FinD;bar;Int;100;1
+STD_FOU;Filter Out Pressure - FoutD;bar;Int;100;1
+STH_TSH;Chiller Supply Temperature - TsH;°C;Int;100;1
+STH_TRH;Chiller Return Temperature - TrH;°C;Int;100;1
+STH_TAH;Chiller Ambient Temperature - TaH;°C;Int;100;1
+STH_FCV;Free Cooling Valve Open/Closed;on/off;Bool;1;1
+STH_ACT;System Actual Capacity;%;Int;1;1
+STH_DMN;System Demand Capacity;%;Int;1;1
+STH_STA;Chiller System Status;Num;Int;1;1
+SH1_ACT;Actual Power;%;Int;1;1
+SH1_DMN;Actual Chiller Demand;%;Int;1;1
+SH2_ACT;Actual Power;%;Int;1;1
+SH2_DMN;Actual Chiller Demand;%;Int;1;1
+SH3_ACT;Actual Power;%;Int;1;1
+SH3_DMN;Actual Chiller Demand;%;Int;1;1
+SH4_ACT;Actual Power;%;Int;1;1
+SH4_DMN;Actual Chiller Demand;%;Int;1;1
+SH5_ACT;Actual Power;%;Int;1;1
+SH5_DMN;Actual Chiller Demand;%;Int;1;1
+SH6_ACT;Actual Power;%;Int;1;1
+SH6_DMN;Actual Chiller Demand;%;Int;1;1
+STX_AIN;Analog Input;--;Int;100;1
+STX_AOU;Analog Output;--;Int;1;1
+SYS_STA;System Operation Status;--;Int;1;1

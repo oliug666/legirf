@@ -34,7 +34,48 @@ namespace TPIH.Gecco.WPF.Helpers
             }
         }
 
-        public static void AnnotateAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation)
+        public static void UnshowPoints(PlotModel wPlot, string seriesName)
+        {
+            List<Series> tdbSerie = wPlot.Series.Where(x => x.Title == seriesName).ToList();
+            if (tdbSerie.Count != 0)
+            {
+                foreach (var _tbd in tdbSerie)
+                {
+                    wPlot.Series.Remove(_tbd);
+                }
+                wPlot.InvalidatePlot(true);
+            }
+        }
+
+        public static void UnshowAnnotations(PlotModel wPlot)
+        {
+            wPlot.Annotations.Clear();
+            wPlot.InvalidatePlot(true);
+        }
+
+        public static void ShowAnnotations(IList<string> alarmNames, PlotModel pM, bool description)
+        {
+            if (alarmNames.Count > 0)
+            {
+                // Annotate the plot just one time
+                List<Annotation> Annotations = pM.Annotations.ToList();
+                if (Annotations.Count == 0)
+                {
+                    foreach (string name in alarmNames)
+                    {
+                        string annotationText = "";
+                        if (description)
+                            annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)];
+
+                        ShowAlarms(pM, DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                        annotationText);
+
+                    }
+                }
+            }
+        }
+
+        private static void ShowAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation)
         {
             // Check when the alarm was triggered and when it was gone
             // var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
@@ -47,6 +88,7 @@ namespace TPIH.Gecco.WPF.Helpers
                     Type = LineAnnotationType.Vertical,
                     X = DateTimeAxis.ToDouble(MP.Date),
                     Color = OxyPlot.OxyColors.Red,
+                    StrokeThickness = 2,
                     Text = Annotation,
                     ClipByXAxis = true
                 });
@@ -58,6 +100,7 @@ namespace TPIH.Gecco.WPF.Helpers
                     Type = LineAnnotationType.Vertical,
                     X = DateTimeAxis.ToDouble(MP.Date),
                     Color = OxyColors.Green,
+                    StrokeThickness = 2,
                     Text = Annotation,
                     ClipByXAxis = true
                 });

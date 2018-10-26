@@ -102,6 +102,7 @@
                     <views:GetDataView />
                     <views:SelectDataView/>
                     <views:ExportDataView/>
+                    <views:ActionButtonView/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Connection Properties">

@@ -13,4 +13,12 @@
 	<Plot11>
     	<reg_name>STE_ASP</reg_name> 
     </Plot11>
+  <PID_File>
+    <Filename>myPdf.pdf</Filename>
+    <Path></Path> <!--Inserire il percorso cartella, se nella stessa cartella del programma lasciare vuoto-->
+  </PID_File>
+  <Auto_GetData>
+    <Enabled>1</Enabled> <!-- 1=Abilitato, 0=Disabilitat -->
+    <Time_Period_Min>1</Time_Period_Min>
+  </Auto_GetData>
 </Configuration>
