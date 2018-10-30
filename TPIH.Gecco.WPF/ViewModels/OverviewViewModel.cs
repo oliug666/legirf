@@ -282,6 +282,10 @@ namespace TPIH.Gecco.WPF.ViewModels
                 Plotter.UnshowAnnotations(Plot10);
                 Plotter.UnshowAnnotations(Plot11);
             }
+            Plot00.InvalidatePlot(true);
+            Plot01.InvalidatePlot(true);
+            Plot10.InvalidatePlot(true);
+            Plot11.InvalidatePlot(true);
         }
     }
 }

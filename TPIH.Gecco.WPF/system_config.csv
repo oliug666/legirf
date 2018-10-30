@@ -30,35 +30,35 @@ STE_SD5;SD Pump 5;0-Off/1-On;Bool;1;1
 STE_SD6;SD Pump 6;0-Off/1-On;Bool;1;1
 STE_SD7;SD Pump 7;0-Off/1-On;Bool;1;1
 STE_SD8;SD Pump 8;0-Off/1-On;Bool;1;1
-STE_RFV;Refill Valve;0-Off/1-On;Bool;1;1
+STE_RFV;Refill Valve;0-Off/1-On;Bool;1;0
 TITLE;PROCESS CIRCUIT A;;;;
-STA_PTS;Delivery Temperature - TsA;°C;Int;100;1
-STA_RTR;Return Temperature - TrA;°C;Int;100;1
-STA_DPS;Delivery Pressure - PsA;bar;Int;100;1
-STA_SPT;Suction Pressure - PrA;bar;Int;100;1
-STA_LCK;Pumps in Locked Configuration;0-No/1-Yes;Bool;1;1
-STA_PP1;Pump 1;0-Off/1-On;Bool;1;1
-STA_PP2;Pump 2;0-Off/1-On;Bool;1;1
-STA_PP3;Pump 3;0-Off/1-On;Bool;1;1
-STA_PP4;Pump 4;0-Off/1-On;Bool;1;1
-STA_PP5;Pump 5;0-Off/1-On;Bool;1;1
-STA_PP6;Pump 6;0-Off/1-On;Bool;1;1
-STA_PP7;Pump 7;0-Off/1-On;Bool;1;1
-STA_PP8;Pump 8;0-Off/1-On;Bool;1;1
-STA_PMP;Available Pumps No.;Num;Int;1;1
-STA_PSP;Pumps Set Speed;Hz;Int;1;1
-STA_MF1;Pump 1 Motor Frequency;Hz;Int;10;1
-STA_MF2;Pump 2 Motor Frequency;Hz;Int;10;1
-STA_MF3;Pump 3 Motor Frequency;Hz;Int;10;1
-STA_MF4;Pump 4 Motor Frequency;Hz;Int;10;1
-STA_MF5;Pump 5 Motor Frequency;Hz;Int;10;1
-STA_MF6;Pump 6 Motor Frequency;Hz;Int;10;1
-STA_RSV;Return Line Shut off Valve;0-Off/1-On;Bool;1;1
-STA_FLM;Flow Meter Reading;m3/h;Int;100;1
-STA_TLP;Tank Level Percentage;%;Int;1;1
-STA_RFV;Refill Valve;0-Off/1-On;Bool;1;1
-STA_FIN;Filter In Pressure - Fina;bar;Int;100;1
-STA_FOU;Filter Out Pressure - Fouta;bar;Int;100;1
+STA_PTS;Delivery Temperature - TsA;°C;Int;100;0
+STA_RTR;Return Temperature - TrA;°C;Int;100;0
+STA_DPS;Delivery Pressure - PsA;bar;Int;100;0
+STA_SPT;Suction Pressure - PrA;bar;Int;100;0
+STA_LCK;Pumps in Locked Configuration;0-No/1-Yes;Bool;1;0
+STA_PP1;Pump 1;0-Off/1-On;Bool;1;0
+STA_PP2;Pump 2;0-Off/1-On;Bool;1;0
+STA_PP3;Pump 3;0-Off/1-On;Bool;1;0
+STA_PP4;Pump 4;0-Off/1-On;Bool;1;0
+STA_PP5;Pump 5;0-Off/1-On;Bool;1;0
+STA_PP6;Pump 6;0-Off/1-On;Bool;1;0
+STA_PP7;Pump 7;0-Off/1-On;Bool;1;0
+STA_PP8;Pump 8;0-Off/1-On;Bool;1;0
+STA_PMP;Available Pumps No.;Num;Int;1;0
+STA_PSP;Pumps Set Speed;Hz;Int;1;0
+STA_MF1;Pump 1 Motor Frequency;Hz;Int;10;0
+STA_MF2;Pump 2 Motor Frequency;Hz;Int;10;0
+STA_MF3;Pump 3 Motor Frequency;Hz;Int;10;0
+STA_MF4;Pump 4 Motor Frequency;Hz;Int;10;0
+STA_MF5;Pump 5 Motor Frequency;Hz;Int;10;0
+STA_MF6;Pump 6 Motor Frequency;Hz;Int;10;0
+STA_RSV;Return Line Shut off Valve;0-Off/1-On;Bool;1;0
+STA_FLM;Flow Meter Reading;m3/h;Int;100;0
+STA_TLP;Tank Level Percentage;%;Int;1;0
+STA_RFV;Refill Valve;0-Off/1-On;Bool;1;0
+STA_FIN;Filter In Pressure - Fina;bar;Int;100;0
+STA_FOU;Filter Out Pressure - Fouta;bar;Int;100;0
 TITLE;PROCESS CIRCUIT B;;;;
 STB_PTS;Delivery Temperature - TsB;°C;Int;100;1
 STB_RTR;Return Temperature - TrB;°C;Int;100;1
@@ -113,8 +113,8 @@ STC_TLP;Tank Level Percentage;%;Int;1;1
 STC_RFV;Refill Valve;0-Off/1-On;Bool;1;1
 STC_FIN;Filter In Pressure - FinC;bar;Int;100;1
 STC_FOU;Filter Out Pressure - FoutC;bar;Int;100;1
-STD_PTS;Delivery Temperature - TsD;°C;Int;100;1
 TITLE;PROCESS CIRCUIT D;;;;
+STD_PTS;Delivery Temperature - TsD;°C;Int;100;1
 STD_RTR;Return Temperature - TrD;°C;Int;100;1
 STD_DPS;Delivery Pressure - PsD;bar;Int;100;1
 STD_SPT;Suction Pressure - PrD;bar;Int;100;1

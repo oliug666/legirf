@@ -43,14 +43,14 @@ namespace TPIH.Gecco.WPF.Helpers
                 {
                     wPlot.Series.Remove(_tbd);
                 }
-                wPlot.InvalidatePlot(true);
+                //wPlot.InvalidatePlot(true);
             }
         }
 
         public static void UnshowAnnotations(PlotModel wPlot)
         {
             wPlot.Annotations.Clear();
-            wPlot.InvalidatePlot(true);
+            //wPlot.InvalidatePlot(true);
         }
 
         public static void ShowAnnotations(IList<string> alarmNames, PlotModel pM, bool description)
