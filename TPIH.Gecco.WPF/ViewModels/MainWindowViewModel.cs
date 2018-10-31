@@ -55,7 +55,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception e)
             {
-                GlobalCommands.ShowError.Execute(e);
+                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to close application."));
             }
         }
 

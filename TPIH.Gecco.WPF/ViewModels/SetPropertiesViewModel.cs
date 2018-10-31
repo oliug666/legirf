@@ -155,7 +155,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 IsPropertiesEnabled = false;
                 OnPropertyChanged(() => IsConnected);
-                GlobalCommands.ShowError.Execute(e);
+                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to connect to SQL database."));
             }
 
             if (!DriverContainer.Driver.IsConnected)
@@ -178,7 +178,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 catch (Exception e)
                 {
                     IsPropertiesEnabled = false;
-                    GlobalCommands.ShowError.Execute(e);
+                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when trying to disconnect from SQL server."));
                 }
             }            
         }

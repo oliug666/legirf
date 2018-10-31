@@ -190,7 +190,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(e);
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find newest date."));
                     _isRetrieving.Release(1);
                     return;
                 }
@@ -211,7 +211,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(e);
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrive latest data."));
                 }
             }
 
@@ -309,7 +309,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(e);
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to executre SQL query."));
                 }
             }
 

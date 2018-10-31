@@ -369,7 +369,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    GlobalCommands.ShowError.Execute(ex);
+                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when creating Excel export thread."));
                 }
             }
         }
@@ -444,7 +444,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                GlobalCommands.ShowError.Execute(ex);
+                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when exporting Excel data."));
                 if (fs != null)
                     fs.Close();
             }
@@ -472,7 +472,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    GlobalCommands.ShowError.Execute(ex);
+                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when creating Csv export thread."));
                 }
             }
         }
@@ -525,7 +525,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                GlobalCommands.ShowError.Execute(ex);
+                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when exporting Csv data."));
                 if (fs != null)
                     fs.Close();
             }
