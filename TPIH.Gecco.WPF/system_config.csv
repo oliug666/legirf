@@ -1,5 +1,5 @@
 N3PR_RegName;N3PR_RegDescription;N3PR_RegUnit;N3PR_RegType;N3PR_DivFactors;Present
-TITLE;ECODRY;;;;
+TITLE;ECODRY;;;;1
 STE_PTA;Ambient Dry Bulb - TaE;°C;Int;100;1
 STE_PTE;Ecodry Outlet Temperature - TsE;°C;Int;100;1
 STE_PTR;Ecodry Inlet Temperature - TrE;°C;Int;100;1
@@ -31,7 +31,7 @@ STE_SD6;SD Pump 6;0-Off/1-On;Bool;1;1
 STE_SD7;SD Pump 7;0-Off/1-On;Bool;1;1
 STE_SD8;SD Pump 8;0-Off/1-On;Bool;1;1
 STE_RFV;Refill Valve;0-Off/1-On;Bool;1;0
-TITLE;PROCESS CIRCUIT A;;;;
+TITLE;PROCESS CIRCUIT A;;;;0
 STA_PTS;Delivery Temperature - TsA;°C;Int;100;0
 STA_RTR;Return Temperature - TrA;°C;Int;100;0
 STA_DPS;Delivery Pressure - PsA;bar;Int;100;0
@@ -59,7 +59,7 @@ STA_TLP;Tank Level Percentage;%;Int;1;0
 STA_RFV;Refill Valve;0-Off/1-On;Bool;1;0
 STA_FIN;Filter In Pressure - Fina;bar;Int;100;0
 STA_FOU;Filter Out Pressure - Fouta;bar;Int;100;0
-TITLE;PROCESS CIRCUIT B;;;;
+TITLE;PROCESS CIRCUIT B;;;;1
 STB_PTS;Delivery Temperature - TsB;°C;Int;100;1
 STB_RTR;Return Temperature - TrB;°C;Int;100;1
 STB_DPS;Delivery Pressure - PsB;bar;Int;100;1
@@ -87,7 +87,7 @@ STB_TLP;Tank Level Percentage;%;Int;1;1
 STB_RFV;Refill Valve;0-Off/1-On;Bool;1;1
 STB_FIN;Filter In Pressure - Finb;bar;Int;100;1
 STB_FOU;Filter Out Pressure - Foutb;bar;Int;100;1
-TITLE;PROCESS CIRCUIT C;;;;
+TITLE;PROCESS CIRCUIT C;;;;1
 STC_PTS;Delivery Temperature - TsC;°C;Int;100;1
 STC_RTR;Return Temperature - TrC;°C;Int;100;1
 STC_DPS;Delivery Pressure - PsC;bar;Int;100;1
@@ -113,7 +113,7 @@ STC_TLP;Tank Level Percentage;%;Int;1;1
 STC_RFV;Refill Valve;0-Off/1-On;Bool;1;1
 STC_FIN;Filter In Pressure - FinC;bar;Int;100;1
 STC_FOU;Filter Out Pressure - FoutC;bar;Int;100;1
-TITLE;PROCESS CIRCUIT D;;;;
+TITLE;PROCESS CIRCUIT D;;;;1
 STD_PTS;Delivery Temperature - TsD;°C;Int;100;1
 STD_RTR;Return Temperature - TrD;°C;Int;100;1
 STD_DPS;Delivery Pressure - PsD;bar;Int;100;1
@@ -139,7 +139,7 @@ STD_TLP;Tank Level Percentage;%;Int;1;1
 STD_RFV;Refill Valve;0-Off/1-On;Bool;1;1
 STD_FIN;Filter In Pressure - FinD;bar;Int;100;1
 STD_FOU;Filter Out Pressure - FoutD;bar;Int;100;1
-TITLE;CENTRAL CHILLER;;;;
+TITLE;CENTRAL CHILLER;;;;1
 STH_TSH;Chiller Supply Temperature - TsH;°C;Int;100;1
 STH_TRH;Chiller Return Temperature - TrH;°C;Int;100;1
 STH_TAH;Chiller Ambient Temperature - TaH;°C;Int;100;1
@@ -159,8 +159,8 @@ SH5_ACT;Actual Power;%;Int;1;1
 SH5_DMN;Actual Chiller Demand;%;Int;1;1
 SH6_ACT;Actual Power;%;Int;1;1
 SH6_DMN;Actual Chiller Demand;%;Int;1;1
-TITLE;AUXILIARY CONTROLS;;;;
+TITLE;AUXILIARY CONTROLS;;;;1
 STX_AIN;Analog Input;--;Int;100;1
 STX_AOU;Analog Output;--;Int;1;1
-TITLE;SYSTEM;;;;
+TITLE;SYSTEM;;;;1
 SYS_STA;System Operation Status;0-Off/1-Switching/2-On;Int;1;1

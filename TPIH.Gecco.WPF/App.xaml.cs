@@ -24,72 +24,87 @@ namespace TPIH.Gecco.WPF
                 List<string> n3pr_Unit = new List<string>();
                 List<string> n3pr_Type = new List<string>();
                 List<string> n3pr_DivFactor = new List<string>();
-                List<string> n3pr_Present = new List<string>();
+                bool _add = false;
                 using (var reader = new StreamReader(@"system_config.csv", Encoding.GetEncoding("iso-8859-1")))
                 {
                     // Skip first header line
-                    bool _titleAtFirst = false;
                     reader.ReadLine();
                     while (!reader.EndOfStream)
                     {                        
                         var line = reader.ReadLine();                        
                         var values = line.Split(';');
-                        if (values[0] != "TITLE")
-                        {
-                            // Name
-                            n3pr_Names.Add(values[0]);
-                            // Description
-                            n3pr_Desc.Add(values[1]);
-                            // Data type
-                            n3pr_Unit.Add(values[2]);
-                            if (values[3] == N3PR_Data.INT ||
-                                values[3] == N3PR_Data.UINT ||
-                                values[3] == N3PR_Data.BOOL)
-                            {
-                                n3pr_Type.Add(values[3]);
-                            }
-                            else
-                            {
-                                n3pr_Type.Add(N3PR_Data.INT);
-                            }
-                            // Div factor
-                            if (Convert.ToDouble(values[4]) != 0)
-                                n3pr_DivFactor.Add(values[4]);
-                            else
-                                n3pr_DivFactor.Add("1");
-                            // Present
-                            if (values[5] == "1" || values[5] == "0")
-                                n3pr_Present.Add(values[5]);
-                            else
-                                n3pr_Present.Add("0");
-                        }
+                        // Present
+                        if (values[5] == "1" || values[5] == "0")
+                            _add = (values[5] == "1") ? true : false;
                         else
+                            _add = false;
+
+                        if (_add)
                         {
-                            N3PR_Data.TITLES.Add(values[1]);
-                            if (n3pr_Names.Count != 0)
-                                N3PR_Data.WHERE_SPLIT.Add(n3pr_Names.Last());
+                            if (values[0] != "TITLE")
+                            {
+
+                                // Name
+                                n3pr_Names.Add(values[0]);
+                                // Description
+                                n3pr_Desc.Add(values[1]);
+                                // Data type
+                                n3pr_Unit.Add(values[2]);
+                                if (values[3] == N3PR_Data.INT ||
+                                    values[3] == N3PR_Data.UINT ||
+                                    values[3] == N3PR_Data.BOOL)
+                                {
+                                    n3pr_Type.Add(values[3]);
+                                }
+                                else
+                                {
+                                    n3pr_Type.Add(N3PR_Data.INT);
+                                }
+                                // Div factor
+                                if (Convert.ToDouble(values[4]) != 0)
+                                    n3pr_DivFactor.Add(values[4]);
+                                else
+                                    n3pr_DivFactor.Add("1");
+                            }
                             else
-                                _titleAtFirst = true;
+                            {
+                                // Name
+                                n3pr_Names.Add(values[0]);
+                                n3pr_Desc.Add(values[1]);
+                                n3pr_Unit.Add("");
+                                n3pr_Type.Add("");
+                                n3pr_DivFactor.Add("");
+                            }
                         }
                     }
-                    if (_titleAtFirst)
-                        N3PR_Data.WHERE_SPLIT.Insert(0, n3pr_Names.First());
                 }
+                // Check where to split
+                for (int i = 0; i < n3pr_Names.Count(); i++)
+                {
+                    if (n3pr_Names[i] == "TITLE")
+                    {
+                        N3PR_Data.TITLES.Add(n3pr_Desc[i]);
+                        if (i == 0)
+                            N3PR_Data.WHERE_SPLIT.Add(n3pr_Names[1]);
+                        else
+                            N3PR_Data.WHERE_SPLIT.Add(n3pr_Names[i - 1]);
+                    }
+                }                
 
                 if ((n3pr_Names.Count == n3pr_Desc.Count) &&
                     (n3pr_Names.Count == n3pr_Unit.Count) &&
                     (n3pr_Names.Count == n3pr_Type.Count) &&
                     (n3pr_Names.Count == n3pr_DivFactor.Count) &&
-                    (n3pr_Names.Count == n3pr_Present.Count) && n3pr_Names.Count != 0)
+                    n3pr_Names.Count != 0)
                 {
                     N3PR_Data.REG_NAMES.Clear();
                     N3PR_Data.REG_DESCRIPTION.Clear();
                     N3PR_Data.REG_MEASUNIT.Clear();
                     N3PR_Data.REG_TYPES.Clear();
                     N3PR_Data.REG_DIVFACTORS.Clear();
-                    for (int i = 0; i < n3pr_Present.Count; i++)
+                    for (int i = 0; i < n3pr_Names.Count; i++)
                     {
-                        if (n3pr_Present[i] == "1")
+                        if (n3pr_Names[i] != "TITLE")
                         {
                             N3PR_Data.REG_NAMES.Add(n3pr_Names[i]);
                             N3PR_Data.REG_DESCRIPTION.Add(n3pr_Desc[i]);

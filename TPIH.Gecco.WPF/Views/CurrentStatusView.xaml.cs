@@ -31,7 +31,7 @@ namespace TPIH.Gecco.WPF.Views
             List<int> idx = new List<int>();
             for (int ii = 0; ii < N3PR_Data.WHERE_SPLIT.Count; ii++)
             {
-                idx.Add(N3PR_Data.REG_NAMES.IndexOf(N3PR_Data.WHERE_SPLIT[ii]));
+                idx.Add(N3PR_Data.REG_NAMES.IndexOf(N3PR_Data.WHERE_SPLIT[ii])+1);
             }
             idx.Add(-1);
 
