@@ -9,7 +9,6 @@
     <Application.Resources>
         <!--Shared viewmodels-->
         <viewModels:PulseGraphViewModel x:Key="sharedPulseGraphViewModel" />
-        <viewModels:OverviewViewModel x:Key="sharedOverviewViewModel" />
         <!--Tetra Pak Colors-->
         <Color x:Key="TetraDarkBlue">#3E5FC2</Color>
         <Color x:Key="TetraSkyBlue">#96C6F0</Color>

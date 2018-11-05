@@ -178,7 +178,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 catch (Exception e)
                 {
                     IsPropertiesEnabled = false;
-                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when trying to disconnect from SQL server."));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to disconnect from SQL server."));
                 }
             }            
         }

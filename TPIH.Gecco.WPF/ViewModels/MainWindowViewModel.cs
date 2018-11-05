@@ -40,8 +40,15 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
         }        
 
-        private Visibility _isFileLoaded;
-        public Visibility IsFileLoaded { get { return _isFileLoaded; } set { _isFileLoaded = value; OnPropertyChanged(() => IsFileLoaded); } }
+        private Visibility _isTab1Visible, _isTab2Visible;
+        public Visibility IsTab1Visible { get { return _isTab1Visible; } set { _isTab1Visible = value; OnPropertyChanged(() => IsTab1Visible); } }
+        public Visibility IsTab2Visible { get { return _isTab2Visible; } set { _isTab2Visible = value; OnPropertyChanged(() => IsTab1Visible); } }
+
+        private OverviewViewModel _overviewViewModel;
+        public OverviewViewModel OverviewVM { get { return _overviewViewModel; } set { _overviewViewModel = value; OnPropertyChanged(() => OverviewVM); } }
+
+        private Overview2ViewModel _overview2ViewModel;
+        public Overview2ViewModel Overview2VM { get { return _overview2ViewModel; } set { _overview2ViewModel = value; OnPropertyChanged(() => Overview2VM); } }
 
         public void TerminateExecutionAndCloseConnections()
         {
@@ -79,6 +86,12 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 IsErrorVisible = false;
             });
+
+            // Overviews
+            OverviewVM = new OverviewViewModel();
+            Overview2VM = new Overview2ViewModel();
+            IsTab1Visible = OverviewVM.IsFileLoaded;
+            IsTab2Visible = Overview2VM.IsFileLoaded;
 
             GlobalCommands.ShowError = new DelegateCommand(ShowError);
 
