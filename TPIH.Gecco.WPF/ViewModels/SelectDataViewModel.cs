@@ -27,14 +27,10 @@ namespace TPIH.Gecco.WPF.ViewModels
         }
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            if (DriverContainer.Driver.MbData.Count() != 0)
-            {
-                EnablePlottableObjects = true;
-            }
-            else
-            {
-                EnablePlottableObjects = false;
-            }            
+            EnablePlottableObjects = false;
+            if (DriverContainer.Driver.MbData != null)
+                if (DriverContainer.Driver.MbData.Count() != 0)
+                    EnablePlottableObjects = true;
         }
     }    
 }

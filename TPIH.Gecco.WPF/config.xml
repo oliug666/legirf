@@ -1,33 +1,38 @@
 <?xml version="1.0"?>
 <Configuration>
 	<!-- Primo tab overview -->
-    <Plot000>
+    <Plot0>
     	<reg_name>STE_PTA</reg_name>
     	<reg_name>STE_SPS</reg_name>   	
-    </Plot000>
-    <Plot001>
+    </Plot0>
+    <Plot1>
     	<reg_name>STE_PTE</reg_name> 
-    </Plot001>
-	<Plot010>
+    </Plot1>
+	<Plot2>
     	<reg_name>STE_PTR</reg_name> 
-    </Plot010>
-	<Plot011>
+    </Plot2>
+	<Plot3>
     	<reg_name>STE_ASP</reg_name> 
-    </Plot011>
+    </Plot3>
 	<!-- Secondo tab overview -->
-	<Plot100>
+  <!-- Rimuovere le righe con "AAA" e "BBB"
+  per togliere il commento ed 
+  abilitare il secondo tab -->
+  <!-- AAA
+	<Plot4>
 		<reg_name>STE_PTA</reg_name>
 		<reg_name>STE_SPS</reg_name>
-	</Plot100>
-	<Plot101>
+	</Plot4>
+	<Plot5>
 		<reg_name>STE_PTE</reg_name>
-	</Plot101>
-	<Plot110>
+	</Plot5>
+	<Plot6>
 		<reg_name>STE_PTR</reg_name>
-	</Plot110>
-	<Plot111>
+	</Plot6>
+	<Plot7>
 		<reg_name>STE_ASP</reg_name>
-	</Plot111>
+	</Plot7>
+  BBB --> 
 	<PID_File>
     <Filename>myPdf.pdf</Filename>
     <Path>C:\Users\io\Desktop</Path> <!--Inserire il percorso cartella, se nella stessa cartella del programma lasciare vuoto-->

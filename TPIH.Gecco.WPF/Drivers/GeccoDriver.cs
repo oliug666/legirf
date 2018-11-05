@@ -174,7 +174,6 @@ namespace TPIH.Gecco.WPF.Drivers
 
             _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
 
-            _cmd = new MySqlCommand();
             _dataReader = null;
 
             if (IsConnected & _latestData != null)
@@ -185,15 +184,16 @@ namespace TPIH.Gecco.WPF.Drivers
                 {
                     _cmd = new MySqlCommand(dateQuery, _connection);
                     var date = _cmd.ExecuteScalar();
-                    LatestDate = ParseDate(date + "");
-                    _cmd.Dispose();
+                    LatestDate = ParseDate(date + "");                    
                 }
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find newest date."));
+                    DriverContainer.Driver.Disconnect();
                     _isRetrieving.Release(1);
                     return;
                 }
+                _cmd.Dispose();
 
                 string selectQuery = "SELECT * FROM " + tableName + " WHERE " + tableName + "." + N3PR_DB.DATE
                     + " >= '" + LatestDate.AddSeconds(-10).ToString(N3PR_Data.DATA_FORMAT) + "'";
@@ -309,7 +309,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to executre SQL query."));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to execute SQL query."));
                 }
             }
 

@@ -226,7 +226,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             List<Series> tbrSeries = Plot.Series.ToList();
             List<Series> tbrSeriesBool = PlotBool.Series.ToList();
             // If there are some plots on the graph
-            if (tbrSeries.Count != 0)
+            if (tbrSeries.Count != 0 && DriverContainer.Driver.MbData != null)
             {   
                 foreach(Series tbrSerie in tbrSeries)
                 {
@@ -246,7 +246,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }                
             }
 
-            if (tbrSeriesBool.Count != 0)
+            if (tbrSeriesBool.Count != 0 && DriverContainer.Driver.MbData != null)
             {
                 foreach (Series tbrSerie in tbrSeriesBool)
                 {
