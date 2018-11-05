@@ -1,19 +1,34 @@
 <?xml version="1.0"?>
 <Configuration>
-    <Plot00>
+	<!-- Primo tab overview -->
+    <Plot000>
     	<reg_name>STE_PTA</reg_name>
     	<reg_name>STE_SPS</reg_name>   	
-    </Plot00>
-    <Plot01>
+    </Plot000>
+    <Plot001>
     	<reg_name>STE_PTE</reg_name> 
-    </Plot01>
-	<Plot10>
+    </Plot001>
+	<Plot010>
     	<reg_name>STE_PTR</reg_name> 
-    </Plot10>
-	<Plot11>
+    </Plot010>
+	<Plot011>
     	<reg_name>STE_ASP</reg_name> 
-    </Plot11>
-  <PID_File>
+    </Plot011>
+	<!-- Secondo tab overview -->
+	<Plot100>
+		<reg_name>STE_PTA</reg_name>
+		<reg_name>STE_SPS</reg_name>
+	</Plot100>
+	<Plot101>
+		<reg_name>STE_PTE</reg_name>
+	</Plot101>
+	<Plot110>
+		<reg_name>STE_PTR</reg_name>
+	</Plot110>
+	<Plot111>
+		<reg_name>STE_ASP</reg_name>
+	</Plot111>
+	<PID_File>
     <Filename>myPdf.pdf</Filename>
     <Path>C:\Users\io\Desktop</Path> <!--Inserire il percorso cartella, se nella stessa cartella del programma lasciare vuoto-->
   </PID_File>

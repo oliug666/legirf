@@ -142,6 +142,7 @@
     <Compile Include="Helpers\CheckedListItem.cs" />
     <Compile Include="Helpers\EventAggregator.cs" />
     <Compile Include="Helpers\ItemCheckedEvent.cs" />
+    <Compile Include="Helpers\MultiPlotViewModel.cs" />
     <Compile Include="Helpers\N3PR_Data.cs" />
     <Compile Include="Helpers\N3PR_DB.cs" />
     <Compile Include="Helpers\Parser.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="ViewModels\LogViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\OverviewViewModel.cs" />
+    <Compile Include="ViewModels\Overview2ViewModel.cs" />
     <Compile Include="ViewModels\PopupViewModel.cs" />
     <Compile Include="ViewModels\PulseGraphViewModel.cs" />
     <Compile Include="ViewModels\SelectDataViewModel.cs" />
