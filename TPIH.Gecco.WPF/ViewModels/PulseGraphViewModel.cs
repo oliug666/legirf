@@ -162,7 +162,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             };
 
             // Initialize data-export fields
-            DataFormat = new List<string> { "Csv", "Excel" };
+            DataFormat = new List<string> { "Excel", "Csv"};
             ExportDataCommand = new DelegateCommand(obj => ExportDataCommand_Execution(), obj => _isExportDataEnabled);
 
             // Subscribe to event(s)

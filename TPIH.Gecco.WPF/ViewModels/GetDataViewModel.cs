@@ -23,6 +23,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         private DateTime _to, _from;
         private bool _isAutoGetDataEnabled;
         private int _autoGetDataRefreshTime;
+        private bool _hasGetDataBeenExecuteOnce = false;
 
         public List<string> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
         public int SelectedTimeInterval
@@ -92,7 +93,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             while(true)
             {
                 Thread.Sleep(1000 * 60 * interval_min);
-                if (DriverContainer.Driver.IsConnected && !_isLoading)
+                if (DriverContainer.Driver.IsConnected && !_isLoading && _hasGetDataBeenExecuteOnce)
                 {
                     //
                     GetDataCommand_Execution();
@@ -102,6 +103,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void GetDataCommand_Execution()
         {
+            _hasGetDataBeenExecuteOnce = true;
             if (DriverContainer.Driver.IsConnected)
             {
                 Status = "Loading...";
