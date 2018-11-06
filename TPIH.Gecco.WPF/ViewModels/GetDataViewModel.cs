@@ -19,7 +19,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private List<int> _lastDays;
         private string _status;
-        private bool _isLoading, _isCalendarEnabled;
+        private bool _isLoading, _isCalendarEnabled, _getDataCanExecute;
         private DateTime _to, _from;
         private bool _isAutoGetDataEnabled;
         private int _autoGetDataRefreshTime;
@@ -48,8 +48,9 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public GetDataViewModel()
         {
-            GetDataCommand = new DelegateCommand(obj => GetDataCommand_Execution(), obj => (DriverContainer.Driver.IsConnected && !_isLoading));
+            GetDataCommand = new DelegateCommand(obj => GetDataCommand_Execution(), obj => (_getDataCanExecute && !_isLoading)); 
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+            DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(OnConnectionStatusChangedEventHandler);
 
             _lastDays = new List<int> { 2, 7, 15, 30, 60 };
             TimeIntervals = new List<string>();
@@ -86,6 +87,21 @@ namespace TPIH.Gecco.WPF.ViewModels
                 AutoGetDataThread.IsBackground = true;
                 AutoGetDataThread.Start();
             }       
+        }
+
+        private void OnConnectionStatusChangedEventHandler(object sender, EventArgs e)
+        {
+            if (!DriverContainer.Driver.IsConnected)
+            {
+                _getDataCanExecute = false;
+                IsCalendarEnabled = false;
+            }
+            else
+            {
+                _getDataCanExecute = true;
+                IsCalendarEnabled = false;
+            }
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private void AutoGetDataThread_Execution(int interval_min)
@@ -157,6 +173,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
             }
             _isLoading = false;
+            CommandManager.InvalidateRequerySuggested();
         }        
     }
 }
