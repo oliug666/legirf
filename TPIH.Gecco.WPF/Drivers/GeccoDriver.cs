@@ -28,6 +28,7 @@ namespace TPIH.Gecco.WPF.Drivers
         private static IList<MeasurePoint> _mbAlarm;
         private static IList<MeasurePoint> _latestData;
         private Semaphore _isRetrieving = new Semaphore(1,1);
+        public Semaphore IsUpdatingData = new Semaphore(1, 1);
 
         public bool IsConnected { get { return (_connection != null && (_connection.State == ConnectionState.Open)); } }
         public string Status;

@@ -99,7 +99,10 @@ namespace TPIH.Gecco.WPF.ViewModels
             else
             {
                 _getDataCanExecute = true;
-                IsCalendarEnabled = false;
+                if (_timeIntervals[_selectedTimeInterval] == "Custom")
+                    IsCalendarEnabled = true;
+                else
+                    IsCalendarEnabled = false;
             }
             CommandManager.InvalidateRequerySuggested();
         }

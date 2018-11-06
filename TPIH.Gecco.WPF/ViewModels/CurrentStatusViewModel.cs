@@ -72,13 +72,15 @@ namespace TPIH.Gecco.WPF.ViewModels
         {
             if (!DriverContainer.Driver.IsConnected)
             {
-                LatestValues.Clear();
+                for (int i= 0;i<LatestValues.Count; i++)
+                    LatestValues[i] = "";
                 LastRefreshed = "";
             }
         }
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
+            // We need semaphores on data (LatestData, MbData)
             if (DriverContainer.Driver.LatestData != null)
             {
                 if (DriverContainer.Driver.LatestData.Count() != 0)
@@ -89,7 +91,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     for (int i = 0; i < DriverContainer.Driver.LatestData.Count(); i++)
                     {
                         int idx = N3PR_Data.REG_NAMES.IndexOf(DriverContainer.Driver.LatestData[i].Reg_Name);
-                        if (idx != -1)
+                        if (idx != -1 && LatestValues.Count > 0)
                         {
                             double div_factor = Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
                             LatestValues[idx] = (DriverContainer.Driver.LatestData[i].val).ToString();

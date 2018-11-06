@@ -65,6 +65,7 @@ namespace TPIH.Gecco.WPF.Helpers
         {
             Plotter.ClearAnnotations(pM);
             Plotter.ClearPoints(pM);
+            pM.InvalidatePlot(true);
         }
 
         public void AddSeries(PlotModel pM, IList<string> RegNames)

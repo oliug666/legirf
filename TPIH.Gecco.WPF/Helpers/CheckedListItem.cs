@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TPIH.Gecco.WPF.ViewModels;
 
 namespace TPIH.Gecco.WPF.Helpers
-{    
-    class CheckedListItem
+{
+    class CheckedListItem : ViewModelBase
     {
         //protected readonly IEventAggregator _eventAggregator;
         private bool _isChecked;
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public bool IsChecked { get { return _isChecked; } set { _isChecked = value; SendMessage(); } }
+        public bool IsChecked { get { return _isChecked; } set { _isChecked = value; OnPropertyChanged(() => IsChecked); SendMessage(); } }
         public string RegName { get; set; }
         public string Unit { get; set; }
         public string Data_Type { get; set; }
