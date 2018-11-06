@@ -169,8 +169,9 @@ namespace TPIH.Gecco.WPF.ViewModels
             EventAggregator.OnCheckedItemTransmitted += OnCheckedItemMessageReceived;
             EventAggregator.OnAlarmMessageTransmitted += OnFlaggedAlarmMessageReceived;            
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(RefreshPlotsEventHandler);
-        }
-    
+            DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
+        }        
+
         public void ShowPoints(IList<MeasurePoint> points)
         {
             if (points != null && points.Any() && points.All(p => p != null))
@@ -210,11 +211,11 @@ namespace TPIH.Gecco.WPF.ViewModels
             // Delete Annotations too, if there are no more traces
             if (Plot.Series.ToList().Count == 0)
             {
-                Plotter.UnshowAnnotations(Plot);
+                Plotter.ClearAnnotations(Plot);
             }
             if (PlotBool.Series.ToList().Count == 0)
             {
-                Plotter.UnshowAnnotations(PlotBool);
+                Plotter.ClearAnnotations(PlotBool);
             }
 
             Plot.InvalidatePlot(true);
@@ -237,7 +238,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 // Refresh Annotations
                 if (_showAlarms)
                 {
-                    Plotter.UnshowAnnotations(Plot);
+                    Plotter.ClearAnnotations(Plot);
                     if (DriverContainer.Driver.MbAlarm != null)
                     {
                         List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
@@ -257,7 +258,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 // Refresh Annotations
                 if (_showAlarms)
                 {
-                    Plotter.UnshowAnnotations(PlotBool);
+                    Plotter.ClearAnnotations(PlotBool);
                     if (DriverContainer.Driver.MbAlarm != null)
                     {
                         List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
@@ -304,6 +305,18 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
         }
 
+        private void ConnectionStatusChangedEventHandler(object sender, EventArgs e)
+        {
+            if (!DriverContainer.Driver.IsConnected)
+            {
+                Plotter.ClearPoints(Plot);
+                Plotter.ClearPoints(PlotBool);
+                Plotter.ClearAnnotations(Plot);
+                Plotter.ClearAnnotations(PlotBool);
+                Plot.InvalidatePlot(true);
+                PlotBool.InvalidatePlot(true);
+            }
+        }
         public void OnFlaggedAlarmMessageReceived(ItemCheckedEvent e)
         {
             if (e.value) // show annotations
@@ -311,9 +324,9 @@ namespace TPIH.Gecco.WPF.ViewModels
                 _showAlarms = true;
                 // Refresh Annotations
                 if (Plot.Series.ToList().Count > 0)
-                    Plotter.UnshowAnnotations(Plot);
+                    Plotter.ClearAnnotations(Plot);
                 if (PlotBool.Series.ToList().Count > 0)
-                    Plotter.UnshowAnnotations(PlotBool);
+                    Plotter.ClearAnnotations(PlotBool);
                 if (DriverContainer.Driver.MbAlarm != null)
                 {
                     List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
@@ -326,8 +339,8 @@ namespace TPIH.Gecco.WPF.ViewModels
             else // unshow annotations
             {
                 _showAlarms = false;
-                Plotter.UnshowAnnotations(Plot);
-                Plotter.UnshowAnnotations(PlotBool);
+                Plotter.ClearAnnotations(Plot);
+                Plotter.ClearAnnotations(PlotBool);
             }
             Plot.InvalidatePlot(true);
             PlotBool.InvalidatePlot(true);

@@ -37,6 +37,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             AutoRefreshThread.Start();
 
             DriverContainer.Driver.OnLatestDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+            DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
         }
 
         private void AutoRefresh()
@@ -64,6 +65,15 @@ namespace TPIH.Gecco.WPF.ViewModels
                     LatestValuesEnabled = false;
                     Thread.Sleep(200);
                 }
+            }
+        }
+
+        private void ConnectionStatusChangedEventHandler(object sender, System.EventArgs e)
+        {
+            if (!DriverContainer.Driver.IsConnected)
+            {
+                LatestValues.Clear();
+                LastRefreshed = "";
             }
         }
 

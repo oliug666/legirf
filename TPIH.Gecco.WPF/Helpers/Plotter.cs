@@ -43,15 +43,16 @@ namespace TPIH.Gecco.WPF.Helpers
                 {
                     wPlot.Series.Remove(_tbd);
                 }
-                //wPlot.InvalidatePlot(true);
             }
         }
 
-        public static void UnshowAnnotations(PlotModel wPlot)
+        public static void ClearPoints(PlotModel wPlot)
         {
-            wPlot.Annotations.Clear();
-            //wPlot.InvalidatePlot(true);
-        }
+            if (wPlot.Series.Count != 0)
+            {
+                wPlot.Series.Clear();                
+            }
+        }        
 
         public static void ShowAnnotations(IList<string> alarmNames, PlotModel pM, bool description)
         {
@@ -73,6 +74,11 @@ namespace TPIH.Gecco.WPF.Helpers
                     }
                 }
             }
+        }
+
+        public static void ClearAnnotations(PlotModel wPlot)
+        {
+            wPlot.Annotations.Clear();
         }
 
         private static void ShowAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation)

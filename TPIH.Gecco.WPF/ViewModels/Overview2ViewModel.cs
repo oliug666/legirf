@@ -63,6 +63,18 @@ namespace TPIH.Gecco.WPF.ViewModels
                 // Subscribe to event(s)
                 EventAggregator.OnAlarmMessageTransmitted += OnFlaggedAlarmMessageReceived;
                 DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+                DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
+            }
+        }
+
+        private void ConnectionStatusChangedEventHandler(object sender, EventArgs e)
+        {
+            if (!DriverContainer.Driver.IsConnected)
+            {
+                ClearAll(Plot00);
+                ClearAll(Plot01);
+                ClearAll(Plot10);
+                ClearAll(Plot11);
             }
         }
 

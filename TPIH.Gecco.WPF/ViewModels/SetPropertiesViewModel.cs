@@ -116,7 +116,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public SetPropertiesViewModel()
         {
-            ToggleConnectionCommand = new DelegateCommand(obj => ToggleConnection()); //, obj => !IsConnected);
+            ToggleConnectionCommand = new DelegateCommand(obj => ToggleConnection());
             IsPropertiesEnabled = false;
             // Load last used settings
             _ipaddress = _settings.IPAddress;
@@ -125,8 +125,17 @@ namespace TPIH.Gecco.WPF.ViewModels
             _tablename = _settings.TableName;
             _username = _settings.Username;
             _password = _settings.Password;
+
+            DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
         }
-        
+
+        private void ConnectionStatusChangedEventHandler(object sender, EventArgs e)
+        {
+            // Refresh connection status
+            OnPropertyChanged(() => IsConnected);
+            IsPropertiesEnabled = DriverContainer.Driver.IsConnected;            
+        }
+
         private void ToggleConnection()
         {
             if (IsConnected)

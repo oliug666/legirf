@@ -61,6 +61,12 @@ namespace TPIH.Gecco.WPF.Helpers
             }
         }
 
+        public void ClearAll(PlotModel pM)
+        {
+            Plotter.ClearAnnotations(pM);
+            Plotter.ClearPoints(pM);
+        }
+
         public void AddSeries(PlotModel pM, IList<string> RegNames)
         {
             if (RegNames != null)
@@ -202,10 +208,10 @@ namespace TPIH.Gecco.WPF.Helpers
             {
                 _showAlarms = true;
                 // Refresh Annotations
-                Plotter.UnshowAnnotations(Plot00);
-                Plotter.UnshowAnnotations(Plot01);
-                Plotter.UnshowAnnotations(Plot10);
-                Plotter.UnshowAnnotations(Plot11);
+                Plotter.ClearAnnotations(Plot00);
+                Plotter.ClearAnnotations(Plot01);
+                Plotter.ClearAnnotations(Plot10);
+                Plotter.ClearAnnotations(Plot11);
                 if (DriverContainer.Driver.MbAlarm != null)
                 {
                     List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
@@ -218,10 +224,10 @@ namespace TPIH.Gecco.WPF.Helpers
             else // unshow annotations
             {
                 _showAlarms = false;
-                Plotter.UnshowAnnotations(Plot00);
-                Plotter.UnshowAnnotations(Plot01);
-                Plotter.UnshowAnnotations(Plot10);
-                Plotter.UnshowAnnotations(Plot11);
+                Plotter.ClearAnnotations(Plot00);
+                Plotter.ClearAnnotations(Plot01);
+                Plotter.ClearAnnotations(Plot10);
+                Plotter.ClearAnnotations(Plot11);
             }
             Plot00.InvalidatePlot(true);
             Plot01.InvalidatePlot(true);

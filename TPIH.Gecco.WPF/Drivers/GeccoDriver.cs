@@ -148,6 +148,14 @@ namespace TPIH.Gecco.WPF.Drivers
                 {
                     Status = ex.Message;
                 }
+
+                if (_mbData != null)
+                    _mbData.Clear();
+                if (_mbAlarm != null)
+                    _mbAlarm.Clear();
+                if (_latestData != null)
+                    _latestData.Clear();
+
                 _isRetrieving.Release(1);
             }
           

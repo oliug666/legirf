@@ -24,7 +24,9 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
 
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+            DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
         }
+
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
             EnablePlottableObjects = false;
@@ -32,5 +34,24 @@ namespace TPIH.Gecco.WPF.ViewModels
                 if (DriverContainer.Driver.MbData.Count() != 0)
                     EnablePlottableObjects = true;
         }
-    }    
+
+        private void ConnectionStatusChangedEventHandler(object sender, System.EventArgs e)
+        {
+            if (DriverContainer.Driver.IsConnected && DriverContainer.Driver.MbData != null)
+            {
+                if (DriverContainer.Driver.MbData.Count() != 0)
+                    EnablePlottableObjects = true;
+            }
+            else
+            {
+                // Uncheck elements (if checked)
+                foreach (CheckedListItem cli in AvailablePlottableObjects)
+                {
+                    cli.IsChecked = false;
+                }
+
+                EnablePlottableObjects = false;
+            }
+        }
+    }
 }
