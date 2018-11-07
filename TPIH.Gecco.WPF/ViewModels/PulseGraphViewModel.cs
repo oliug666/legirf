@@ -190,14 +190,17 @@ namespace TPIH.Gecco.WPF.ViewModels
                 // Now check the alarms
                 if (_showAlarms)
                 {
-                    // Check the alarms
-                    if (DriverContainer.Driver.MbAlarm != null)
+                    lock (DriverContainer.Driver.MbAlarm)
                     {
-                        List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                        if (Plot.Series.ToList().Count > 0)
-                            Plotter.ShowAnnotations(alarmNames, Plot, true);
-                        if (PlotBool.Series.ToList().Count > 0)
-                            Plotter.ShowAnnotations(alarmNames, PlotBool, false);
+                        // Check the alarms
+                        if (DriverContainer.Driver.MbAlarm != null)
+                        {
+                            List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                            if (Plot.Series.ToList().Count > 0)
+                                Plotter.ShowAnnotations(alarmNames, Plot, true);
+                            if (PlotBool.Series.ToList().Count > 0)
+                                Plotter.ShowAnnotations(alarmNames, PlotBool, false);
+                        }
                     }
                 } 
             }
@@ -227,44 +230,50 @@ namespace TPIH.Gecco.WPF.ViewModels
             List<Series> tbrSeries = Plot.Series.ToList();
             List<Series> tbrSeriesBool = PlotBool.Series.ToList();
             // If there are some plots on the graph
-            if (tbrSeries.Count != 0 && DriverContainer.Driver.MbData != null)
-            {   
-                foreach(Series tbrSerie in tbrSeries)
-                {
-                    var ls = (LineSeries)tbrSerie;
-                    var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == ls.Title).ToList();
-                    AddPoints(ls, myPoints);                                                            
-                }
-                // Refresh Annotations
-                if (_showAlarms)
-                {
-                    Plotter.ClearAnnotations(Plot);
-                    if (DriverContainer.Driver.MbAlarm != null)
-                    {
-                        List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                        Plotter.ShowAnnotations(alarmNames, Plot, true);
-                    }
-                }                
-            }
-
-            if (tbrSeriesBool.Count != 0 && DriverContainer.Driver.MbData != null)
+            lock (DriverContainer.Driver.MbData)
             {
-                foreach (Series tbrSerie in tbrSeriesBool)
+                lock (DriverContainer.Driver.MbAlarm)
                 {
-                    var ls = (LineSeries)tbrSerie;
-                    var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == ls.Title).ToList();
-                    AddPoints(ls, myPoints);
-                }
-                // Refresh Annotations
-                if (_showAlarms)
-                {
-                    Plotter.ClearAnnotations(PlotBool);
-                    if (DriverContainer.Driver.MbAlarm != null)
+                    if (tbrSeries.Count != 0 && DriverContainer.Driver.MbData != null)
                     {
-                        List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                        Plotter.ShowAnnotations(alarmNames, PlotBool, false);
+                        foreach (Series tbrSerie in tbrSeries)
+                        {
+                            var ls = (LineSeries)tbrSerie;
+                            var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == ls.Title).ToList();
+                            AddPoints(ls, myPoints);
+                        }
+                        // Refresh Annotations
+                        if (_showAlarms)
+                        {
+                            Plotter.ClearAnnotations(Plot);
+                            if (DriverContainer.Driver.MbAlarm != null)
+                            {
+                                List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                                Plotter.ShowAnnotations(alarmNames, Plot, true);
+                            }
+                        }
                     }
-                }                
+
+                    if (tbrSeriesBool.Count != 0 && DriverContainer.Driver.MbData != null)
+                    {
+                        foreach (Series tbrSerie in tbrSeriesBool)
+                        {
+                            var ls = (LineSeries)tbrSerie;
+                            var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == ls.Title).ToList();
+                            AddPoints(ls, myPoints);
+                        }
+                        // Refresh Annotations
+                        if (_showAlarms)
+                        {
+                            Plotter.ClearAnnotations(PlotBool);
+                            if (DriverContainer.Driver.MbAlarm != null)
+                            {
+                                List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                                Plotter.ShowAnnotations(alarmNames, PlotBool, false);
+                            }
+                        }
+                    }
+                }
             }
             Plot.InvalidatePlot(true);
             PlotBool.InvalidatePlot(true);
@@ -285,23 +294,26 @@ namespace TPIH.Gecco.WPF.ViewModels
         public void OnCheckedItemMessageReceived(ItemCheckedEvent e)
         {
             IList<MeasurePoint> myPoints = new List<MeasurePoint>();
-            if (DriverContainer.Driver.MbData != null)
+            lock (DriverContainer.Driver.MbData)
             {
-                // The item was checked
-                if (e.value)
+                if (DriverContainer.Driver.MbData != null)
                 {
-                    myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == e.name).ToList();
-                    ShowPoints(myPoints);
-                    Plot.InvalidatePlot(true);
-                    PlotBool.InvalidatePlot(true);
-                }
-                else // The item was unchecked
-                {
-                    // Unplot
-                    UnshowPoints(e.name);
-                }
+                    // The item was checked
+                    if (e.value)
+                    {
+                        myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == e.name).ToList();
+                        ShowPoints(myPoints);
+                        Plot.InvalidatePlot(true);
+                        PlotBool.InvalidatePlot(true);
+                    }
+                    else // The item was unchecked
+                    {
+                        // Unplot
+                        UnshowPoints(e.name);
+                    }
 
-                IsExportDataEnabled = ((_plot.Series.Count() + _plotBool.Series.Count()) != 0) ? true : false;
+                    IsExportDataEnabled = ((_plot.Series.Count() + _plotBool.Series.Count()) != 0) ? true : false;
+                }
             }
         }
 
@@ -327,14 +339,17 @@ namespace TPIH.Gecco.WPF.ViewModels
                     Plotter.ClearAnnotations(Plot);
                 if (PlotBool.Series.ToList().Count > 0)
                     Plotter.ClearAnnotations(PlotBool);
-                if (DriverContainer.Driver.MbAlarm != null)
+                lock (DriverContainer.Driver.MbAlarm)
                 {
-                    List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                    if (Plot.Series.ToList().Count > 0)
-                        Plotter.ShowAnnotations(alarmNames, Plot, true);
-                    if (PlotBool.Series.ToList().Count > 0)
-                        Plotter.ShowAnnotations(alarmNames, PlotBool, false);
-                }                
+                    if (DriverContainer.Driver.MbAlarm != null)
+                    {
+                        List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                        if (Plot.Series.ToList().Count > 0)
+                            Plotter.ShowAnnotations(alarmNames, Plot, true);
+                        if (PlotBool.Series.ToList().Count > 0)
+                            Plotter.ShowAnnotations(alarmNames, PlotBool, false);
+                    }
+                }
             }
             else // unshow annotations
             {

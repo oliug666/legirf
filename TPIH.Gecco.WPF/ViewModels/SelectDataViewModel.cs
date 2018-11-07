@@ -29,31 +29,37 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            EnablePlottableObjects = false;
-            if (DriverContainer.Driver.MbData != null)
-                if (DriverContainer.Driver.MbData.Count() != 0)
-                    EnablePlottableObjects = true;
+            lock (DriverContainer.Driver.MbData)
+            {
+                EnablePlottableObjects = false;
+                if (DriverContainer.Driver.MbData != null)
+                    if (DriverContainer.Driver.MbData.Count() != 0)
+                        EnablePlottableObjects = true;
+            }
         }
 
         private void ConnectionStatusChangedEventHandler(object sender, System.EventArgs e)
         {
-            if (DriverContainer.Driver.IsConnected)
+            lock (DriverContainer.Driver.MbData)
             {
-                if (DriverContainer.Driver.MbData != null)
+                if (DriverContainer.Driver.IsConnected)
                 {
-                    if (DriverContainer.Driver.MbData.Count() != 0)
-                        EnablePlottableObjects = true;
+                    if (DriverContainer.Driver.MbData != null)
+                    {
+                        if (DriverContainer.Driver.MbData.Count() != 0)
+                            EnablePlottableObjects = true;
+                    }
                 }
-            }
-            else
-            {
-                // Uncheck elements (if checked)
-                foreach (CheckedListItem cli in AvailablePlottableObjects)
+                else
                 {
-                    cli.IsChecked = false;                   
+                    // Uncheck elements (if checked)
+                    foreach (CheckedListItem cli in AvailablePlottableObjects)
+                    {
+                        cli.IsChecked = false;
+                    }
+                    EnablePlottableObjects = false;
                 }
-                EnablePlottableObjects = false;
-            }
+            }        
         }
     }
 }

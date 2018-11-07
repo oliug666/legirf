@@ -162,17 +162,20 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            if (DriverContainer.Driver.MbData != null)
+            lock (DriverContainer.Driver.MbData)
             {
-                if (DriverContainer.Driver.MbData.Count() != 0)
+                if (DriverContainer.Driver.MbData != null)
                 {
-                    // There is some shit
-                    Status = "Data Retrieved: " + DriverContainer.Driver.MbData.Count().ToString() + " entries.";
-                }
-                else
-                {
-                    // There is no shit
-                    Status = "No entries retrieved from database.";
+                    if (DriverContainer.Driver.MbData.Count() != 0)
+                    {
+                        // There is some shit
+                        Status = "Data Retrieved: " + DriverContainer.Driver.MbData.Count().ToString() + " entries.";
+                    }
+                    else
+                    {
+                        // There is no shit
+                        Status = "No entries retrieved from database.";
+                    }
                 }
             }
             _isLoading = false;

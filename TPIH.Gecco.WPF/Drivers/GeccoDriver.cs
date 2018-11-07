@@ -28,7 +28,6 @@ namespace TPIH.Gecco.WPF.Drivers
         private static IList<MeasurePoint> _mbAlarm;
         private static IList<MeasurePoint> _latestData;
         private Semaphore _isRetrieving = new Semaphore(1,1);
-        public Semaphore IsUpdatingData = new Semaphore(1, 1);
 
         public bool IsConnected { get { return (_connection != null && (_connection.State == ConnectionState.Open)); } }
         public string Status;
@@ -50,7 +49,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     return null;
                 }
             }
-            private set { }
+            private set { _mbData = value; }
         }
 
         public IList<MeasurePoint> MbAlarm
@@ -67,7 +66,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     return null;
                 }
             }
-            private set { }
+            private set { _mbAlarm = value; }
         }
 
         public IList<MeasurePoint> LatestData
@@ -84,7 +83,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     return null;
                 }
             }
-            private set { }
+            private set { _latestData = value; }
         }
 
         public GeccoDriver()
@@ -150,12 +149,21 @@ namespace TPIH.Gecco.WPF.Drivers
                     Status = ex.Message;
                 }
 
-                if (_mbData != null)
-                    _mbData.Clear();
-                if (_mbAlarm != null)
-                    _mbAlarm.Clear();
-                if (_latestData != null)
-                    _latestData.Clear();
+                lock (MbData)
+                {
+                    if (MbData != null)
+                        MbData.Clear();
+                }
+                lock (MbAlarm)
+                {
+                    if (MbAlarm != null)
+                        MbAlarm.Clear();
+                }
+                lock (LatestData)
+                {
+                    if (LatestData != null)
+                        LatestData.Clear();
+                }
 
                 _isRetrieving.Release(1);
             }
@@ -210,17 +218,20 @@ namespace TPIH.Gecco.WPF.Drivers
                 // Pause if there is someone already retrieving data
                 try
                 {
-                    lock (_latestData)
+                    lock (LatestData)
                     {
                         _cmd = new MySqlCommand(selectQuery, _connection);
                         _dataReader = _cmd.ExecuteReader();
-                        _latestData.Clear();
-                        _latestData = ParseDataReader(_dataReader);
+                        LatestData.Clear();
+                        LatestData = ParseDataReader(_dataReader);
                     }
                 }
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrive latest data."));
+                    DriverContainer.Driver.Disconnect();
+                    _isRetrieving.Release(1);
+                    return;
                 }
             }
 
@@ -288,37 +299,44 @@ namespace TPIH.Gecco.WPF.Drivers
             if (IsConnected)
             {
                 try
-                {                    
+                {
                     // Clear the previous data
-                    _mbData.Clear();
-                    _mbAlarm.Clear();
-
-                    _cmd = new MySqlCommand(selectQuery, _connection);
-                    _dataReader = _cmd.ExecuteReader();
-
-                    // Parse data reader
-                    List<MeasurePoint> _allData = ParseDataReader(_dataReader);
-
-                    // Sort the retrieved entries (alarms or data?)
-                    if (_allData.Count() > 0 & _allData != null)
+                    lock (MbData)
                     {
-                        // data
-                        foreach (MeasurePoint _mbp in _allData)
+                        lock (MbAlarm)
                         {
-                            if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
-                                _mbData.Add(_mbp);
-                        }
-                        // alarms
-                        foreach (MeasurePoint _mbp in _allData)
-                        {
-                            if (N3PR_Data.ALARM_NAMES.Contains(_mbp.Reg_Name))
-                                _mbAlarm.Add(_mbp);
+                            MbData.Clear();
+                            MbAlarm.Clear();
+
+                            _cmd = new MySqlCommand(selectQuery, _connection);
+                            _dataReader = _cmd.ExecuteReader();
+
+                            // Parse data reader
+                            List<MeasurePoint> _allData = ParseDataReader(_dataReader);
+
+                            // Sort the retrieved entries (alarms or data?)
+                            if (_allData.Count() > 0 & _allData != null)
+                            {
+                                // data
+                                foreach (MeasurePoint _mbp in _allData)
+                                {
+                                    if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
+                                        MbData.Add(_mbp);
+                                }
+                                // alarms
+                                foreach (MeasurePoint _mbp in _allData)
+                                {
+                                    if (N3PR_Data.ALARM_NAMES.Contains(_mbp.Reg_Name))
+                                        MbAlarm.Add(_mbp);
+                                }
+                            }
                         }
                     }
                 }
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to execute SQL query."));
+                    DriverContainer.Driver.Disconnect();                    
                 }
             }
 
@@ -346,16 +364,16 @@ namespace TPIH.Gecco.WPF.Drivers
                     switch (N3PR_Data.REG_TYPES[idxD])
                     {
                         case N3PR_Data.INT:
-                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture);
+                            value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), 1);
                             break;
                         case N3PR_Data.UINT:
-                            value = Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture);
+                            value = Math.Round(Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), 1);
                             break;
                         case N3PR_Data.BOOL:
                             value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
                             break;
                         default:
-                            value = Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture);
+                            value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), 1);
                             break;
                     }
 

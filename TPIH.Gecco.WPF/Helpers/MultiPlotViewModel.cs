@@ -70,21 +70,24 @@ namespace TPIH.Gecco.WPF.Helpers
 
         public void AddSeries(PlotModel pM, IList<string> RegNames)
         {
-            if (RegNames != null)
+            lock (DriverContainer.Driver.MbData)
             {
-                if (RegNames.Count > 0)
+                if (RegNames != null)
                 {
-                    pM.Series.Clear();
-                    pM.Annotations.Clear();
-                    foreach (string regName in RegNames)
+                    if (RegNames.Count > 0)
                     {
-                        if (regName != " ")
+                        pM.Series.Clear();
+                        pM.Annotations.Clear();
+                        foreach (string regName in RegNames)
                         {
-                            var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == regName).ToList();
-                            ShowPoints(myPoints, pM);
+                            if (regName != " ")
+                            {
+                                var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == regName).ToList();
+                                ShowPoints(myPoints, pM);
+                            }
                         }
+                        pM.InvalidatePlot(true);
                     }
-                    pM.InvalidatePlot(true);
                 }
             }
         }
@@ -103,10 +106,13 @@ namespace TPIH.Gecco.WPF.Helpers
                     // Annotate Alarms
                     if (_showAlarms)
                     {
-                        if (DriverContainer.Driver.MbAlarm != null)
+                        lock (DriverContainer.Driver.MbAlarm)
                         {
-                            List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                            Plotter.ShowAnnotations(alarmNames, pM, true);
+                            if (DriverContainer.Driver.MbAlarm != null)
+                            {
+                                List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                                Plotter.ShowAnnotations(alarmNames, pM, true);
+                            }
                         }
                     }
                 }
@@ -213,13 +219,16 @@ namespace TPIH.Gecco.WPF.Helpers
                 Plotter.ClearAnnotations(Plot01);
                 Plotter.ClearAnnotations(Plot10);
                 Plotter.ClearAnnotations(Plot11);
-                if (DriverContainer.Driver.MbAlarm != null)
+                lock (DriverContainer.Driver.MbAlarm)
                 {
-                    List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                    Plotter.ShowAnnotations(alarmNames, Plot00, true);
-                    Plotter.ShowAnnotations(alarmNames, Plot01, true);
-                    Plotter.ShowAnnotations(alarmNames, Plot10, true);
-                    Plotter.ShowAnnotations(alarmNames, Plot11, true);
+                    if (DriverContainer.Driver.MbAlarm != null)
+                    {
+                        List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                        Plotter.ShowAnnotations(alarmNames, Plot00, true);
+                        Plotter.ShowAnnotations(alarmNames, Plot01, true);
+                        Plotter.ShowAnnotations(alarmNames, Plot10, true);
+                        Plotter.ShowAnnotations(alarmNames, Plot11, true);
+                    }
                 }
             }
             else // unshow annotations

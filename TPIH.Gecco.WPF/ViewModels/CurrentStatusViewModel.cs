@@ -80,28 +80,31 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            // We need semaphores on data (LatestData, MbData)
-            if (DriverContainer.Driver.LatestData != null)
+            lock (DriverContainer.Driver.LatestData)
             {
-                if (DriverContainer.Driver.LatestData.Count() != 0)
+                // We need semaphores on data (LatestData, MbData)
+                if (DriverContainer.Driver.LatestData != null)
                 {
-                    // There is some shit
-                    LastRefreshed = DriverContainer.Driver.LatestData[0].Date.ToString();
-                    // Fill the TextBox
-                    for (int i = 0; i < DriverContainer.Driver.LatestData.Count(); i++)
+                    if (DriverContainer.Driver.LatestData.Count() != 0)
                     {
-                        int idx = N3PR_Data.REG_NAMES.IndexOf(DriverContainer.Driver.LatestData[i].Reg_Name);
-                        if (idx != -1 && LatestValues.Count > 0)
+                        // There is some shit
+                        LastRefreshed = DriverContainer.Driver.LatestData[0].Date.ToString();
+                        // Fill the TextBox
+                        for (int i = 0; i < DriverContainer.Driver.LatestData.Count(); i++)
                         {
-                            double div_factor = Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
-                            LatestValues[idx] = (DriverContainer.Driver.LatestData[i].val).ToString();
-                        }                               
+                            int idx = N3PR_Data.REG_NAMES.IndexOf(DriverContainer.Driver.LatestData[i].Reg_Name);
+                            if (idx != -1 && LatestValues.Count > 0)
+                            {
+                                double div_factor = Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                                LatestValues[idx] = (DriverContainer.Driver.LatestData[i].val).ToString();
+                            }
+                        }
                     }
-                }
-                else
-                {
-                    // There is no shit
-                    LastRefreshed = "No entries retrieved from database.";
+                    else
+                    {
+                        // There is no shit
+                        LastRefreshed = "No entries retrieved from database.";
+                    }
                 }
             }
 
