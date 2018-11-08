@@ -162,9 +162,9 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            lock (DriverContainer.Driver.MbData)
+            if (DriverContainer.Driver.MbData != null)
             {
-                if (DriverContainer.Driver.MbData != null)
+                lock (DriverContainer.Driver.MbData)
                 {
                     if (DriverContainer.Driver.MbData.Count() != 0)
                     {

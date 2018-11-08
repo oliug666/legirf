@@ -56,28 +56,31 @@ namespace TPIH.Gecco.WPF.Helpers
 
         public static void ShowAnnotations(IList<string> alarmNames, PlotModel pM, bool description)
         {
-            lock (DriverContainer.Driver.MbAlarm)
+            if (DriverContainer.Driver.MbAlarm != null)
             {
-                if (alarmNames.Count > 0)
+                lock (DriverContainer.Driver.MbAlarm)
                 {
-                    // Annotate the plot just one time
-                    List<Annotation> Annotations = pM.Annotations.ToList();
-                    if (Annotations.Count == 0)
+                    if (alarmNames.Count > 0)
                     {
-                        foreach (string name in alarmNames)
+                        // Annotate the plot just one time
+                        List<Annotation> Annotations = pM.Annotations.ToList();
+                        if (Annotations.Count == 0)
                         {
-                            string annotationText = "";
-                            if (description)
-                                annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)];
+                            foreach (string name in alarmNames)
+                            {
+                                string annotationText = "";
+                                if (description)
+                                    annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)];
 
-                            ShowAlarms(pM, DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
-                            annotationText);
-
+                                ShowAlarms(pM, DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
+                                annotationText);
+                            }
                         }
                     }
                 }
             }
         }
+
 
         public static void ClearAnnotations(PlotModel wPlot)
         {

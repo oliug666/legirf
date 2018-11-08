@@ -80,10 +80,9 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            lock (DriverContainer.Driver.LatestData)
+            if (DriverContainer.Driver.LatestData != null)
             {
-                // We need semaphores on data (LatestData, MbData)
-                if (DriverContainer.Driver.LatestData != null)
+                lock (DriverContainer.Driver.LatestData)
                 {
                     if (DriverContainer.Driver.LatestData.Count() != 0)
                     {
