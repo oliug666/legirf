@@ -21,15 +21,23 @@ namespace TPIH.Gecco.WPF.Helpers
         {
             if (points != null && points.Any() && points.All(p => p != null))
             {
+                string reg_description = N3PR_Data.REG_DESCRIPTION[N3PR_Data.REG_NAMES.IndexOf(points[0].Reg_Name)];
+
                 LineSeries newSerie = new LineSeries
                 {
                     Title = points[0].Reg_Name,
-                    CanTrackerInterpolatePoints = false
+                    CanTrackerInterpolatePoints = false,
+                    TrackerFormatString = "{0}\n{1}: {2}\n{3}: {4:0.#}\n" + reg_description
                 };
-
+                /*
+                {0} = Title of Series
+                {1} = Title of X-Axis
+                {2} = X Value
+                {3} = Title of Y-Axis
+                {4} = Y Value
+                */
                 AddPoints(newSerie, points);
                 newSerie.YAxisKey = AxisKey;
-
                 wPlot.Series.Add(newSerie);
             }
         }
@@ -70,7 +78,7 @@ namespace TPIH.Gecco.WPF.Helpers
                             {
                                 string annotationText = "";
                                 if (description)
-                                    annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_NAMES.IndexOf(name)];
+                                    annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_WARNING_NAMES.IndexOf(name)];
 
                                 ShowAlarms(pM, DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
                                 annotationText);
@@ -95,26 +103,47 @@ namespace TPIH.Gecco.WPF.Helpers
             var where_inactive = AlarmValueList.Where(x => x.val == 0).ToList();
             foreach (MeasurePoint MP in where_active)
             {
-                WPlot.Annotations.Add(new LineAnnotation
+                if (N3PR_Data.ALARM_NAMES.Contains(MP.Reg_Name))
                 {
-                    Type = LineAnnotationType.Vertical,
-                    X = DateTimeAxis.ToDouble(MP.Date),
-                    Color = OxyPlot.OxyColors.Red,
-                    StrokeThickness = 2,
-                    Text = Annotation,
-                    ClipByXAxis = true
-                });
+                    WPlot.Annotations.Add(new TooltipAnnotation
+                    {
+                        Type = LineAnnotationType.Vertical,
+                        X = DateTimeAxis.ToDouble(MP.Date),
+                        Color = OxyPlot.OxyColors.Red,
+                        StrokeThickness = 2,
+                        Text = Annotation,
+                        ClipByXAxis = true,
+                        Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
+                        + "\nValue: 1"
+                    });
+                }
+                else
+                {
+                    WPlot.Annotations.Add(new TooltipAnnotation
+                    {
+                        Type = LineAnnotationType.Vertical,
+                        X = DateTimeAxis.ToDouble(MP.Date),
+                        Color = OxyPlot.OxyColors.Orange,
+                        StrokeThickness = 2,
+                        Text = Annotation,
+                        ClipByXAxis = true,
+                        Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
+                        + "\nValue: 1"
+                    });
+                }
             }
             foreach (MeasurePoint MP in where_inactive)
             {
-                WPlot.Annotations.Add(new LineAnnotation
+                WPlot.Annotations.Add(new TooltipAnnotation
                 {
                     Type = LineAnnotationType.Vertical,
                     X = DateTimeAxis.ToDouble(MP.Date),
                     Color = OxyColors.Green,
                     StrokeThickness = 2,
                     Text = Annotation,
-                    ClipByXAxis = true
+                    ClipByXAxis = true,
+                    Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
+                    + "\nValue: 0"
                 });
             }            
         }

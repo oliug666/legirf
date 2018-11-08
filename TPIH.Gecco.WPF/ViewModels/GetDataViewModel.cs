@@ -95,6 +95,8 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 _getDataCanExecute = false;
                 IsCalendarEnabled = false;
+                Status = "";
+                _isLoading = false;
             }
             else
             {

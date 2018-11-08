@@ -149,6 +149,7 @@
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Helpers\Plotter.cs" />
     <Compile Include="Helpers\PulseLogger.cs" />
+    <Compile Include="Helpers\TooltipAnnotation.cs" />
     <Compile Include="Interfaces\IGeccoDriver.cs" />
     <Compile Include="Models\GeneratorErrorModel.cs" />
     <Compile Include="Models\MeasurementCollection.cs" />

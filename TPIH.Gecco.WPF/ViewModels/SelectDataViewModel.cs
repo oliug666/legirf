@@ -43,26 +43,26 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void ConnectionStatusChangedEventHandler(object sender, System.EventArgs e)
         {
-            if (DriverContainer.Driver.MbData != null)
+            if (DriverContainer.Driver.IsConnected)
             {
-                lock (DriverContainer.Driver.MbData)
+                if (DriverContainer.Driver.MbData != null)
                 {
-                    if (DriverContainer.Driver.IsConnected)
+                    lock (DriverContainer.Driver.MbData)
                     {
                         if (DriverContainer.Driver.MbData.Count() != 0)
                             EnablePlottableObjects = true;
                     }
-                    else
-                    {
-                        // Uncheck elements (if checked)
-                        foreach (CheckedListItem cli in AvailablePlottableObjects)
-                        {
-                            cli.IsChecked = false;
-                        }
-                        EnablePlottableObjects = false;
-                    }
                 }
             }
+            else
+            {
+                // Uncheck elements (if checked)
+                foreach (CheckedListItem cli in AvailablePlottableObjects)
+                {
+                    cli.IsChecked = false;
+                }
+                EnablePlottableObjects = false;
+            }            
         }
     }
 }

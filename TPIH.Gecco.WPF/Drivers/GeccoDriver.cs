@@ -149,21 +149,15 @@ namespace TPIH.Gecco.WPF.Drivers
                     Status = ex.Message;
                 }
 
-                lock (MbData)
-                {
-                    if (MbData != null)
+                if (MbData != null)
+                    lock (MbData)
                         MbData.Clear();
-                }
-                lock (MbAlarm)
-                {
-                    if (MbAlarm != null)
+                if (MbAlarm != null)
+                    lock (MbAlarm)
                         MbAlarm.Clear();
-                }
-                lock (LatestData)
-                {
-                    if (LatestData != null)
+                if (LatestData != null)
+                    lock (LatestData)
                         LatestData.Clear();
-                }
 
                 _isRetrieving.Release(1);
             }
@@ -206,8 +200,8 @@ namespace TPIH.Gecco.WPF.Drivers
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find newest date."));
-                    DriverContainer.Driver.Disconnect();
                     _isRetrieving.Release(1);
+                    DriverContainer.Driver.Disconnect();                    
                     return;
                 }
                 _cmd.Dispose();
@@ -218,19 +212,19 @@ namespace TPIH.Gecco.WPF.Drivers
                 // Pause if there is someone already retrieving data
                 try
                 {
-                    lock (LatestData)
-                    {
-                        _cmd = new MySqlCommand(selectQuery, _connection);
-                        _dataReader = _cmd.ExecuteReader();
-                        LatestData.Clear();
+                    _cmd = new MySqlCommand(selectQuery, _connection);
+                    _dataReader = _cmd.ExecuteReader();
+                    if (LatestData != null)
+                        lock (LatestData)
+                            LatestData = ParseDataReader(_dataReader);
+                    else
                         LatestData = ParseDataReader(_dataReader);
-                    }
                 }
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrive latest data."));
-                    DriverContainer.Driver.Disconnect();
                     _isRetrieving.Release(1);
+                    DriverContainer.Driver.Disconnect();                    
                     return;
                 }
             }
@@ -264,9 +258,14 @@ namespace TPIH.Gecco.WPF.Drivers
             // Create query
             string selectQuery = "SELECT * FROM " + tableName + " WHERE "+ N3PR_DB.DATE +
                 " BETWEEN '" + long_ago_s + "' AND '" + right_now_s + "'";
-            
+
             // Read
-            ExecuteQuery(selectQuery);
+            if (!ExecuteQuery(selectQuery))
+            {
+                _isRetrieving.Release(1);
+                DriverContainer.Driver.Disconnect();
+                return;
+            }
 
             _isRetrieving.Release(1);
             // Fire the event
@@ -286,14 +285,19 @@ namespace TPIH.Gecco.WPF.Drivers
                 To.AddHours(23).AddMinutes(59).AddSeconds(59).ToString(N3PR_Data.DATA_FORMAT) + "'";
 
             // Read
-            ExecuteQuery(selectQuery);
+            if (!ExecuteQuery(selectQuery))            
+            {
+                _isRetrieving.Release(1);
+                DriverContainer.Driver.Disconnect();
+                return;
+            }
 
             _isRetrieving.Release(1);
             // Fire the event
             OnDataRetrievalCompleted?.Invoke(this, null);
         }
 
-        private void ExecuteQuery(string selectQuery)
+        private bool ExecuteQuery(string selectQuery)
         {            
             // Read
             if (IsConnected)
@@ -326,7 +330,7 @@ namespace TPIH.Gecco.WPF.Drivers
                                 // alarms
                                 foreach (MeasurePoint _mbp in _allData)
                                 {
-                                    if (N3PR_Data.ALARM_NAMES.Contains(_mbp.Reg_Name))
+                                    if (N3PR_Data.ALARM_WARNING_NAMES.Contains(_mbp.Reg_Name))
                                         MbAlarm.Add(_mbp);
                                 }
                             }
@@ -336,7 +340,16 @@ namespace TPIH.Gecco.WPF.Drivers
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to execute SQL query."));
-                    DriverContainer.Driver.Disconnect();                    
+                    // Dispose connection objects
+                    _cmd.Dispose();
+                    if (_dataReader != null)
+                    {
+                        _dataReader.Close();
+                        _dataReader.Dispose();
+                    }
+                    _dataReader = null;
+
+                    return false;
                 }
             }
 
@@ -348,6 +361,8 @@ namespace TPIH.Gecco.WPF.Drivers
                 _dataReader.Dispose();
             }
             _dataReader = null;
+
+            return true;
         }
 
         private List<MeasurePoint> ParseDataReader(IDataReader _dataReader)
@@ -356,7 +371,7 @@ namespace TPIH.Gecco.WPF.Drivers
             while (_dataReader.Read())
             {
                 int idxD = N3PR_Data.REG_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
-                int idxA = N3PR_Data.ALARM_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
+                int idxA = N3PR_Data.ALARM_WARNING_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
 
                 double value;
                 if (idxD != -1)
@@ -392,7 +407,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 else if (idxA != -1)
                 {
                     value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
-                    if (N3PR_Data.ALARM_NAMES.Contains(_dataReader[N3PR_DB.REG_NAME] + ""))
+                    if (N3PR_Data.ALARM_WARNING_NAMES.Contains(_dataReader[N3PR_DB.REG_NAME] + ""))
                     {
                         _allData.Add(new MeasurePoint
                         {

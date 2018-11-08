@@ -333,8 +333,10 @@ namespace TPIH.Gecco.WPF.ViewModels
                 Plotter.ClearAnnotations(PlotBool);
                 Plot.InvalidatePlot(true);
                 PlotBool.InvalidatePlot(true);
+                IsExportDataEnabled = false;
             }
         }
+
         public void OnFlaggedAlarmMessageReceived(ItemCheckedEvent e)
         {
             if (e.value) // show annotations
