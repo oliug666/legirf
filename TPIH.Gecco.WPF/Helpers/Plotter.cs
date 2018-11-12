@@ -96,12 +96,19 @@ namespace TPIH.Gecco.WPF.Helpers
 
         private static void ShowAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation)
         {
+            List<DateTime> WhereAlreadyAnnotated = new List<DateTime>();
+            VerticalAlignment va;
             // Check when the alarm was triggered and when it was gone
             // var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
             var where_active = AlarmValueList.Where(x => x.val == 1).ToList();
             var where_inactive = AlarmValueList.Where(x => x.val == 0).ToList();
             foreach (MeasurePoint MP in where_active)
             {
+                if (WhereAlreadyAnnotated.Contains(MP.Date))
+                    va = VerticalAlignment.Bottom;
+                else
+                    va = VerticalAlignment.Top;
+
                 if (N3PR_Data.ALARM_NAMES.Contains(MP.Reg_Name))
                 {
                     WPlot.Annotations.Add(new TooltipAnnotation
@@ -112,6 +119,7 @@ namespace TPIH.Gecco.WPF.Helpers
                         StrokeThickness = 2,
                         Text = Annotation,
                         ClipByXAxis = true,
+                        TextVerticalAlignment = va,
                         Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
                         + "\nValue: 1"
                     });
@@ -126,13 +134,21 @@ namespace TPIH.Gecco.WPF.Helpers
                         StrokeThickness = 2,
                         Text = Annotation,
                         ClipByXAxis = true,
+                        TextVerticalAlignment = va,
                         Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
                         + "\nValue: 1"
                     });
                 }
+
+                WhereAlreadyAnnotated.Add(MP.Date);
             }
             foreach (MeasurePoint MP in where_inactive)
             {
+                if (WhereAlreadyAnnotated.Contains(MP.Date))
+                    va = VerticalAlignment.Bottom;
+                else
+                    va = VerticalAlignment.Top;
+
                 WPlot.Annotations.Add(new TooltipAnnotation
                 {
                     Type = LineAnnotationType.Vertical,
@@ -141,9 +157,12 @@ namespace TPIH.Gecco.WPF.Helpers
                     StrokeThickness = 2,
                     Text = Annotation,
                     ClipByXAxis = true,
+                    TextVerticalAlignment = va,
                     Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
                     + "\nValue: 0"
                 });
+
+                WhereAlreadyAnnotated.Add(MP.Date);
             }            
         }
     

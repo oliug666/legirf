@@ -375,7 +375,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 int idxA = N3PR_Data.ALARM_WARNING_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
 
                 if (_dataReader[N3PR_DB.REG_NAME] + "" == "STE_IPS" || _dataReader[N3PR_DB.REG_NAME] + "" == "STE_OPS")
-                    digits = 2;
+                    digits = 3;
                 else
                     digits = 1;
 
