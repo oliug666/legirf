@@ -27,7 +27,7 @@ namespace TPIH.Gecco.WPF.Helpers
                 {
                     Title = points[0].Reg_Name,
                     CanTrackerInterpolatePoints = false,
-                    TrackerFormatString = "{0}\n{1}: {2}\n{3}: {4:0.#}\n" + reg_description
+                    TrackerFormatString = "{0}\n{1}: {2}\n{3}: {4:0.##}\n" + reg_description
                 };
                 /*
                 {0} = Title of Series
@@ -88,7 +88,6 @@ namespace TPIH.Gecco.WPF.Helpers
                 }
             }
         }
-
 
         public static void ClearAnnotations(PlotModel wPlot)
         {
@@ -158,6 +157,46 @@ namespace TPIH.Gecco.WPF.Helpers
                     ls.Points.Add(new DataPoint(DateTimeAxis.ToDouble(mp.Date), mp.val));
                 }
             }
+        }
+
+        public static List<bool> AreThereActiveAlarms(IList<string> alarmNames)
+        {
+            List<bool> alarmActiveFlags = new List<bool>();
+
+            if (alarmNames != null)
+            {
+                if (alarmNames.Count > 0)
+                {
+                    foreach (string sg in alarmNames)
+                    {
+                        var aList = getAlarmListThreadSafe(sg);
+                        if (aList != null)
+                        {
+                            // Find the latest date
+                            List<DateTime> latestDates = aList.Select(p => p.Date).ToList();
+                            int whereMaxDate = latestDates.IndexOf(latestDates.Max());
+                            // At that time, was the alarm/warning active?
+                            alarmActiveFlags.Add(aList[whereMaxDate].val == 0 ? false : true);
+                        }
+                    }
+                    return alarmActiveFlags;
+                }
+            }
+
+            return null;
+        }
+
+        private static List<MeasurePoint> getAlarmListThreadSafe(string name)
+        {
+            if (DriverContainer.Driver.MbAlarm != null)
+            {
+                lock (DriverContainer.Driver.MbAlarm)
+                {
+                    return DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
+                }
+            }
+
+            return null;
         }
     }
 }

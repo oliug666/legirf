@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
+using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Helpers;
 
 namespace TPIH.Gecco.WPF.ViewModels
@@ -16,10 +17,13 @@ namespace TPIH.Gecco.WPF.ViewModels
         private bool _isPidButtonEnabled;
         private List<string> _filename;
         private List<string> _path;
-        private string _fullPath;
+        private string _fullPath, _alarmsActive, _warningsActive;
 
         public ICommand OpenPIDCommand { get; private set; }
         public CheckedAlarmItem AlarmsEnabled { get { return _alarmEnabled; } set { _alarmEnabled = value; OnPropertyChanged(() => AlarmsEnabled); } }
+        public string AlarmsActive { get { return _alarmsActive; } set { _alarmsActive = value; OnPropertyChanged(() => AlarmsActive); } }
+        public string WarningsActive { get { return _warningsActive; } set { _warningsActive = value; OnPropertyChanged(() => WarningsActive); } }
+
         public ActionButtonViewModel()
         {
             XDocument doc = new XDocument();
@@ -32,6 +36,9 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 _isPidButtonEnabled = false;                
             }
+
+            AlarmsActive = "Gray";
+            WarningsActive = "Gray";
 
             var p00 = doc.Root.Descendants("PID_File");
             _filename = Parser.ParseXmlElement(p00.Elements("Filename").Nodes());
@@ -48,6 +55,56 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             OpenPIDCommand = new DelegateCommand(obj => OpenPIDCommand_Execution(), obj => _isPidButtonEnabled);
             AlarmsEnabled = new CheckedAlarmItem(true);
+
+            DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
+            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+        }
+
+        private void DataRetrievedEventHandler(object sender, EventArgs e)
+        {
+            List<string> alarmNames = new List<string>();
+            List<string> warningNames = new List<string>();
+            List<bool> activeAlarmsFlags = new List<bool>();
+            List<bool> activeWarningFlags = new List<bool>();
+
+            if (DriverContainer.Driver.MbAlarm != null)
+            {
+                lock (DriverContainer.Driver.MbAlarm)
+                {
+                    // Distinct Values
+                    List<string> uniqueRegNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                    foreach (string sg in uniqueRegNames)
+                    {
+                        if (N3PR_Data.ALARM_NAMES.Contains(sg))
+                            alarmNames.Add(sg);
+                        else
+                            warningNames.Add(sg);
+                    }
+                    activeAlarmsFlags = Plotter.AreThereActiveAlarms(alarmNames);
+                    activeWarningFlags = Plotter.AreThereActiveAlarms(warningNames);
+                }
+            }
+
+            if (activeAlarmsFlags != null)
+                if (activeAlarmsFlags.Contains(true))
+                    AlarmsActive = "Red";
+                else
+                    AlarmsActive = "Green";
+
+            if (activeWarningFlags != null)
+                if (activeWarningFlags.Contains(true))
+                    WarningsActive = "Red";
+                else
+                    WarningsActive = "Yellow";
+        }
+
+        private void ConnectionStatusChangedEventHandler(object sender, EventArgs e)
+        {
+            if (!DriverContainer.Driver.IsConnected)
+            {
+                AlarmsActive = "Gray";
+                WarningsActive = "Gray";
+            }
         }
 
         private void OpenPIDCommand_Execution()

@@ -367,11 +367,17 @@ namespace TPIH.Gecco.WPF.Drivers
 
         private List<MeasurePoint> ParseDataReader(IDataReader _dataReader)
         {
+            int digits;
             List<MeasurePoint> _allData = new List<MeasurePoint>();
             while (_dataReader.Read())
             {
                 int idxD = N3PR_Data.REG_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
                 int idxA = N3PR_Data.ALARM_WARNING_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
+
+                if (_dataReader[N3PR_DB.REG_NAME] + "" == "STE_IPS" || _dataReader[N3PR_DB.REG_NAME] + "" == "STE_OPS")
+                    digits = 2;
+                else
+                    digits = 1;
 
                 double value;
                 if (idxD != -1)
@@ -379,16 +385,16 @@ namespace TPIH.Gecco.WPF.Drivers
                     switch (N3PR_Data.REG_TYPES[idxD])
                     {
                         case N3PR_Data.INT:
-                            value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), 1);
+                            value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
                             break;
                         case N3PR_Data.UINT:
-                            value = Math.Round(Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), 1);
+                            value = Math.Round(Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
                             break;
                         case N3PR_Data.BOOL:
                             value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
                             break;
                         default:
-                            value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), 1);
+                            value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
                             break;
                     }
 

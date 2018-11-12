@@ -19,11 +19,13 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private List<int> _lastDays;
         private string _status;
-        private bool _isLoading, _isCalendarEnabled, _getDataCanExecute;
+        private bool _isCalendarEnabled, _getDataCanExecute;
         private DateTime _to, _from;
         private bool _isAutoGetDataEnabled;
         private int _autoGetDataRefreshTime;
         private bool _hasGetDataBeenExecuteOnce = false;
+
+        public bool GetDataIsEnabled { get { return _getDataCanExecute; } set { _getDataCanExecute = value; OnPropertyChanged(() => GetDataIsEnabled); } } 
 
         public List<string> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
         public int SelectedTimeInterval
@@ -48,7 +50,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public GetDataViewModel()
         {
-            GetDataCommand = new DelegateCommand(obj => GetDataCommand_Execution(), obj => (_getDataCanExecute && !_isLoading)); 
+            GetDataCommand = new DelegateCommand(obj => GetDataCommand_Execution()); 
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(OnConnectionStatusChangedEventHandler);
 
@@ -93,20 +95,18 @@ namespace TPIH.Gecco.WPF.ViewModels
         {
             if (!DriverContainer.Driver.IsConnected)
             {
-                _getDataCanExecute = false;
+                GetDataIsEnabled = false;
                 IsCalendarEnabled = false;
                 Status = "";
-                _isLoading = false;
             }
             else
             {
-                _getDataCanExecute = true;
+                GetDataIsEnabled = true;
                 if (_timeIntervals[_selectedTimeInterval] == "Custom")
                     IsCalendarEnabled = true;
                 else
                     IsCalendarEnabled = false;
             }
-            CommandManager.InvalidateRequerySuggested();
         }
 
         private void AutoGetDataThread_Execution(int interval_min)
@@ -114,7 +114,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             while(true)
             {
                 Thread.Sleep(1000 * 60 * interval_min);
-                if (DriverContainer.Driver.IsConnected && !_isLoading && _hasGetDataBeenExecuteOnce)
+                if (DriverContainer.Driver.IsConnected && GetDataIsEnabled && _hasGetDataBeenExecuteOnce)
                 {
                     //
                     GetDataCommand_Execution();
@@ -125,10 +125,10 @@ namespace TPIH.Gecco.WPF.ViewModels
         private void GetDataCommand_Execution()
         {
             _hasGetDataBeenExecuteOnce = true;
-            if (DriverContainer.Driver.IsConnected)
+            if (DriverContainer.Driver.IsConnected && GetDataIsEnabled)
             {
                 Status = "Loading...";
-                _isLoading = true;
+                GetDataIsEnabled = false;
                 if (!_isCalendarEnabled)
                 {
                     try
@@ -180,8 +180,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     }
                 }
             }
-            _isLoading = false;
-            CommandManager.InvalidateRequerySuggested();
+            GetDataIsEnabled = true;
         }        
     }
 }

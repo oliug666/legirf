@@ -166,7 +166,6 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Background="AliceBlue" TextWrapping="Wrap" Text="Error" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                             <TextBlock Grid.Row="1" MinHeight="50" Background="AliceBlue" TextWrapping="Wrap" Text="{Binding Error.Message, Mode=OneWay}" Margin="4" VerticalAlignment="Top"/>
-
                         </Grid>
                     </ScrollViewer>
                     <Button Visibility="Collapsed" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2" Content="Close" Height="23" IsHitTestVisible="True" Command="{Binding CloseErrorCommand}"/>
