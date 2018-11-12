@@ -85,17 +85,15 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
             }
 
+            AlarmsActive = "Green";
             if (activeAlarmsFlags != null)
                 if (activeAlarmsFlags.Contains(true))
                     AlarmsActive = "Red";
-                else
-                    AlarmsActive = "Green";
 
+            WarningsActive = "Green";
             if (activeWarningFlags != null)
                 if (activeWarningFlags.Contains(true))
-                    WarningsActive = "Red";
-                else
-                    WarningsActive = "Yellow";
+                    WarningsActive = "Orange";
         }
 
         private void ConnectionStatusChangedEventHandler(object sender, EventArgs e)

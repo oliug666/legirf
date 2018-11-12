@@ -97,6 +97,12 @@ namespace TPIH.Gecco.WPF.Helpers
         private static void ShowAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation)
         {
             List<DateTime> WhereAlreadyAnnotated = new List<DateTime>();
+            foreach (Annotation ann in WPlot.Annotations.ToList())
+            {
+                TooltipAnnotation tann = (TooltipAnnotation)ann;
+                WhereAlreadyAnnotated.Add(DateTimeAxis.ToDateTime(tann.X));
+            }
+
             VerticalAlignment va;
             // Check when the alarm was triggered and when it was gone
             // var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
@@ -163,7 +169,7 @@ namespace TPIH.Gecco.WPF.Helpers
                 });
 
                 WhereAlreadyAnnotated.Add(MP.Date);
-            }            
+            }
         }
     
         private static void AddPoints(LineSeries ls, IList<MeasurePoint> myPoints)
