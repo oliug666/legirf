@@ -19,7 +19,13 @@ namespace TPIH.Gecco.WPF.Helpers
             OnAlarmMessageTransmitted?.Invoke(new ItemCheckedEvent("", value));
         }
 
+        public static void SignalIsRetrievingData(bool value)
+        {
+            OnSignalIsRetrievingTransmitted?.Invoke(new ItemCheckedEvent("", value));
+        }
+
         public static Action<ItemCheckedEvent> OnCheckedItemTransmitted;
         public static Action<ItemCheckedEvent> OnAlarmMessageTransmitted;
+        public static Action<ItemCheckedEvent> OnSignalIsRetrievingTransmitted;
     }
 }

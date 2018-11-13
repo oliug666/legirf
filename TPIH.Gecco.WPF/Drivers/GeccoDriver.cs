@@ -24,12 +24,21 @@ namespace TPIH.Gecco.WPF.Drivers
         private MySqlCommand _cmd;
         private MySqlDataReader _dataReader;
 
+#if DEMO
+        private Random rnd = new Random();
+#endif
+
         private static IList<MeasurePoint> _mbData;
         private static IList<MeasurePoint> _mbAlarm;
         private static IList<MeasurePoint> _latestData;
         private Semaphore _isRetrieving = new Semaphore(1,1);
 
+#if !DEMO
         public bool IsConnected { get { return (_connection != null && (_connection.State == ConnectionState.Open)); } }
+#else
+        private bool _isConnected;
+        public bool IsConnected { get { return _isConnected; } }
+#endif
         public string Status;
         public event EventHandler OnDataRetrievalCompleted;
         public event EventHandler OnLatestDataRetrievalCompleted;
@@ -73,7 +82,7 @@ namespace TPIH.Gecco.WPF.Drivers
         {
             get
             {
-                if (IsConnected && _latestData.Count > 0)
+                if (IsConnected)
                 {
                     return _latestData;
                 }
@@ -92,10 +101,11 @@ namespace TPIH.Gecco.WPF.Drivers
 
         private void Initialize(string ipAddress, int port, string dbname, string username, string password)
         {
+#if !DEMO
             string connectionString = "SERVER=" + ipAddress + ";" + "PORT=" + port.ToString() + ";" + "DATABASE=" +
                 dbname + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
             _connection = new MySqlConnection(connectionString);
-
+#endif
             _mbData = new List<MeasurePoint>();
             _mbAlarm = new List<MeasurePoint>();
             _latestData = new List<MeasurePoint>();
@@ -107,6 +117,7 @@ namespace TPIH.Gecco.WPF.Drivers
 
             if (!IsConnected)
             {
+#if !DEMO
                 try
                 {
                     _connection.Open();
@@ -129,6 +140,9 @@ namespace TPIH.Gecco.WPF.Drivers
                             break;
                     }
                 }
+#else
+                _isConnected = true;
+#endif
             }
 
             OnConnectionStatusChanged?.Invoke(this, null);
@@ -140,6 +154,7 @@ namespace TPIH.Gecco.WPF.Drivers
             if (IsConnected)
             {
                 _isRetrieving.WaitOne();
+#if !DEMO
                 try
                 {
                     _connection.Close();                    
@@ -148,7 +163,9 @@ namespace TPIH.Gecco.WPF.Drivers
                 {
                     Status = ex.Message;
                 }
-
+#else
+                _isConnected = false;
+#endif
                 if (MbData != null)
                     lock (MbData)
                         MbData.Clear();
@@ -167,6 +184,7 @@ namespace TPIH.Gecco.WPF.Drivers
 
         public void Dispose()
         {
+#if !DEMO
             try
             {
                 if (_connection != null)
@@ -176,6 +194,7 @@ namespace TPIH.Gecco.WPF.Drivers
             {
                 Status = ex.Message;
             }
+#endif
         }
 
         public void GetLatestData(string tableName)
@@ -189,6 +208,7 @@ namespace TPIH.Gecco.WPF.Drivers
 
             if (IsConnected & _latestData != null)
             {
+#if !DEMO
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
                 try
@@ -236,7 +256,22 @@ namespace TPIH.Gecco.WPF.Drivers
                 _dataReader.Dispose();
             }
             _dataReader = null;
-
+#else
+                LatestData = new List<MeasurePoint>();
+                for (int i = 0; i < N3PR_Data.REG_NAMES.Count(); i++)
+                {
+                    LatestData.Add(new MeasurePoint
+                    {
+                        Date = DateTime.Now,
+                        Reg_Name = N3PR_Data.REG_NAMES[i],
+                        data_type = N3PR_Data.REG_TYPES[i],
+                        unit = N3PR_Data.REG_MEASUNIT[i],
+                        val = (N3PR_Data.REG_TYPES[i] == N3PR_Data.BOOL) ? rnd.Next(1) : rnd.Next(5000)
+                    });
+                }
+                Thread.Sleep(1000);
+            }
+#endif
             // Fire the event
             _isRetrieving.Release(1);
             OnLatestDataRetrievalCompleted?.Invoke(this, null);           
@@ -298,7 +333,7 @@ namespace TPIH.Gecco.WPF.Drivers
         }
 
         private bool ExecuteQuery(string selectQuery)
-        {            
+        {
             // Read
             if (IsConnected)
             {
@@ -311,7 +346,7 @@ namespace TPIH.Gecco.WPF.Drivers
                         {
                             MbData.Clear();
                             MbAlarm.Clear();
-
+#if !DEMO
                             _cmd = new MySqlCommand(selectQuery, _connection);
                             _dataReader = _cmd.ExecuteReader();
 
@@ -334,7 +369,25 @@ namespace TPIH.Gecco.WPF.Drivers
                                         MbAlarm.Add(_mbp);
                                 }
                             }
+#else
+                            // Add 1000 datas
+                            for (int j = 0; j < 1000; j++)
+                            {
+                                for (int i = 0; i < N3PR_Data.REG_NAMES.Count(); i++)
+                                {
+                                    MbData.Add(new MeasurePoint
+                                    {
+                                        Date = DateTime.Now,
+                                        Reg_Name = N3PR_Data.REG_NAMES[i],
+                                        data_type = N3PR_Data.REG_TYPES[i],
+                                        unit = N3PR_Data.REG_MEASUNIT[i],
+                                        val = (N3PR_Data.REG_TYPES[i] == N3PR_Data.BOOL) ? rnd.Next(1) : rnd.Next(5000)
+                                    });
+                                }
+                            }
+                            Thread.Sleep(4000);
                         }
+#endif
                     }
                 }
                 catch (Exception e)

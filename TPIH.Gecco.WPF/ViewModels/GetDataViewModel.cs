@@ -124,6 +124,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void GetDataCommand_Execution()
         {
+            EventAggregator.SignalIsRetrievingData(true);
             _hasGetDataBeenExecuteOnce = true;
             if (DriverContainer.Driver.IsConnected && GetDataIsEnabled)
             {
@@ -181,6 +182,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
             }
             GetDataIsEnabled = true;
+            EventAggregator.SignalIsRetrievingData(false);
         }        
     }
 }

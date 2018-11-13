@@ -25,6 +25,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
+            EventAggregator.OnSignalIsRetrievingTransmitted += SignalIsRetrievingEventHandler;
         }
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
@@ -63,6 +64,14 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 EnablePlottableObjects = false;
             }            
+        }
+
+        private void SignalIsRetrievingEventHandler(ItemCheckedEvent e)
+        {
+            if (e.value)
+                EnablePlottableObjects = false;
+            else
+                EnablePlottableObjects = true;
         }
     }
 }
