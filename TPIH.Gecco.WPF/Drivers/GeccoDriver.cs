@@ -203,24 +203,27 @@ namespace TPIH.Gecco.WPF.Drivers
             Thread.Sleep(1000);
 
             _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
-
             _dataReader = null;
 
-            if (IsConnected & _latestData != null)
+            if (IsConnected)
             {
 #if !DEMO
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
                 try
                 {
-                    _cmd = new MySqlCommand(dateQuery, _connection);
-                    var date = _cmd.ExecuteScalar();
+                    _cmd = new MySqlCommand(dateQuery, _connection)
+                    {
+                        CommandTimeout = 60
+                    };
+                    var date = _cmd.ExecuteScalar();                    
                     LatestDate = ParseDate(date + "");                    
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find newest date."));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find most recent date."));
                     _isRetrieving.Release(1);
+                    DisposeDataReader();
                     DriverContainer.Driver.Disconnect();                    
                     return;
                 }
@@ -228,34 +231,27 @@ namespace TPIH.Gecco.WPF.Drivers
 
                 string selectQuery = "SELECT * FROM " + tableName + " WHERE " + tableName + "." + N3PR_DB.DATE
                     + " >= '" + LatestDate.AddSeconds(-10).ToString(N3PR_Data.DATA_FORMAT) + "'";
-
-                // Pause if there is someone already retrieving data
                 try
                 {
-                    _cmd = new MySqlCommand(selectQuery, _connection);
+                    _cmd = new MySqlCommand(selectQuery, _connection)
+                    {
+                        CommandTimeout = 60
+                    };
                     _dataReader = _cmd.ExecuteReader();
-                    if (LatestData != null)
-                        lock (LatestData)
-                            LatestData = ParseDataReader(_dataReader);
-                    else
+                    lock (LatestData)
                         LatestData = ParseDataReader(_dataReader);
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrive latest data."));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrieve latest data."));
                     _isRetrieving.Release(1);
                     DriverContainer.Driver.Disconnect();                    
                     return;
                 }
             }
 
-            _cmd.Dispose();
-            if (_dataReader != null)
-            {
-                _dataReader.Close();
-                _dataReader.Dispose();
-            }
-            _dataReader = null;
+            _isRetrieving.Release(1);
+            DisposeDataReader();
 #else
                 LatestData = new List<MeasurePoint>();
                 for (int i = 0; i < N3PR_Data.REG_NAMES.Count(); i++)
@@ -272,17 +268,14 @@ namespace TPIH.Gecco.WPF.Drivers
                 Thread.Sleep(1000);
             }
 #endif
-            // Fire the event
-            _isRetrieving.Release(1);
+            // Fire the event            
             OnLatestDataRetrievalCompleted?.Invoke(this, null);           
         }
 
         public void GetDataFromLastXDays(string tableName, int lastDays)
         {
             _cmd = new MySqlCommand();
-            _dataReader = null;
-
-            _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
+            _dataReader = null;            
 
             // Get day today and calculate time interval
             DateTime right_now = DateTime.Now;
@@ -297,12 +290,11 @@ namespace TPIH.Gecco.WPF.Drivers
             // Read
             if (!ExecuteQuery(selectQuery))
             {
-                _isRetrieving.Release(1);
+                GlobalCommands.ShowError.Execute(new Exception("Error when trying to retrieve data from Last X days."));
                 DriverContainer.Driver.Disconnect();
                 return;
-            }
+            }            
 
-            _isRetrieving.Release(1);
             // Fire the event
             OnDataRetrievalCompleted?.Invoke(this, null);
         }
@@ -310,9 +302,7 @@ namespace TPIH.Gecco.WPF.Drivers
         public void GetDataFromCalendarDays(string tableName, DateTime From, DateTime To)
         {
             _cmd = new MySqlCommand();
-            _dataReader = null;
-
-            _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
+            _dataReader = null;            
 
             // Create query     
             string selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
@@ -322,99 +312,45 @@ namespace TPIH.Gecco.WPF.Drivers
             // Read
             if (!ExecuteQuery(selectQuery))            
             {
-                _isRetrieving.Release(1);
+                GlobalCommands.ShowError.Execute(new Exception("Error when trying to retrieve data from Calendar days."));
                 DriverContainer.Driver.Disconnect();
                 return;
             }
 
-            _isRetrieving.Release(1);
             // Fire the event
             OnDataRetrievalCompleted?.Invoke(this, null);
         }
 
         private bool ExecuteQuery(string selectQuery)
         {
+            List<MeasurePoint> _allData = new List<MeasurePoint>();
             // Read
             if (IsConnected)
             {
                 try
                 {
-                    // Clear the previous data
-                    lock (MbData)
-                    {
-                        lock (MbAlarm)
-                        {
-                            MbData.Clear();
-                            MbAlarm.Clear();
 #if !DEMO
-                            _cmd = new MySqlCommand(selectQuery, _connection);
-                            _dataReader = _cmd.ExecuteReader();
-
-                            // Parse data reader
-                            List<MeasurePoint> _allData = ParseDataReader(_dataReader);
-
-                            // Sort the retrieved entries (alarms or data?)
-                            if (_allData.Count() > 0 & _allData != null)
-                            {
-                                // data
-                                foreach (MeasurePoint _mbp in _allData)
-                                {
-                                    if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
-                                        MbData.Add(_mbp);
-                                }
-                                // alarms
-                                foreach (MeasurePoint _mbp in _allData)
-                                {
-                                    if (N3PR_Data.ALARM_WARNING_NAMES.Contains(_mbp.Reg_Name))
-                                        MbAlarm.Add(_mbp);
-                                }
-                            }
-#else
-                            // Add 1000 datas
-                            for (int j = 0; j < 1000; j++)
-                            {
-                                for (int i = 0; i < N3PR_Data.REG_NAMES.Count(); i++)
-                                {
-                                    MbData.Add(new MeasurePoint
-                                    {
-                                        Date = DateTime.Now,
-                                        Reg_Name = N3PR_Data.REG_NAMES[i],
-                                        data_type = N3PR_Data.REG_TYPES[i],
-                                        unit = N3PR_Data.REG_MEASUNIT[i],
-                                        val = (N3PR_Data.REG_TYPES[i] == N3PR_Data.BOOL) ? rnd.Next(1) : rnd.Next(5000)
-                                    });
-                                }
-                            }
-                            Thread.Sleep(4000);
-                        }
-#endif
-                    }
-                }
-                catch (Exception e)
-                {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to execute SQL query."));
-                    // Dispose connection objects
-                    _cmd.Dispose();
-                    if (_dataReader != null)
+                    _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
+                    _cmd = new MySqlCommand(selectQuery, _connection)
                     {
-                        _dataReader.Close();
-                        _dataReader.Dispose();
-                    }
-                    _dataReader = null;
-
+                        CommandTimeout = 60
+                    };
+                    _dataReader = _cmd.ExecuteReader();
+                    // Parse data reader
+                    _allData = ParseDataReader(_dataReader);
+                    _isRetrieving.Release(1);
+#endif
+                }
+                catch (Exception)
+                {
+                    _isRetrieving.Release(1);
+                    DisposeDataReader(); // Dispose connection objects                   
                     return false;
                 }
             }
-
-            // Dispose connection objects
-            _cmd.Dispose();
-            if (_dataReader != null)
-            {
-                _dataReader.Close();
-                _dataReader.Dispose();
-            }
-            _dataReader = null;
-
+            
+            SortRetrievedData(_allData); // Sort query (data, alarms?)            
+            DisposeDataReader(); // Dispose connection objects
             return true;
         }
 
@@ -496,6 +432,65 @@ namespace TPIH.Gecco.WPF.Drivers
                     System.Globalization.CultureInfo.CurrentCulture);
             }
             return ParsedDate;
+        }
+        
+        private void DisposeDataReader()
+        {
+            _cmd.Dispose();
+            if (_dataReader != null)
+            {
+                _dataReader.Close();
+                _dataReader.Dispose();
+                _dataReader = null;
+            }            
+        }
+
+        private void SortRetrievedData(List<MeasurePoint> aData)
+        {
+#if !DEMO
+            // Sort the retrieved entries (alarms or data?)
+            if (aData.Count() > 0)
+            {
+                // data
+                lock (MbData)
+                {
+                    foreach (MeasurePoint _mbp in aData)
+                    {
+                        if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
+                            MbData.Add(_mbp);
+                    }
+                }
+                lock (MbAlarm)
+                {
+                    // alarms
+                    foreach (MeasurePoint _mbp in aData)
+                    {
+                        if (N3PR_Data.ALARM_WARNING_NAMES.Contains(_mbp.Reg_Name))
+                            MbAlarm.Add(_mbp);
+                    }
+                }
+            }
+#else
+            // Add 1000 datas
+            lock (MbData)
+            {
+                for (int i = 0; i < 1000; i++)
+                {
+                    for (int j = 0; j < N3PR_Data.REG_NAMES.Count(); j++)
+                    {
+                        MbData.Add(new MeasurePoint
+                        {
+                            Date = DateTime.Now,
+                            Reg_Name = N3PR_Data.REG_NAMES[j],
+                            data_type = N3PR_Data.REG_TYPES[j],
+                            unit = N3PR_Data.REG_MEASUNIT[j],
+                            val = (N3PR_Data.REG_TYPES[j] == N3PR_Data.BOOL) ? rnd.Next(1) : rnd.Next(5000)
+                        });
+                    }
+                }
+            }
+            Thread.Sleep(4000);
+#endif
         }
     }    
 }
