@@ -70,32 +70,34 @@ namespace TPIH.Gecco.WPF.Helpers
 
         public void AddSeries(PlotModel pM, IList<string> RegNames)
         {
-            if (DriverContainer.Driver.MbData != null)
+            // Lets make a local copy (thread safety)
+            IList<MeasurePoint> _mbData = DriverContainer.Driver.MbData;
+            if (_mbData != null)
             {
-                lock (DriverContainer.Driver.MbData)
+                if (RegNames != null)
                 {
-                    if (RegNames != null)
+                    if (RegNames.Count > 0)
                     {
-                        if (RegNames.Count > 0)
+                        pM.Series.Clear();
+                        pM.Annotations.Clear();
+                        foreach (string regName in RegNames)
                         {
-                            pM.Series.Clear();
-                            pM.Annotations.Clear();
-                            foreach (string regName in RegNames)
+                            if (regName != " ")
                             {
-                                if (regName != " ")
-                                {
-                                    var myPoints = DriverContainer.Driver.MbData.Where(x => x.Reg_Name == regName).ToList();
-                                    ShowPoints(myPoints, pM);
-                                }
+                                var myPoints = _mbData.Where(x => x.Reg_Name == regName).ToList();
+                                ShowPoints(myPoints, pM);
                             }
-                            pM.InvalidatePlot(true);
                         }
+                        pM.InvalidatePlot(true);
                     }
                 }
             }
         }
         public void ShowPoints(IList<MeasurePoint> points, PlotModel pM)
         {
+            // Let's make a local copy (thread safety)
+            IList<MeasurePoint> _mbAlarms = DriverContainer.Driver.MbAlarm;
+
             if (IsFileLoaded == Visibility.Visible)
             {
                 if (points != null && points.Any() && points.All(p => p != null))
@@ -109,13 +111,10 @@ namespace TPIH.Gecco.WPF.Helpers
                     // Annotate Alarms
                     if (_showAlarms)
                     {
-                        if (DriverContainer.Driver.MbAlarm != null)
+                        if (_mbAlarms != null)
                         {
-                            lock (DriverContainer.Driver.MbAlarm)
-                            {
-                                List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                                Plotter.ShowAnnotations(alarmNames, pM, true);
-                            }
+                            List<string> alarmNames = _mbAlarms.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                            Plotter.ShowAnnotations(alarmNames, _mbAlarms, pM, true);
                         }
                     }
                 }
@@ -214,6 +213,9 @@ namespace TPIH.Gecco.WPF.Helpers
 
         public void OnFlaggedAlarmMessageReceived(ItemCheckedEvent e)
         {
+            // Let's make a local copy (thread safety)
+            IList<MeasurePoint> _mbAlarms = DriverContainer.Driver.MbAlarm;
+
             if (e.value) // show annotations
             {
                 _showAlarms = true;
@@ -222,16 +224,13 @@ namespace TPIH.Gecco.WPF.Helpers
                 Plotter.ClearAnnotations(Plot01);
                 Plotter.ClearAnnotations(Plot10);
                 Plotter.ClearAnnotations(Plot11);
-                if (DriverContainer.Driver.MbAlarm != null)
+                if (_mbAlarms != null)
                 {
-                    lock (DriverContainer.Driver.MbAlarm)
-                    {
-                        List<string> alarmNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                        Plotter.ShowAnnotations(alarmNames, Plot00, true);
-                        Plotter.ShowAnnotations(alarmNames, Plot01, true);
-                        Plotter.ShowAnnotations(alarmNames, Plot10, true);
-                        Plotter.ShowAnnotations(alarmNames, Plot11, true);
-                    }
+                    List<string> alarmNames = _mbAlarms.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                    Plotter.ShowAnnotations(alarmNames, _mbAlarms, Plot00, true);
+                    Plotter.ShowAnnotations(alarmNames, _mbAlarms, Plot01, true);
+                    Plotter.ShowAnnotations(alarmNames, _mbAlarms, Plot10, true);
+                    Plotter.ShowAnnotations(alarmNames, _mbAlarms, Plot11, true);
                 }
             }
             else // unshow annotations

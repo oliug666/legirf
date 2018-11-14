@@ -331,14 +331,17 @@ namespace TPIH.Gecco.WPF.Drivers
                 {
 #if !DEMO
                     _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
+
                     _cmd = new MySqlCommand(selectQuery, _connection)
                     {
                         CommandTimeout = 60
                     };
                     _dataReader = _cmd.ExecuteReader();
                     // Parse data reader
-                    _allData = ParseDataReader(_dataReader);
+                    _allData = ParseDataReader(_dataReader);                    
                     _isRetrieving.Release(1);
+
+                    SortRetrievedData(_allData); // Sort query (data, alarms?)    
 #endif
                 }
                 catch (Exception)
@@ -348,8 +351,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     return false;
                 }
             }
-            
-            SortRetrievedData(_allData); // Sort query (data, alarms?)            
+                                
             DisposeDataReader(); // Dispose connection objects
             return true;
         }

@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Helpers;
+using TPIH.Gecco.WPF.Models;
 using TPIH.Gecco.WPF.Settings;
 
 namespace TPIH.Gecco.WPF.ViewModels
@@ -165,20 +166,19 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            if (DriverContainer.Driver.MbData != null)
+            // Lets make a local copy (thread safety)
+            IList<MeasurePoint> _mbData = DriverContainer.Driver.MbData;
+            if (_mbData != null)
             {
-                lock (DriverContainer.Driver.MbData)
+                if (_mbData.Count() != 0)
                 {
-                    if (DriverContainer.Driver.MbData.Count() != 0)
-                    {
-                        // There is some shit
-                        Status = "Data Retrieved: " + DriverContainer.Driver.MbData.Count().ToString() + " entries.";
-                    }
-                    else
-                    {
-                        // There is no shit
-                        Status = "No entries retrieved from database.";
-                    }
+                    // There is some shit
+                    Status = "Data Retrieved: " + _mbData.Count().ToString() + " entries.";
+                }
+                else
+                {
+                    // There is no shit
+                    Status = "No entries retrieved from database.";
                 }
             }
             GetDataIsEnabled = true;

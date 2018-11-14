@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Helpers;
+using TPIH.Gecco.WPF.Models;
 using TPIH.Gecco.WPF.Settings;
 
 namespace TPIH.Gecco.WPF.ViewModels
@@ -75,36 +76,33 @@ namespace TPIH.Gecco.WPF.ViewModels
                 for (int i= 0;i<LatestValues.Count; i++)
                     LatestValues[i] = "";
                 LastRefreshed = "";
+
+                LatestValuesEnabled = false;
             }
         }
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
-        {
-            if (DriverContainer.Driver.LatestData != null)
-            {
-                lock (DriverContainer.Driver.LatestData)
+        {            
+            // Let's make a local copy (for thread safety)
+            IList<MeasurePoint> _latestData = DriverContainer.Driver.LatestData;
+            LastRefreshed = "No entries retrieved from database.";
+            if (_latestData != null)
+            {                
+                if (_latestData.Count != 0)
                 {
-                    if (DriverContainer.Driver.LatestData.Count() != 0)
+                    // There is some shit
+                    LastRefreshed = _latestData[0].Date.ToString();
+                    // Fill the TextBox
+                    for (int i = 0; i < _latestData.Count(); i++)
                     {
-                        // There is some shit
-                        LastRefreshed = DriverContainer.Driver.LatestData[0].Date.ToString();
-                        // Fill the TextBox
-                        for (int i = 0; i < DriverContainer.Driver.LatestData.Count(); i++)
+                        int idx = N3PR_Data.REG_NAMES.IndexOf(_latestData[i].Reg_Name);
+                        if (idx != -1 && LatestValues.Count > 0)
                         {
-                            int idx = N3PR_Data.REG_NAMES.IndexOf(DriverContainer.Driver.LatestData[i].Reg_Name);
-                            if (idx != -1 && LatestValues.Count > 0)
-                            {
-                                double div_factor = Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
-                                LatestValues[idx] = (DriverContainer.Driver.LatestData[i].val).ToString();
-                            }
+                            double div_factor = Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idx], CultureInfo.InvariantCulture);
+                            LatestValues[idx] = (_latestData[i].val).ToString();
                         }
                     }
-                    else
-                    {
-                        // There is no shit
-                        LastRefreshed = "No entries retrieved from database.";
-                    }
-                }
+                }                
             }
 
             _loadLatestDataThread.Abort();

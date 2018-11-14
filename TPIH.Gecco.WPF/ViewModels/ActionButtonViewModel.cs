@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Helpers;
+using TPIH.Gecco.WPF.Models;
 
 namespace TPIH.Gecco.WPF.ViewModels
 {
@@ -67,22 +68,22 @@ namespace TPIH.Gecco.WPF.ViewModels
             List<bool> activeAlarmsFlags = new List<bool>();
             List<bool> activeWarningFlags = new List<bool>();
 
-            if (DriverContainer.Driver.MbAlarm != null)
+            // Let's make a local copy (thread safety)
+            IList<MeasurePoint> _mbAlarms = DriverContainer.Driver.MbAlarm;
+
+            if (_mbAlarms != null)
             {
-                lock (DriverContainer.Driver.MbAlarm)
+                // Distinct Values
+                List<string> uniqueRegNames = _mbAlarms.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                foreach (string sg in uniqueRegNames)
                 {
-                    // Distinct Values
-                    List<string> uniqueRegNames = DriverContainer.Driver.MbAlarm.Select(x => x.Reg_Name).ToList().Distinct().ToList();
-                    foreach (string sg in uniqueRegNames)
-                    {
-                        if (N3PR_Data.ALARM_NAMES.Contains(sg))
-                            alarmNames.Add(sg);
-                        else
-                            warningNames.Add(sg);
-                    }
-                    activeAlarmsFlags = Plotter.AreThereActiveAlarms(alarmNames);
-                    activeWarningFlags = Plotter.AreThereActiveAlarms(warningNames);
+                    if (N3PR_Data.ALARM_NAMES.Contains(sg))
+                        alarmNames.Add(sg);
+                    else
+                        warningNames.Add(sg);
                 }
+                activeAlarmsFlags = Plotter.AreThereActiveAlarms(alarmNames, _mbAlarms);
+                activeWarningFlags = Plotter.AreThereActiveAlarms(warningNames, _mbAlarms);
             }
 
             AlarmsActive = "Green";

@@ -53,7 +53,6 @@ namespace TPIH.Gecco.WPF.Helpers
                 }
             }
         }
-
         public static void ClearPoints(PlotModel wPlot)
         {
             if (wPlot.Series.Count != 0)
@@ -62,27 +61,24 @@ namespace TPIH.Gecco.WPF.Helpers
             }
         }
 
-        public static void ShowAnnotations(IList<string> alarmNames, PlotModel pM, bool description)
+        public static void ShowAnnotations(IList<string> alarmNames, IList<MeasurePoint> mbAlarms, PlotModel pM, bool description)
         {
-            if (DriverContainer.Driver.MbAlarm != null)
+            if (mbAlarms != null)
             {
-                lock (DriverContainer.Driver.MbAlarm)
+                if (alarmNames.Count > 0)
                 {
-                    if (alarmNames.Count > 0)
+                    // Annotate the plot just one time
+                    List<Annotation> Annotations = pM.Annotations.ToList();
+                    if (Annotations.Count == 0)
                     {
-                        // Annotate the plot just one time
-                        List<Annotation> Annotations = pM.Annotations.ToList();
-                        if (Annotations.Count == 0)
+                        foreach (string name in alarmNames)
                         {
-                            foreach (string name in alarmNames)
-                            {
-                                string annotationText = "";
-                                if (description)
-                                    annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_WARNING_NAMES.IndexOf(name)];
+                            string annotationText = "";
+                            if (description)
+                                annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_WARNING_NAMES.IndexOf(name)];
 
-                                ShowAlarms(pM, DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList(),
-                                annotationText);
-                            }
+                            ShowAlarms(pM, mbAlarms.Where(x => x.Reg_Name == name).ToList(),
+                            annotationText);
                         }
                     }
                 }
@@ -92,6 +88,17 @@ namespace TPIH.Gecco.WPF.Helpers
         public static void ClearAnnotations(PlotModel wPlot)
         {
             wPlot.Annotations.Clear();
+        }
+
+        public static void RefreshAnnotations(IList<MeasurePoint> mbAlarms, PlotModel pM, bool annotation)
+        {
+            // Refresh Annotations
+            if (mbAlarms != null)
+            {
+                ClearAnnotations(pM);
+                List<string> alarmNames = mbAlarms.Select(x => x.Reg_Name).ToList().Distinct().ToList();
+                ShowAnnotations(alarmNames, mbAlarms, pM, annotation);
+            }
         }
 
         private static void ShowAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation)
@@ -172,6 +179,19 @@ namespace TPIH.Gecco.WPF.Helpers
             }
         }
     
+        public static void RefreshSeries(IList<MeasurePoint> mbData, IList<Series> tbrSeries)
+        {
+            if (mbData != null)
+            {
+                foreach (Series tbrSerie in tbrSeries)
+                {
+                    var ls = (LineSeries)tbrSerie;
+                    var myPoints = mbData.Where(x => x.Reg_Name == ls.Title).ToList();
+                    AddPoints(ls, myPoints);
+                }
+            }           
+        }        
+
         private static void AddPoints(LineSeries ls, IList<MeasurePoint> myPoints)
         {
             if (myPoints != null && myPoints.Any() && myPoints.All(p => p != null))
@@ -184,7 +204,7 @@ namespace TPIH.Gecco.WPF.Helpers
             }
         }
 
-        public static List<bool> AreThereActiveAlarms(IList<string> alarmNames)
+        public static List<bool> AreThereActiveAlarms(IList<string> alarmNames, IList<MeasurePoint> mbAlarms)
         {
             List<bool> alarmActiveFlags = new List<bool>();
 
@@ -194,7 +214,7 @@ namespace TPIH.Gecco.WPF.Helpers
                 {
                     foreach (string sg in alarmNames)
                     {
-                        var aList = getAlarmListThreadSafe(sg);
+                        var aList = mbAlarms.Where(x => x.Reg_Name == sg).ToList();
                         if (aList != null)
                         {
                             // Find the latest date
@@ -209,19 +229,6 @@ namespace TPIH.Gecco.WPF.Helpers
             }
 
             return null;
-        }
-
-        private static List<MeasurePoint> getAlarmListThreadSafe(string name)
-        {
-            if (DriverContainer.Driver.MbAlarm != null)
-            {
-                lock (DriverContainer.Driver.MbAlarm)
-                {
-                    return DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
-                }
-            }
-
-            return null;
-        }
+        }        
     }
 }

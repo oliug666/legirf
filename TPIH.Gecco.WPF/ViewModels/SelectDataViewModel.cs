@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Helpers;
+using TPIH.Gecco.WPF.Models;
 
 namespace TPIH.Gecco.WPF.ViewModels
 {
@@ -30,30 +31,24 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            if (DriverContainer.Driver.MbData != null)
-            {
-                lock (DriverContainer.Driver.MbData)
-                {
-                    EnablePlottableObjects = false;
-                    if (DriverContainer.Driver.MbData != null)
-                        if (DriverContainer.Driver.MbData.Count() != 0)
-                            EnablePlottableObjects = true;
-                }
-            }
+            EnablePlottableObjects = false;
+            // Lets make a local copy (thread safety)
+            IList<MeasurePoint> _mbData = DriverContainer.Driver.MbData;
+            if (_mbData != null)
+            {                             
+                if (_mbData.Count() != 0)
+                    EnablePlottableObjects = true;
+            }                            
         }
 
         private void ConnectionStatusChangedEventHandler(object sender, System.EventArgs e)
         {
-            if (DriverContainer.Driver.IsConnected)
+            // Lets make a local copy (thread safety)
+            IList<MeasurePoint> _mbData = DriverContainer.Driver.MbData;
+            if (_mbData != null && DriverContainer.Driver.IsConnected)
             {
-                if (DriverContainer.Driver.MbData != null)
-                {
-                    lock (DriverContainer.Driver.MbData)
-                    {
-                        if (DriverContainer.Driver.MbData.Count() != 0)
-                            EnablePlottableObjects = true;
-                    }
-                }
+                if (_mbData.Count() != 0)
+                    EnablePlottableObjects = true;
             }
             else
             {
