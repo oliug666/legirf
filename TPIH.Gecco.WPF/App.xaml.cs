@@ -17,6 +17,11 @@ namespace TPIH.Gecco.WPF
     {
         void App_Startup(object sender, StartupEventArgs e)
         {
+            // Set language resource
+            ResourceDictionary dict = new ResourceDictionary();
+            dict.Source = new Uri(SharedResourceDictionary.dictionary, UriKind.Relative);
+            this.Resources.MergedDictionaries.Add(dict);
+
             if (File.Exists("system_config.csv"))
             {
                 List<string> n3pr_Names = new List<string>();

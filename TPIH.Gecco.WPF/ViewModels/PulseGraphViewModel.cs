@@ -1,26 +1,26 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Models;
-using TPIH.Gecco.WPF.Interfaces;
 using TPIH.Gecco.WPF.Helpers;
 using System.Windows.Input;
 using System.IO;
 using OfficeOpenXml;
 using System.Threading;
 using OxyPlot.Annotations;
+using System.Windows;
 
 namespace TPIH.Gecco.WPF.ViewModels
 {
     public class PulseGraphViewModel : ViewModelBase
     {
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
+
         private PlotModel _plot;
         private PlotModel _plotBool;
         private string _error, _status;
@@ -33,7 +33,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         public List<string> DataFormat { get { return _dataFormat; } set { _dataFormat = value; OnPropertyChanged(() => DataFormat); } }
         public int SelectedDataFormat { get { return _selectedDataFormat; } set { _selectedDataFormat = value; OnPropertyChanged(() => SelectedDataFormat); } }
         public string Status { get { return _status; } set { _status = value; OnPropertyChanged(() => Status); } }
-
+        
         public PlotModel Plot
         {
             get { return _plot; }
@@ -67,9 +67,9 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public PulseGraphViewModel()
         {
-            Plot = new PlotModel("N3PR Data");
+            Plot = new PlotModel(resourceDictionary["L_Graph1"] + "");
             Plot.Axes.Clear();
-            var axis1 = new DateTimeAxis(AxisPosition.Bottom, "Time")
+            var axis1 = new DateTimeAxis(AxisPosition.Bottom, resourceDictionary["L_TimeAxis"] + "")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",
@@ -82,7 +82,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 IsPanEnabled = false
             };
             Plot.Axes.Add(axis1);
-            Plot.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
+            Plot.Axes.Add(new LinearAxis(AxisPosition.Left, resourceDictionary["L_DataAxis"] + "")
             {
                 Key = Plotter.PRIMARY_AXIS,
                 MajorGridlineStyle = LineStyle.Solid,
@@ -103,7 +103,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 IsZoomEnabled = true
             });
 
-            PlotBool = new PlotModel("N3PR Logic Data");
+            PlotBool = new PlotModel(resourceDictionary["L_Graph2"] + "");
             PlotBool.Axes.Clear();
             var axis2 = new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
@@ -359,7 +359,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when creating Excel export thread."));
+                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error16"]));
                 }
             }
         }
@@ -434,7 +434,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when exporting Excel data."));
+                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error17"]));
                 if (fs != null)
                     fs.Close();
             }
@@ -462,7 +462,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when creating Csv export thread."));
+                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error18"]));
                 }
             }
         }
@@ -515,7 +515,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - Error when exporting Csv data."));
+                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error19"]));
                 if (fs != null)
                     fs.Close();
             }

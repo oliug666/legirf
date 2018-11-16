@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Models;
 
 namespace TPIH.Gecco.WPF.Helpers

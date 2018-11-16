@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Windows;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Helpers;
@@ -15,10 +14,12 @@ using TPIH.Gecco.WPF.Settings;
 namespace TPIH.Gecco.WPF.ViewModels
 {
     public class CurrentStatusViewModel : ViewModelBase
-    {
+    {        
+        private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
+
         private string _lastRefreshed;
         private Thread _loadLatestDataThread;
-        private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
         private ObservableCollection<string> _latestValues;
         private bool _latestValuesEnabled;
 
@@ -57,7 +58,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     }
                     catch (Exception e)
                     {
-                        GlobalCommands.ShowError.Execute(new Exception(e.Message+" - Error while creating latest data thread."));
+                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error10"]));
                     }
                     Thread.Sleep(30 * 1000);
                 }
@@ -85,7 +86,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         {            
             // Let's make a local copy (for thread safety)
             IList<MeasurePoint> _latestData = DriverContainer.Driver.LatestData;
-            LastRefreshed = "No entries retrieved from database.";
+            LastRefreshed = resourceDictionary["M_Error11"] + "";
             if (_latestData != null)
             {                
                 if (_latestData.Count != 0)

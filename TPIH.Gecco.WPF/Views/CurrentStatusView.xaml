@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0" Grid.ColumnSpan="2">
             <StackPanel Orientation="Horizontal"  DockPanel.Dock="Bottom">
-                <Label DockPanel.Dock="Bottom" Height="23" Content="Last Updated:"/>
+                <Label DockPanel.Dock="Bottom" Height="23" Content="{DynamicResource L_LastUpdated}"/>
                 <Label DockPanel.Dock="Bottom" Height="23" Content="{Binding LastRefreshed}"/>
             </StackPanel>
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">

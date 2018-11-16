@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO.Ports;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Net.Sockets;
 using MySql.Data.MySqlClient;
 using TPIH.Gecco.WPF.Interfaces;
 using TPIH.Gecco.WPF.Models;
-using System.Net;
 using System.Data;
 using TPIH.Gecco.WPF.Settings;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Helpers;
+using System.Windows;
 
 namespace TPIH.Gecco.WPF.Drivers
 {
     public class GeccoDriver : IGeccoDriver
     {
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
+
         private MySqlConnection _connection;
         private MySqlCommand _cmd;
         private MySqlDataReader _dataReader;
@@ -54,7 +53,6 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 else
                 {
-                    // GlobalCommands.ShowError.Execute(new Exception("Failed to retrieve data from server. Check network connection and try to re-connect."));
                     return null;
                 }
             }
@@ -71,7 +69,6 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 else
                 {
-                    // GlobalCommands.ShowError.Execute(new Exception("Failed to retrieve data from server. Check network connection and try to re-connect."));
                     return null;
                 }
             }
@@ -88,7 +85,6 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 else
                 {
-                    // GlobalCommands.ShowError.Execute(new Exception("Failed to retrieve data from server. Check network connection and try to re-connect."));
                     return null;
                 }
             }
@@ -132,11 +128,11 @@ namespace TPIH.Gecco.WPF.Drivers
                     switch (ex.Number)
                     {
                         case 0:
-                            Status = "Cannot connect to server.  Contact administrator";
+                            Status = resourceDictionary["M_Error4"] + "";
                             break;
 
                         case 1045:
-                            Status = "Invalid username/password, please try again";
+                            Status = resourceDictionary["M_Error5"] + "";
                             break;
                     }
                 }
@@ -221,7 +217,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find most recent date."));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error6"]));
                     _isRetrieving.Release(1);
                     DisposeDataReader();
                     DriverContainer.Driver.Disconnect();                    
@@ -243,7 +239,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrieve latest data."));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - "+ resourceDictionary["M_Error7"]));
                     _isRetrieving.Release(1);
                     DriverContainer.Driver.Disconnect();                    
                     return;
@@ -290,7 +286,7 @@ namespace TPIH.Gecco.WPF.Drivers
             // Read
             if (!ExecuteQuery(selectQuery))
             {
-                GlobalCommands.ShowError.Execute(new Exception("Error when trying to retrieve data from Last X days."));
+                GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error8"] + ""));
                 DriverContainer.Driver.Disconnect();
                 return;
             }            
@@ -312,7 +308,7 @@ namespace TPIH.Gecco.WPF.Drivers
             // Read
             if (!ExecuteQuery(selectQuery))            
             {
-                GlobalCommands.ShowError.Execute(new Exception("Error when trying to retrieve data from Calendar days."));
+                GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error9"] + ""));
                 DriverContainer.Driver.Disconnect();
                 return;
             }

@@ -25,8 +25,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <CheckBox Grid.Column="0" IsChecked="{Binding AlarmsEnabled.IsChecked}"></CheckBox>
-                <TextBlock Text="View Alarms" Grid.Column="1"></TextBlock>
-                <Button Content="P&amp;ID" Width="50" Grid.Column="3" Command="{Binding OpenPIDCommand}"></Button>
+                <TextBlock Text="{DynamicResource L_ViewAlarms}" Grid.Column="1"></TextBlock>
+                <Button Content="{DynamicResource B_PID}" Width="50" Grid.Column="3" Command="{Binding OpenPIDCommand}"></Button>
                 <Grid Grid.Row="1" Grid.ColumnSpan="5" Height="30">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
@@ -37,9 +37,9 @@
                         <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Alarms" VerticalAlignment="Center" Grid.Column="0"></TextBlock>
+                    <TextBlock Text="{DynamicResource L_Alarms}" VerticalAlignment="Center" Grid.Column="0"></TextBlock>
                     <Rectangle Width="30" Height="20" Grid.Column="2" HorizontalAlignment="Center" Stroke="Black" Fill="{Binding AlarmsActive}"/>
-                    <TextBlock Text="Warnings" VerticalAlignment="Center" Grid.Column="4"></TextBlock>
+                    <TextBlock Text="{DynamicResource L_Warnings}" VerticalAlignment="Center" Grid.Column="4"></TextBlock>
                     <Rectangle Width="30" Height="20" Grid.Column="6" HorizontalAlignment="Center" Stroke="Black" Fill="{Binding WarningsActive}"/>
                 </Grid>
             </Grid>

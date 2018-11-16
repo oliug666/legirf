@@ -133,11 +133,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\GlobalCommands.cs" />
     <Compile Include="Core\InvertConverter.cs" />
-    <Compile Include="CustomWindow.cs" />
-    <Compile Include="Drivers\CommandInfo.cs" />
     <Compile Include="Drivers\DriverContainer.cs" />
-    <Compile Include="Drivers\GeccoDriverArgs.cs" />
-    <Compile Include="Drivers\InfoEnum.cs" />
     <Compile Include="Helpers\CheckedAlarmItem.cs" />
     <Compile Include="Helpers\CheckedListItem.cs" />
     <Compile Include="Helpers\EventAggregator.cs" />
@@ -148,17 +144,13 @@
     <Compile Include="Helpers\Parser.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Helpers\Plotter.cs" />
-    <Compile Include="Helpers\PulseLogger.cs" />
+    <Compile Include="Helpers\SharedResourceDictionary.cs" />
+    <Compile Include="Helpers\TimeIntervalsConverter.cs" />
     <Compile Include="Helpers\TooltipAnnotation.cs" />
     <Compile Include="Interfaces\IGeccoDriver.cs" />
-    <Compile Include="Models\GeneratorErrorModel.cs" />
-    <Compile Include="Models\MeasurementCollection.cs" />
     <Compile Include="Models\MeasurePoint.cs" />
     <Compile Include="Core\MvvmExtensions.cs" />
     <Compile Include="Core\PlotModelExtensions.cs" />
-    <Compile Include="Models\PulseMeasurement.cs" />
-    <Compile Include="Models\PulseSummary.cs" />
-    <Compile Include="Models\TestSequence.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\GlobalSettings.cs" />
@@ -168,15 +160,12 @@
     <Compile Include="ViewModels\CurrentStatusViewModel.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\GetDataViewModel.cs" />
-    <Compile Include="ViewModels\LogViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\OverviewViewModel.cs" />
     <Compile Include="ViewModels\Overview2ViewModel.cs" />
-    <Compile Include="ViewModels\PopupViewModel.cs" />
     <Compile Include="ViewModels\PulseGraphViewModel.cs" />
     <Compile Include="ViewModels\SelectDataViewModel.cs" />
     <Compile Include="ViewModels\SetPropertiesViewModel.cs" />
-    <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\CurrentStatusView.xaml.cs">
       <DependentUpon>CurrentStatusView.xaml</DependentUpon>
@@ -189,9 +178,6 @@
     </Compile>
     <Compile Include="Views\GetDataView.xaml.cs">
       <DependentUpon>GetDataView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LogView.xaml.cs">
-      <DependentUpon>LogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OverviewView.xaml.cs">
       <DependentUpon>OverviewView.xaml</DependentUpon>
@@ -208,9 +194,14 @@
     <Compile Include="Views\SetPropertiesView.xaml.cs">
       <DependentUpon>SetPropertiesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StatusView.xaml.cs">
-      <DependentUpon>StatusView.xaml</DependentUpon>
-    </Compile>
+    <Page Include="Resources\StringResources-EN.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\StringResources-IT.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CurrentStatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -224,10 +215,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\GetDataView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\LogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -251,10 +238,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\StatusView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Resource Include="MainResource.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -268,7 +251,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drivers\GeccoDriver.cs" />
-    <Compile Include="Drivers\SideEnum.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

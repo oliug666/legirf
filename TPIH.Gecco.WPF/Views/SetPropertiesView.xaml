@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <StackPanel VerticalAlignment="Top" Height="23" HorizontalAlignment="Stretch" Background="{StaticResource ButtonGradientBrushBlueHover}">
-                <Label Content="Connection Properties" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Content="{DynamicResource H_ConnectionProperties}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </StackPanel>
             <Border BorderBrush="{StaticResource TetraDarkBlueBrush05}"  BorderThickness="1,0,1,1">
                 <Grid>
@@ -36,18 +36,18 @@
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0"  Content="DB Address:" />
+                    <Label Grid.Column="0"  Content="{DynamicResource L_DBAddress}" />
                     <TextBox Grid.Column="1" Height="23" Text="{Binding IPAddress, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}"/>
                     <ToggleButton Grid.Column="2" Height="24" Width="50" Command="{Binding ToggleConnectionCommand}" HorizontalAlignment="Center" Style="{StaticResource ConnectButtonStyle}" IsChecked="{Binding IsConnected, Mode=OneWay}"/>
-                    <Label Grid.Column="0" Grid.Row="1" Content="Port:" />
+                    <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource L_Port}" />
                     <TextBox Grid.Column="1" Grid.Row="1" Height="23" Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}"/>
-                    <Label Grid.Column="0" Grid.Row="2" Content="Database:" />
+                    <Label Grid.Column="0" Grid.Row="2" Content="{DynamicResource L_Database}" />
                     <TextBox Grid.Column="1" Grid.Row="2" Height="23" Text="{Binding DBname, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}"/>
-                    <Label Grid.Column="0" Grid.Row="3" Content="Table Name:" />
+                    <Label Grid.Column="0" Grid.Row="3" Content="{DynamicResource L_TableName}" />
                     <TextBox Grid.Column="1" Grid.Row="3" Height="23" Text="{Binding TableName, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}"/>
-                    <Label Grid.Column="0" Grid.Row="4" Content="Username:" />
+                    <Label Grid.Column="0" Grid.Row="4" Content="{DynamicResource L_Username}" />
                     <TextBox Grid.Column="1" Grid.Row="4" Height="23" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}"/>
-                    <Label Grid.Column="0" Grid.Row="5" Content="Password:" />
+                    <Label Grid.Column="0" Grid.Row="5" Content="{DynamicResource L_Password}" />
                     <PasswordBox w:PasswordHelper.Attach="True" 
                             w:PasswordHelper.Password="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}" Grid.Column="1" Grid.Row="5" Height="23"/>
                 </Grid>

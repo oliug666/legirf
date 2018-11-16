@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TPIH.Gecco.WPF.Annotations;
-using TPIH.Gecco.WPF.Interfaces;
+﻿using TPIH.Gecco.WPF.Interfaces;
 
 namespace TPIH.Gecco.WPF.Drivers
 {

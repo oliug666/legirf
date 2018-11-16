@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using TPIH.Gecco.WPF.Core;
@@ -15,10 +16,11 @@ namespace TPIH.Gecco.WPF.ViewModels
     class GetDataViewModel : ViewModelBase
     {
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
-        private List<string> _timeIntervals;
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
+
+        private List<int> _timeIntervals;
         private int _selectedTimeInterval;
 
-        private List<int> _lastDays;
         private string _status;
         private bool _isCalendarEnabled, _getDataCanExecute;
         private DateTime _to, _from;
@@ -28,14 +30,14 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public bool GetDataIsEnabled { get { return _getDataCanExecute; } set { _getDataCanExecute = value; OnPropertyChanged(() => GetDataIsEnabled); } } 
 
-        public List<string> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
+        public List<int> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
         public int SelectedTimeInterval
         {
             get { return _selectedTimeInterval; }
             set
             {
                 _selectedTimeInterval = value;
-                if (_timeIntervals[_selectedTimeInterval] == "Custom")
+                if (_timeIntervals[_selectedTimeInterval] == -1)
                     IsCalendarEnabled = true;
                 else
                     IsCalendarEnabled = false;
@@ -55,19 +57,12 @@ namespace TPIH.Gecco.WPF.ViewModels
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(OnConnectionStatusChangedEventHandler);
 
-            _lastDays = new List<int> { 2, 7, 15, 30, 60 };
-            TimeIntervals = new List<string>();
+            TimeIntervals = new List<int>() { 2, 7, 15, 30, 60, -1}; // -1 = Custom
 
             To = DateTime.Today;
             From = DateTime.Today.AddDays(-1);
             IsCalendarEnabled = false;
-
-            for (int i = 0; i < _lastDays.Count(); i++)
-            {
-                TimeIntervals.Add("Last " + _lastDays[i].ToString() + " days");
-            }
-            TimeIntervals.Add("Custom");            
-
+  
             SelectedTimeInterval = 0;
 
             // Auto get-data
@@ -103,7 +98,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             else
             {
                 GetDataIsEnabled = true;
-                if (_timeIntervals[_selectedTimeInterval] == "Custom")
+                if (_timeIntervals[_selectedTimeInterval] == -1)
                     IsCalendarEnabled = true;
                 else
                     IsCalendarEnabled = false;
@@ -135,13 +130,13 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     try
                     {
-                        Thread loadDataThread = new Thread(tt => DriverContainer.Driver.GetDataFromLastXDays(_settings.TableName, _lastDays[SelectedTimeInterval]));
+                        Thread loadDataThread = new Thread(tt => DriverContainer.Driver.GetDataFromLastXDays(_settings.TableName, _timeIntervals[_selectedTimeInterval]));
                         loadDataThread.IsBackground = true;
                         loadDataThread.Start();
                     }
                     catch (Exception e)
                     {
-                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error while creating Last X days retrieval thread."));
+                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error12"]));
                     }
                 }
                 else
@@ -154,13 +149,13 @@ namespace TPIH.Gecco.WPF.ViewModels
                     }
                     catch (Exception e)
                     {
-                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error while creating Calendar days retrieval thread."));
+                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error13"]));
                     }
                 }
             }
             else
             {
-                GlobalCommands.ShowError.Execute(new Exception("Failed to retrieve data from server. Check network connection and try to re-connect."));
+                GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error14"] + ""));
             }
         }
 
@@ -173,12 +168,12 @@ namespace TPIH.Gecco.WPF.ViewModels
                 if (_mbData.Count() != 0)
                 {
                     // There is some shit
-                    Status = "Data Retrieved: " + _mbData.Count().ToString() + " entries.";
+                    Status = resourceDictionary["L_DataRetrieved"] + ": " + _mbData.Count().ToString() + " " + resourceDictionary["L_Entries"] + ".";
                 }
                 else
                 {
                     // There is no shit
-                    Status = "No entries retrieved from database.";
+                    Status = resourceDictionary["M_Error11"] + "";
                 }
             }
             GetDataIsEnabled = true;
