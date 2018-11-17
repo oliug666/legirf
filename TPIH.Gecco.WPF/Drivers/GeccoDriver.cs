@@ -31,7 +31,7 @@ namespace TPIH.Gecco.WPF.Drivers
         private static IList<MeasurePoint> _mbData;
         private static IList<MeasurePoint> _mbAlarm;
         private static IList<MeasurePoint> _latestData;
-        private Semaphore _isRetrieving = new Semaphore(1,1);
+        private Semaphore _isRetrieving = new Semaphore(1, 1);
 
 #if !DEMO
         public bool IsConnected { get { return (_connection != null && (_connection.State == ConnectionState.Open)); } }
@@ -121,6 +121,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 try
                 {
                     _connection.Open();
+                    _isRetrieving = new Semaphore(1, 1);
                 }
                 catch (MySqlException ex)
                 {
@@ -152,8 +153,7 @@ namespace TPIH.Gecco.WPF.Drivers
         public void Disconnect()
         {           
             if (IsConnected)
-            {
-                _isRetrieving.WaitOne();
+            {                
 #if !DEMO
                 try
                 {
@@ -165,20 +165,22 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
 #else
                 _isConnected = false;
-#endif
-                if (MbData != null)
-                    lock (MbData)
-                        MbData.Clear();
-                if (MbAlarm != null)
-                    lock (MbAlarm)
-                        MbAlarm.Clear();
-                if (LatestData != null)
-                    lock (LatestData)
-                        LatestData.Clear();
-
-                _isRetrieving.Release(1);
+#endif                                
             }
-          
+
+            if (MbData != null)
+                lock (MbData)
+                    MbData.Clear();
+            if (MbAlarm != null)
+                lock (MbAlarm)
+                    MbAlarm.Clear();
+            if (LatestData != null)
+                lock (LatestData)
+                    LatestData.Clear();
+
+            if (_isRetrieving != null)
+                _isRetrieving.Close();
+
             OnConnectionStatusChanged?.Invoke(this, null);
         }
 
@@ -201,12 +203,12 @@ namespace TPIH.Gecco.WPF.Drivers
         {
             DateTime LatestDate = new DateTime();
             Thread.Sleep(1000);
-
-            _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
+            
             _dataReader = null;
 
             if (IsConnected)
             {
+                _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
 #if !DEMO
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
@@ -221,8 +223,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find most recent date."));
-                    _isRetrieving.Release(1);
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find most recent date."));                    
                     DisposeDataReader();
                     DriverContainer.Driver.Disconnect();                    
                     return;
@@ -244,14 +245,14 @@ namespace TPIH.Gecco.WPF.Drivers
                 catch (Exception e)
                 {
                     GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrieve latest data."));
-                    _isRetrieving.Release(1);
+                    DisposeDataReader();
                     DriverContainer.Driver.Disconnect();                    
                     return;
                 }
             }
-
-            _isRetrieving.Release(1);
+            
             DisposeDataReader();
+            _isRetrieving.Release(1);
 #else
                 LatestData = new List<MeasurePoint>();
                 for (int i = 0; i < N3PR_Data.REG_NAMES.Count(); i++)
@@ -338,22 +339,22 @@ namespace TPIH.Gecco.WPF.Drivers
                     };
                     _dataReader = _cmd.ExecuteReader();
                     // Parse data reader
-                    _allData = ParseDataReader(_dataReader);                    
-                    _isRetrieving.Release(1);
-
+                    _allData = ParseDataReader(_dataReader);
                     SortRetrievedData(_allData); // Sort query (data, alarms?)    
+                    DisposeDataReader(); // Dispose connection objects
+
+                    _isRetrieving.Release(1);
+                    return true;
 #endif
                 }
                 catch (Exception)
                 {
-                    _isRetrieving.Release(1);
-                    DisposeDataReader(); // Dispose connection objects                   
+                    DisposeDataReader(); // Dispose connection objects 
                     return false;
                 }
             }
-                                
-            DisposeDataReader(); // Dispose connection objects
-            return true;
+            else
+                return false;                                            
         }
 
         private List<MeasurePoint> ParseDataReader(IDataReader _dataReader)
@@ -456,6 +457,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 // data
                 lock (MbData)
                 {
+                    MbData.Clear();
                     foreach (MeasurePoint _mbp in aData)
                     {
                         if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
@@ -464,6 +466,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 lock (MbAlarm)
                 {
+                    MbAlarm.Clear();
                     // alarms
                     foreach (MeasurePoint _mbp in aData)
                     {
