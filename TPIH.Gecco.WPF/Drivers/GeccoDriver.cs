@@ -20,8 +20,6 @@ namespace TPIH.Gecco.WPF.Drivers
         private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
 
         private MySqlConnection _connection;
-        private MySqlCommand _cmd;
-        private MySqlDataReader _dataReader;
 
 #if DEMO
         private Random rnd = new Random();
@@ -147,13 +145,13 @@ namespace TPIH.Gecco.WPF.Drivers
 
         //Close connection
         public void Disconnect()
-        {           
+        {
             if (IsConnected)
             {
 #if !DEMO
                 try
                 {
-                    _connection.Close();                    
+                    _connection.Close();
                 }
                 catch (MySqlException ex)
                 {
@@ -164,19 +162,19 @@ namespace TPIH.Gecco.WPF.Drivers
 #endif
             }
 
-                if (MbData != null)
-                    lock (MbData)
-                        MbData.Clear();
-                if (MbAlarm != null)
-                    lock (MbAlarm)
-                        MbAlarm.Clear();
-                if (LatestData != null)
-                    lock (LatestData)
-                        LatestData.Clear();
+            if (MbData != null)
+                lock (MbData)
+                    MbData.Clear();
+            if (MbAlarm != null)
+                lock (MbAlarm)
+                    MbAlarm.Clear();
+            if (LatestData != null)
+                lock (LatestData)
+                    LatestData.Clear();
 
             if (_isRetrieving != null)
                 _isRetrieving.Close();
-          
+
             OnConnectionStatusChanged?.Invoke(this, null);
         }
 
@@ -200,8 +198,6 @@ namespace TPIH.Gecco.WPF.Drivers
             DateTime LatestDate = new DateTime();
             Thread.Sleep(1000);
 
-            _dataReader = null;
-
             if (IsConnected)
             {
                 _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
@@ -210,44 +206,40 @@ namespace TPIH.Gecco.WPF.Drivers
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
                 try
                 {
-                    _cmd = new MySqlCommand(dateQuery, _connection)
+                    using (MySqlCommand msqlcommand = new MySqlCommand(dateQuery, _connection) { CommandTimeout = 60 })
                     {
-                        CommandTimeout = 60
-                    };
-                    var date = _cmd.ExecuteScalar();                    
-                    LatestDate = ParseDate(date + "");                    
+                        var mdate = msqlcommand.ExecuteScalar();
+                        LatestDate = ParseDate(mdate + "");
+                    }                               
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to find most recent date."));                    
-                    DisposeDataReader();
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error6"]));
                     DriverContainer.Driver.Disconnect();                    
                     return;
                 }
-                _cmd.Dispose();
 
                 string selectQuery = "SELECT * FROM " + tableName + " WHERE " + tableName + "." + N3PR_DB.DATE
                     + " >= '" + LatestDate.AddSeconds(-10).ToString(N3PR_Data.DATA_FORMAT) + "'";
                 try
                 {
-                    _cmd = new MySqlCommand(selectQuery, _connection)
+                    using (MySqlCommand msqlcommand = new MySqlCommand(selectQuery, _connection) { CommandTimeout = 60 })
                     {
-                        CommandTimeout = 60
-                    };
-                    _dataReader = _cmd.ExecuteReader();
-                    lock (LatestData)
-                        LatestData = ParseDataReader(_dataReader);
+                        using (MySqlDataReader msqldatareader = msqlcommand.ExecuteReader())
+                        {
+                            lock (LatestData)
+                                LatestData = ParseDataReader(msqldatareader);
+                        }
+                    }                    
                 }
                 catch (Exception e)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to retrieve latest data."));
-                    DisposeDataReader();
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error7"]));
                     DriverContainer.Driver.Disconnect();                    
                     return;
                 }
             }
 
-            DisposeDataReader();
             _isRetrieving.Release(1);
 #else
                 LatestData = new List<MeasurePoint>();
@@ -271,9 +263,6 @@ namespace TPIH.Gecco.WPF.Drivers
 
         public void GetDataFromLastXDays(string tableName, int lastDays)
         {
-            _cmd = new MySqlCommand();
-            _dataReader = null;            
-
             // Get day today and calculate time interval
             DateTime right_now = DateTime.Now;
             string right_now_s = right_now.ToString(N3PR_Data.DATA_FORMAT);
@@ -298,9 +287,6 @@ namespace TPIH.Gecco.WPF.Drivers
 
         public void GetDataFromCalendarDays(string tableName, DateTime From, DateTime To)
         {
-            _cmd = new MySqlCommand();
-            _dataReader = null;            
-
             // Create query     
             string selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
                 " BETWEEN '" + From.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + 
@@ -329,15 +315,15 @@ namespace TPIH.Gecco.WPF.Drivers
 #if !DEMO
                     _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
 
-                    _cmd = new MySqlCommand(selectQuery, _connection)
+                    using (MySqlCommand msqlcmd = new MySqlCommand(selectQuery, _connection) { CommandTimeout = 60 })
                     {
-                        CommandTimeout = 60
-                    };
-                    _dataReader = _cmd.ExecuteReader();
-                    // Parse data reader
-                    _allData = ParseDataReader(_dataReader);                    
-                    SortRetrievedData(_allData); // Sort query (data, alarms?)    
-                    DisposeDataReader(); // Dispose connection objects
+                        using (MySqlDataReader msqldatareader = msqlcmd.ExecuteReader())
+                        {
+                            // Parse data reader
+                            _allData = ParseDataReader(msqldatareader);
+                            SortRetrievedData(_allData); // Sort query (data, alarms?)    
+                        }
+                    }
 
                     _isRetrieving.Release(1);
                     return true;
@@ -345,7 +331,6 @@ namespace TPIH.Gecco.WPF.Drivers
                 }
                 catch (Exception)
                 {
-                    DisposeDataReader(); // Dispose connection objects                   
                     return false;
                 }
             }
@@ -431,18 +416,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     System.Globalization.CultureInfo.CurrentCulture);
             }
             return ParsedDate;
-        }
-        
-        private void DisposeDataReader()
-        {
-            _cmd.Dispose();
-            if (_dataReader != null)
-            {
-                _dataReader.Close();
-                _dataReader.Dispose();
-                _dataReader = null;
-            }            
-        }
+        }               
 
         private void SortRetrievedData(List<MeasurePoint> aData)
         {
