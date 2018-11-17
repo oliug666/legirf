@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TPIH.Gecco.WPF.ViewModels;
+﻿using TPIH.Gecco.WPF.ViewModels;
 
 namespace TPIH.Gecco.WPF.Helpers
 {

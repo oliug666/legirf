@@ -7,14 +7,16 @@ using System.Windows;
 using System.Windows.Input;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
+using TPIH.Gecco.WPF.Helpers;
 
 namespace TPIH.Gecco.WPF.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
+
         private string _versionNr, _connectionStatusColor;
         private bool _isErrorVisible;        
-
         public bool IsErrorVisible
         {
             get { return _isErrorVisible; }
@@ -62,7 +64,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception e)
             {
-                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to close application."));
+                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error15"]));
             }
         }
 
@@ -80,7 +82,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             // Display version
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             // Version increases each day, since 10/10/2018
-            VersionNr = "Version: " + $"{version.Major}.{version.MajorRevision}.{version.Build}";
+            VersionNr = $"{version.Major}.{version.MajorRevision}.{version.Build}";
 
             CloseErrorCommand = new DelegateCommand(param =>
             {

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -15,6 +12,7 @@ namespace TPIH.Gecco.WPF.Helpers
     public class MultiPlotViewModel : ViewModelBase
     {
         private bool _showAlarms = true;
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
 
         public List<string> RegNames00, RegNames01, RegNames10, RegNames11;
         public List<string> RegDescriptions00, RegDescriptions01, RegDescriptions10, RegDescriptions11;
@@ -173,7 +171,7 @@ namespace TPIH.Gecco.WPF.Helpers
                 return null;
 
             pM.Axes.Clear();
-            pM.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, "Time")
+            pM.Axes.Add(new DateTimeAxis(AxisPosition.Bottom, resourceDictionary["L_TimeAxis"] + "")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",
@@ -185,7 +183,7 @@ namespace TPIH.Gecco.WPF.Helpers
                 MinorGridlineStyle = LineStyle.None,
                 IsPanEnabled = false
             });
-            pM.Axes.Add(new LinearAxis(AxisPosition.Left, "Data")
+            pM.Axes.Add(new LinearAxis(AxisPosition.Left, resourceDictionary["L_DataAxis"] + "")
             {
                 Key = "Primary",
                 MajorGridlineStyle = LineStyle.Solid,

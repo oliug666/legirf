@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO.Ports;
-using System.Linq;
-using System.Net.Configuration;
-using System.Text;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using TPIH.Gecco.WPF.Annotations;
 using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
+using TPIH.Gecco.WPF.Helpers;
 using TPIH.Gecco.WPF.Settings;
 
 namespace TPIH.Gecco.WPF.ViewModels
@@ -20,6 +12,7 @@ namespace TPIH.Gecco.WPF.ViewModels
     public class SetPropertiesViewModel : ViewModelBase
     {
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
         private string _ipaddress, _port, _dbname, _tablename, _username, _password;
         
         public string IPAddress
@@ -164,18 +157,18 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 IsPropertiesEnabled = false;
                 OnPropertyChanged(() => IsConnected);
-                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to connect to SQL database."));
+                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error3"]));
             }
 
             if (!DriverContainer.Driver.IsConnected)
             { 
-                GlobalCommands.ShowError.Execute(new Exception("Failed to connect to server. Check network connection and server properties."));
+                GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error2"] + ""));
             }
         }
 
         private void Disconnect()
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Close connection to DB?", "Closing Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(resourceDictionary["D_Closing"]+"", resourceDictionary["D_H_Closing"] + "", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 try
@@ -187,7 +180,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 catch (Exception e)
                 {
                     IsPropertiesEnabled = false;
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - Error when trying to disconnect from SQL server."));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error1"]));
                 }
             }            
         }

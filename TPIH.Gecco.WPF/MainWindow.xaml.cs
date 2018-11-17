@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TPIH.Gecco.WPF.Helpers;
 using TPIH.Gecco.WPF.ViewModels;
 
 namespace TPIH.Gecco.WPF
@@ -21,6 +22,7 @@ namespace TPIH.Gecco.WPF
     public partial class MainWindow : Window
     {
         private MainWindowViewModel _mainViewModel;
+        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
 
         public MainWindow()
         {
@@ -43,7 +45,7 @@ namespace TPIH.Gecco.WPF
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure? If there is an open connection it will be closed.", "Closing Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(resourceDictionary["D_ClosingWindow"] + "", resourceDictionary["D_H_Closing"] + "", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 // Signal write to view-model

@@ -12,7 +12,7 @@
     </UserControl.DataContext>
     <StackPanel>
         <StackPanel VerticalAlignment="Top" Height="23" HorizontalAlignment="Stretch" Background="{StaticResource ButtonGradientBrushBlueHover}">
-            <Label Content="Select Data" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Label Content="{DynamicResource H_SelectData}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </StackPanel>
         <Border BorderBrush="{StaticResource TetraDarkBlueBrush05}"  BorderThickness="1,0,1,1">
             <Grid IsSharedSizeScope="True">

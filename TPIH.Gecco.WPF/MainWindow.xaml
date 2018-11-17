@@ -96,7 +96,7 @@
             </StackPanel>
         </Grid>
         <TabControl Grid.Column="0" Grid.Row="1" Margin="10,0,5,5" Background="Transparent" IsEnabled="{Binding IsErrorVisible, Converter={StaticResource InvertConverter }}">
-            <TabItem Header="MODBUS_Viewer">
+            <TabItem Header="{DynamicResource T_Viewer}">
                 <StackPanel>
                     <!-- <views:LogView Margin="0 5 0 0"></views:LogView> -->                    
                     <views:GetDataView />
@@ -105,36 +105,42 @@
                     <views:ActionButtonView/>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Connection Properties">
+            <TabItem Header="{DynamicResource T_ConnectionProperties}">
                 <StackPanel>
                     <views:SetPropertiesView/>
                 </StackPanel>
             </TabItem>
         </TabControl>
         <TabControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Margin="10,0,5,5" Background="Transparent" IsEnabled="{Binding IsErrorVisible, Converter={StaticResource InvertConverter }}">
-            <TabItem Header="Overview" Visibility="{Binding IsTab1Visible}">
+            <TabItem Header="{DynamicResource T_Overview}" Visibility="{Binding IsTab1Visible}">
                 <views:OverviewView DataContext="{Binding OverviewVM}"/>
             </TabItem>
-            <TabItem Header="Overview2" Visibility="{Binding IsTab2Visible}">
+            <TabItem Header="{DynamicResource T_Overview2}" Visibility="{Binding IsTab2Visible}">
                 <views:OverviewView DataContext="{Binding Overview2VM}"/>
             </TabItem>
-            <TabItem Header="Graph">
+            <TabItem Header="{DynamicResource T_Graph}">
                 <views:PulseGraphView DataContext="{StaticResource sharedPulseGraphViewModel}"/>
             </TabItem>
-            <TabItem Header="Current Status">
+            <TabItem Header="{DynamicResource T_CurrentStatus}">
                 <views:CurrentStatusView/>
             </TabItem>
         </TabControl>
         <Image Grid.Column="0" Grid.Row="2" Source="Resources/Frigel.png" Height="80"></Image>
         <Grid Grid.Column="0" Grid.Row="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Width="138" Margin="12,0,0,0" HorizontalAlignment="Left" Grid.Column="0" Text="{Binding VersionNr}"></TextBlock>
-            <TextBlock HorizontalAlignment="Left" Grid.Column="1" Text="Connection: "></TextBlock>
-            <Ellipse Width="15" Height="15" Grid.Column="2" Fill="{Binding ConnectionStatusColor}"/>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="1" Text="{DynamicResource L_Version}"></TextBlock>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="3" Text="{Binding VersionNr}"></TextBlock>
+            <TextBlock HorizontalAlignment="Left" Grid.Column="5" Text="{DynamicResource L_Connection}"></TextBlock>
+            <Ellipse Width="15" Height="15" Grid.Column="7" Fill="{Binding ConnectionStatusColor}"/>
         </Grid>
         <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Grid.Column="0" Opacity="50" Background="Transparent" Visibility="{Binding IsErrorVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
             <Grid.RowDefinitions>

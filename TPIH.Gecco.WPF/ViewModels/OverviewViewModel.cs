@@ -1,18 +1,8 @@
-﻿using OxyPlot;
-using OxyPlot.Annotations;
-using OxyPlot.Axes;
-using OxyPlot.Series;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
 using System.Xml.Linq;
-using TPIH.Gecco.WPF.Core;
 using TPIH.Gecco.WPF.Drivers;
 using TPIH.Gecco.WPF.Helpers;
-using TPIH.Gecco.WPF.Models;
 
 namespace TPIH.Gecco.WPF.ViewModels
 {
