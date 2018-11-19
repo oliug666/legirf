@@ -1,0 +1,72 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:local="clr-namespace:TPIH.Gecco.WPF.Resources">
+    <!--TAB names-->
+    <system:String x:Key="T_Viewer">Viewer</system:String>
+    <system:String x:Key="T_ConnectionProperties">Connection Properties</system:String>
+    <system:String x:Key="T_Overview">Overview</system:String>
+    <system:String x:Key="T_Overview2">Overview - 2</system:String>
+    <system:String x:Key="T_Graph">Graph</system:String>
+    <system:String x:Key="T_CurrentStatus">Current Status</system:String>
+    <!--Header names-->
+    <system:String x:Key="H_TimeIntervals">Time Interval</system:String>
+    <system:String x:Key="H_SelectData">Select Data</system:String>
+    <system:String x:Key="H_ExportData">Export Data</system:String>
+    <system:String x:Key="H_ConnectionProperties">Connection Properties</system:String>
+    <!--Text Labels-->
+    <system:String x:Key="L_TimeSpan">Time Span</system:String>
+    <system:String x:Key="L_From">From</system:String>
+    <system:String x:Key="L_To">To</system:String>
+    <system:String x:Key="L_Status">Status</system:String>
+    <system:String x:Key="L_ViewAlarms">View Alarms</system:String>
+    <system:String x:Key="L_Alarms">Alarms</system:String>
+    <system:String x:Key="L_Warnings">Warnings</system:String>
+    <system:String x:Key="L_DBAddress">DB Address</system:String>
+    <system:String x:Key="L_Port">Port</system:String>
+    <system:String x:Key="L_Database">Database</system:String>
+    <system:String x:Key="L_TableName">Table Name</system:String>
+    <system:String x:Key="L_Username">Username</system:String>
+    <system:String x:Key="L_Password">Password</system:String>
+    <system:String x:Key="L_Connection">Connection</system:String>
+    <system:String x:Key="L_LastUpdated">Last Updated</system:String>
+    <system:String x:Key="L_Version">Version</system:String>
+    <system:String x:Key="L_ComboBox_Custom">Custom</system:String>
+    <system:String x:Key="L_ComboBox_Days">days</system:String>
+    <system:String x:Key="L_ComboBox_Last">Last</system:String>
+    <system:String x:Key="L_TimeAxis">Time</system:String>
+    <system:String x:Key="L_DataAxis">Data</system:String>
+    <system:String x:Key="L_DataRetrieved">Data Retrieved</system:String>
+    <system:String x:Key="L_Entries">entries</system:String>
+    <system:String x:Key="L_Graph1">N3PR Data</system:String>
+    <system:String x:Key="L_Graph2">N3PR Logic Data</system:String>
+    <!--Buttons-->
+    <system:String x:Key="B_GetData">Get Data</system:String>
+    <system:String x:Key="B_Export">Export</system:String>
+    <system:String x:Key="B_PID">P&amp;ID</system:String>
+    <!--Messages-->
+    <system:String x:Key="M_Error1">Error when trying to disconnect from SQL server</system:String>
+    <system:String x:Key="M_Error2">Failed to connect to server. Check network connection and server properties</system:String>
+    <system:String x:Key="M_Error3">Error when trying to connect to SQL server</system:String>
+    <system:String x:Key="M_Error4">Cannot connect to server.  Contact administrator</system:String>
+    <system:String x:Key="M_Error5">Invalid username/password, please try again</system:String>
+    <system:String x:Key="M_Error6">Error when trying to find most recent date</system:String>
+    <system:String x:Key="M_Error7">Error when trying to retrieve latest data</system:String>
+    <system:String x:Key="M_Error8">Error when trying to retrieve data from Last X days</system:String>
+    <system:String x:Key="M_Error9">Error when trying to retrieve data from Calendar days</system:String>
+    <system:String x:Key="M_Error10">Error while creating latest data thread</system:String>
+    <system:String x:Key="M_Error11">No entries retrieved from database</system:String>
+    <system:String x:Key="M_Error12">Error while creating Last X days retrieval thread</system:String>
+    <system:String x:Key="M_Error13">Error while creating Calendar days retrieval thread</system:String>
+    <system:String x:Key="M_Error14">Failed to retrieve data from server. Check network connection and try to re-connect</system:String>
+    <system:String x:Key="M_Error15">Error when trying to close application</system:String>
+    <system:String x:Key="M_Error16">Error when creating Excel export thread</system:String>
+    <system:String x:Key="M_Error17">Error when exporting Excel data</system:String>
+    <system:String x:Key="M_Error18">Error when creating Csv export thread</system:String>
+    <system:String x:Key="M_Error19">Error when exporting Csv data</system:String>
+    <!--Dialogs-->
+    <system:String x:Key="D_Closing">Close connection to DB?</system:String>
+    <system:String x:Key="D_ClosingWindow">Are you sure? If there is an open connection it will be closed.</system:String>
+    <!--Dialogs Headers-->
+    <system:String x:Key="D_H_Closing">Closing Confirmation</system:String>
+</ResourceDictionary>

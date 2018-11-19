@@ -1,0 +1,72 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:local="clr-namespace:TPIH.Gecco.WPF.Resources">
+    <!--TAB names-->
+    <system:String x:Key="T_Viewer">Viewer</system:String>
+    <system:String x:Key="T_ConnectionProperties">Configurazione Connessione</system:String>
+    <system:String x:Key="T_Overview">Overview</system:String>
+    <system:String x:Key="T_Overview2">Overview - 2</system:String>
+    <system:String x:Key="T_Graph">Grafici</system:String>
+    <system:String x:Key="T_CurrentStatus">Stato Corrente</system:String>
+    <!--Header names-->
+    <system:String x:Key="H_TimeIntervals">Intervallo Temporale</system:String>
+    <system:String x:Key="H_SelectData">Selezione Dati</system:String>
+    <system:String x:Key="H_ExportData">Esporta Dati</system:String>
+    <system:String x:Key="H_ConnectionProperties">Proprietà Connessione</system:String>
+    <!--Text Labels-->
+    <system:String x:Key="L_TimeSpan">Intervallo</system:String>
+    <system:String x:Key="L_From">Da</system:String>
+    <system:String x:Key="L_To">A</system:String>
+    <system:String x:Key="L_Status">Stato</system:String>
+    <system:String x:Key="L_ViewAlarms">Mostra Allarmi</system:String>
+    <system:String x:Key="L_Alarms">Allarmi</system:String>
+    <system:String x:Key="L_Warnings">Warnings</system:String>
+    <system:String x:Key="L_DBAddress">Indirizzo DB</system:String>
+    <system:String x:Key="L_Port">Porta</system:String>
+    <system:String x:Key="L_Database">Database</system:String>
+    <system:String x:Key="L_TableName">Nome Tabella</system:String>
+    <system:String x:Key="L_Username">Utente</system:String>
+    <system:String x:Key="L_Password">Password</system:String>
+    <system:String x:Key="L_Connection">Connessione</system:String>
+    <system:String x:Key="L_LastUpdated">Ultimo aggiornameto</system:String>
+    <system:String x:Key="L_Version">Versione</system:String>
+    <system:String x:Key="L_ComboBox_Custom">Custom</system:String>
+    <system:String x:Key="L_ComboBox_Days">giorni</system:String>
+    <system:String x:Key="L_ComboBox_Last">Ultimi</system:String>
+    <system:String x:Key="L_TimeAxis">Data</system:String>
+    <system:String x:Key="L_DataAxis">Valore</system:String>
+    <system:String x:Key="L_DataRetrieved">Dati Recuperati</system:String>
+    <system:String x:Key="L_Entries">valori</system:String>
+    <system:String x:Key="L_Graph1">Dati N3PR</system:String>
+    <system:String x:Key="L_Graph2">Dati Logici N3PR</system:String>
+    <!--Buttons-->
+    <system:String x:Key="B_GetData">Scarica Dati</system:String>
+    <system:String x:Key="B_Export">Esporta</system:String>
+    <system:String x:Key="B_PID">P&amp;ID</system:String>
+    <!--Messages-->
+    <system:String x:Key="M_Error1">Errore durante il tentativo di disconnessione dal server SQL</system:String>
+    <system:String x:Key="M_Error2">Impossibile connettersi al server. Verifica la connessione di rete e le proprietà del server</system:String>
+    <system:String x:Key="M_Error3">Errore durante il tentativo di connessione al server SQL</system:String>
+    <system:String x:Key="M_Error4">Impossibile connettersi al server. Contatta l'amministratore</system:String>
+    <system:String x:Key="M_Error5">Nome utente / password non validi, riprovare</system:String>
+    <system:String x:Key="M_Error6">Errore durante il tentativo di trovare la data più recente</system:String>
+    <system:String x:Key="M_Error7">Errore durante il tentativo di recupero dei dati più recenti</system:String>
+    <system:String x:Key="M_Error8">Errore durante il tentativo di recupero dei dati dagli ultimi X giorni</system:String>
+    <system:String x:Key="M_Error9">Errore durante il tentativo di recupero dei dati dai giorni di calendario</system:String>
+    <system:String x:Key="M_Error10">Errore durante la creazione del thread di dati più recente</system:String>
+    <system:String x:Key="M_Error11">Nessuna voce recuperata dal database</system:String>
+    <system:String x:Key="M_Error12">Errore durante la creazione del thread di recupero degli ultimi X giorni</system:String>
+    <system:String x:Key="M_Error13">Errore durante la creazione del thread di recupero dei giorni di calendario</system:String>
+    <system:String x:Key="M_Error14">Impossibile recuperare i dati dal server. Verifica la connessione di rete e prova a riconnetterti</system:String>
+    <system:String x:Key="M_Error15">Errore durante il tentativo di chiusura dell'applicazione</system:String>
+    <system:String x:Key="M_Error16">Errore durante la creazione del thread di esportazione Excel</system:String>
+    <system:String x:Key="M_Error17">Errore durante l'esportazione dei dati Excel</system:String>
+    <system:String x:Key="M_Error18">Errore durante la creazione del thread di esportazione CSV</system:String>
+    <system:String x:Key="M_Error19">Errore durante l'esportazione dei dati Csv</system:String>
+    <!--Dialogs-->
+    <system:String x:Key="D_Closing">Interrompere comunicazione con DB?</system:String>
+    <system:String x:Key="D_ClosingWindow">Siete sicuri? In caso ci sia una connessione aperta questa verrà chiusa</system:String>
+    <!--Dialogs Headers-->
+    <system:String x:Key="D_H_Closing">Conferma chiusura</system:String>
+</ResourceDictionary>

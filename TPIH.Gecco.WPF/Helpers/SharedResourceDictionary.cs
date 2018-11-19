@@ -5,10 +5,10 @@ namespace TPIH.Gecco.WPF.Helpers
 {
     public static class SharedResourceDictionary
     {
-        private static string language = "EN";
+        public static string language = "EN";
 
-        public static string dictionary_IT = "..\\Resources\\StringResources-IT.xaml";
-        public static string dictionary_EN = "..\\Resources\\StringResources-EN.xaml";
+        public static string dictionary_IT = "..\\Resources\\Resources.it-IT.xaml";
+        public static string dictionary_EN = "..\\Resources\\Resources.en-US.xaml";
 
         public static string dictionary
         {
@@ -50,6 +50,12 @@ namespace TPIH.Gecco.WPF.Helpers
                 return _sharedDictionary;
             }
         }
+
+        public static void ChangeLocalization(string loc)
+        {
+            language = loc;
+        }
+
         private static ResourceDictionary _sharedDictionary;
     }
 }
