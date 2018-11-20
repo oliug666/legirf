@@ -38,7 +38,7 @@
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0"  Content="{DynamicResource L_DBAddress}" />
                     <TextBox Grid.Column="1" Height="23" Text="{Binding IPAddress, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}"/>
-                    <ToggleButton Grid.Column="2" Height="24" Width="50" Command="{Binding ToggleConnectionCommand}" HorizontalAlignment="Center" Style="{StaticResource ConnectButtonStyle}" IsChecked="{Binding IsConnected, Mode=OneWay}"/>
+                    <ToggleButton Grid.Column="2" Height="24" Width="50" Command="{Binding ToggleConnectionCommand}" HorizontalAlignment="Center" Style="{StaticResource ConnectButtonStyle}" IsChecked="{Binding IsConnected, Mode=OneWay}" IsEnabled="{Binding IsConnectionToggleButtonEnabled}"/>
                     <Label Grid.Column="0" Grid.Row="1" Content="{DynamicResource L_Port}" />
                     <TextBox Grid.Column="1" Grid.Row="1" Height="23" Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}"/>
                     <Label Grid.Column="0" Grid.Row="2" Content="{DynamicResource L_Database}" />

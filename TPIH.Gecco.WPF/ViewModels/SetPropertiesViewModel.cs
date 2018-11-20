@@ -16,6 +16,8 @@ namespace TPIH.Gecco.WPF.ViewModels
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
         private string _ipaddress, _port, _dbname, _tablename, _username, _password;
 
+        private bool _isConnectionToggleButtonEnabled;
+        public bool IsConnectionToggleButtonEnabled { get { return _isConnectionToggleButtonEnabled; } set { _isConnectionToggleButtonEnabled = value; OnPropertyChanged(() => IsConnectionToggleButtonEnabled); } }
         /* To be activated on language change implementation
         private List<string> _languageList;
         public List<string> LanguageList { get { return _languageList; } set { _languageList = value; OnPropertyChanged(() => LanguageList); } }
@@ -136,6 +138,8 @@ namespace TPIH.Gecco.WPF.ViewModels
             _username = _settings.Username;
             _password = _settings.Password;
 
+            IsConnectionToggleButtonEnabled = true;
+
             /* Language change
             LanguageList = new List<string>
             {
@@ -146,6 +150,15 @@ namespace TPIH.Gecco.WPF.ViewModels
             */
 
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
+            EventAggregator.OnSignalIsRetrievingTransmitted += SignalIsRetrievingEventHandler;
+        }
+
+        private void SignalIsRetrievingEventHandler(ItemCheckedEvent e)
+        {
+            if (e.value)
+                IsConnectionToggleButtonEnabled = false;
+            else
+                IsConnectionToggleButtonEnabled = true;
         }
 
         private void ConnectionStatusChangedEventHandler(object sender, EventArgs e)

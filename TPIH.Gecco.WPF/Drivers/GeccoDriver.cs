@@ -185,8 +185,8 @@ namespace TPIH.Gecco.WPF.Drivers
 
             if (IsConnected)
             {
-                _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
 #if !DEMO
+                _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
                 try
@@ -318,6 +318,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     return false;
                 }
 #else
+                SortRetrievedData(null);
                 return true;
 #endif
             }
@@ -436,6 +437,7 @@ namespace TPIH.Gecco.WPF.Drivers
             // Add 1000 datas
             lock (MbData)
             {
+                MbData.Clear();
                 for (int i = 0; i < 1000; i++)
                 {
                     for (int j = 0; j < N3PR_Data.REG_NAMES.Count(); j++)
