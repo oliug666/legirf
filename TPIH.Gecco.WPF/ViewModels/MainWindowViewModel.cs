@@ -40,15 +40,15 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
         }        
 
-        private Visibility _isTab1Visible, _isTab2Visible;
+        private Visibility _isTab1Visible, _isTab2Visible, _isTab3Visible;
         public Visibility IsTab1Visible { get { return _isTab1Visible; } set { _isTab1Visible = value; OnPropertyChanged(() => IsTab1Visible); } }
-        public Visibility IsTab2Visible { get { return _isTab2Visible; } set { _isTab2Visible = value; OnPropertyChanged(() => IsTab1Visible); } }
+        public Visibility IsTab2Visible { get { return _isTab2Visible; } set { _isTab2Visible = value; OnPropertyChanged(() => IsTab2Visible); } }
+        public Visibility IsTab3Visible { get { return _isTab3Visible; } set { _isTab3Visible = value; OnPropertyChanged(() => IsTab3Visible); } }
 
-        private OverviewViewModel _overviewViewModel;
-        public OverviewViewModel OverviewVM { get { return _overviewViewModel; } set { _overviewViewModel = value; OnPropertyChanged(() => OverviewVM); } }
-
-        private Overview2ViewModel _overview2ViewModel;
-        public Overview2ViewModel Overview2VM { get { return _overview2ViewModel; } set { _overview2ViewModel = value; OnPropertyChanged(() => Overview2VM); } }
+        private OverviewViewModel _overviewViewModel, _overview2ViewModel, _overview3ViewModel;
+        public OverviewViewModel Overview1VM { get { return _overviewViewModel; } set { _overviewViewModel = value; OnPropertyChanged(() => Overview1VM); } }
+        public OverviewViewModel Overview2VM { get { return _overview2ViewModel; } set { _overview2ViewModel = value; OnPropertyChanged(() => Overview2VM); } }
+        public OverviewViewModel Overview3VM { get { return _overview3ViewModel; } set { _overview3ViewModel = value; OnPropertyChanged(() => Overview3VM); } }
 
         public void TerminateExecutionAndCloseConnections()
         {
@@ -87,10 +87,12 @@ namespace TPIH.Gecco.WPF.ViewModels
             });
 
             // Overviews
-            OverviewVM = new OverviewViewModel();
-            Overview2VM = new Overview2ViewModel();
-            IsTab1Visible = OverviewVM.IsFileLoaded;
+            Overview1VM = new OverviewViewModel(new List<string>() { "Plot0", "Plot1", "Plot2", "Plot3"});
+            Overview2VM = new OverviewViewModel(new List<string>() { "Plot4", "Plot5", "Plot6", "Plot7" });
+            Overview3VM = new OverviewViewModel(new List<string>() { "Plot8", "Plot9", "Plot10", "Plot11" });
+            IsTab1Visible = Overview1VM.IsFileLoaded;
             IsTab2Visible = Overview2VM.IsFileLoaded;
+            IsTab3Visible = Overview3VM.IsFileLoaded;
 
             GlobalCommands.ShowError = new DelegateCommand(ShowError);
 

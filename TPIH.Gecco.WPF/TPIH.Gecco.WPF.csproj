@@ -162,7 +162,6 @@
     <Compile Include="ViewModels\GetDataViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\OverviewViewModel.cs" />
-    <Compile Include="ViewModels\Overview2ViewModel.cs" />
     <Compile Include="ViewModels\PulseGraphViewModel.cs" />
     <Compile Include="ViewModels\SelectDataViewModel.cs" />
     <Compile Include="ViewModels\SetPropertiesViewModel.cs" />

@@ -5,8 +5,9 @@
     <!--TAB names-->
     <system:String x:Key="T_Viewer">Viewer</system:String>
     <system:String x:Key="T_ConnectionProperties">Configurazione Connessione</system:String>
-    <system:String x:Key="T_Overview">Overview</system:String>
-    <system:String x:Key="T_Overview2">Overview - 2</system:String>
+    <system:String x:Key="T_Overview1">Overview-1</system:String>
+    <system:String x:Key="T_Overview2">Overview-2</system:String>
+    <system:String x:Key="T_Overview3">Overview-3</system:String>
     <system:String x:Key="T_Graph">Grafici</system:String>
     <system:String x:Key="T_CurrentStatus">Stato Corrente</system:String>
     <!--Header names-->

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
 using TPIH.Gecco.WPF.Drivers;
@@ -8,8 +9,14 @@ namespace TPIH.Gecco.WPF.ViewModels
 {
     public class OverviewViewModel : MultiPlotViewModel
     {                
-        public OverviewViewModel()
+        public OverviewViewModel(List<string> PlotNames)
         {
+            if (PlotNames == null)
+                return;
+            if (PlotNames.Count != 4)
+                return;
+
+            // If everything is ok, then go
             XDocument doc = new XDocument();
             try
             {
@@ -23,22 +30,22 @@ namespace TPIH.Gecco.WPF.ViewModels
                 return;
             }
 
-            var p00 = doc.Root.Descendants("Plot0");            
+            var p00 = doc.Root.Descendants(PlotNames[0]);            
             RegNames00 = Parser.ParseXmlElement(p00.Elements("reg_name").Nodes());
             RegDescriptions00 = GetRegDescription(RegNames00);
             RegUnits00 = GetRegUnits(RegNames00);
 
-            var p01 = doc.Root.Descendants("Plot1");
+            var p01 = doc.Root.Descendants(PlotNames[1]);
             RegNames01 = Parser.ParseXmlElement(p01.Elements("reg_name").Nodes());
             RegDescriptions01 = GetRegDescription(RegNames01);
             RegUnits01 = GetRegUnits(RegNames01);
 
-            var p10 = doc.Root.Descendants("Plot2");
+            var p10 = doc.Root.Descendants(PlotNames[2]);
             RegNames10 = Parser.ParseXmlElement(p10.Elements("reg_name").Nodes());
             RegDescriptions10 = GetRegDescription(RegNames10);
             RegUnits10 = GetRegUnits(RegNames10);
 
-            var p11 = doc.Root.Descendants("Plot3");
+            var p11 = doc.Root.Descendants(PlotNames[3]);
             RegNames11 = Parser.ParseXmlElement(p11.Elements("reg_name").Nodes());
             RegDescriptions11 = GetRegDescription(RegNames11);
             RegUnits11 = GetRegUnits(RegNames11);
