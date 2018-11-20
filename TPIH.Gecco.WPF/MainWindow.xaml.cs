@@ -22,7 +22,6 @@ namespace TPIH.Gecco.WPF
     public partial class MainWindow : Window
     {
         private MainWindowViewModel _mainViewModel;
-        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
 
         public MainWindow()
         {
@@ -45,7 +44,8 @@ namespace TPIH.Gecco.WPF
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(resourceDictionary["D_ClosingWindow"] + "", resourceDictionary["D_H_Closing"] + "", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(SharedResourceDictionary.SharedDictionary["D_ClosingWindow"] + "",
+                SharedResourceDictionary.SharedDictionary["D_H_Closing"] + "", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 // Signal write to view-model

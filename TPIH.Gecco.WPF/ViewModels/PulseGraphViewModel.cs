@@ -19,8 +19,6 @@ namespace TPIH.Gecco.WPF.ViewModels
 {
     public class PulseGraphViewModel : ViewModelBase
     {
-        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
-
         private PlotModel _plot;
         private PlotModel _plotBool;
         private string _error, _status;
@@ -67,9 +65,9 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public PulseGraphViewModel()
         {
-            Plot = new PlotModel(resourceDictionary["L_Graph1"] + "");
+            Plot = new PlotModel(SharedResourceDictionary.SharedDictionary["L_Graph1"] + "");
             Plot.Axes.Clear();
-            var axis1 = new DateTimeAxis(AxisPosition.Bottom, resourceDictionary["L_TimeAxis"] + "")
+            var axis1 = new DateTimeAxis(AxisPosition.Bottom, SharedResourceDictionary.SharedDictionary["L_TimeAxis"] + "")
             {
                 Key = "X",
                 StringFormat = "dd-MM-yyyy hh:mm",
@@ -82,7 +80,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 IsPanEnabled = false
             };
             Plot.Axes.Add(axis1);
-            Plot.Axes.Add(new LinearAxis(AxisPosition.Left, resourceDictionary["L_DataAxis"] + "")
+            Plot.Axes.Add(new LinearAxis(AxisPosition.Left, SharedResourceDictionary.SharedDictionary["L_DataAxis"] + "")
             {
                 Key = Plotter.PRIMARY_AXIS,
                 MajorGridlineStyle = LineStyle.Solid,
@@ -103,7 +101,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 IsZoomEnabled = true
             });
 
-            PlotBool = new PlotModel(resourceDictionary["L_Graph2"] + "");
+            PlotBool = new PlotModel(SharedResourceDictionary.SharedDictionary["L_Graph2"] + "");
             PlotBool.Axes.Clear();
             var axis2 = new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
@@ -359,7 +357,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error16"]));
+                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error16"]));
                 }
             }
         }
@@ -434,7 +432,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error17"]));
+                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error17"]));
                 if (fs != null)
                     fs.Close();
             }
@@ -462,7 +460,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error18"]));
+                    GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error18"]));
                 }
             }
         }
@@ -515,7 +513,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + resourceDictionary["M_Error19"]));
+                GlobalCommands.ShowError.Execute(new Exception(ex.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error19"]));
                 if (fs != null)
                     fs.Close();
             }

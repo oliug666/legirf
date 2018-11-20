@@ -176,22 +176,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 _isRetrieving.Close();
 
             OnConnectionStatusChanged?.Invoke(this, null);
-        }
-
-        public void Dispose()
-        {
-#if !DEMO
-            try
-            {
-                if (_connection != null)
-                    _connection.Dispose();
-            }
-            catch (MySqlException ex)
-            {
-                Status = ex.Message;
-            }
-#endif
-        }
+        }        
 
         public void GetLatestData(string tableName)
         {
@@ -310,9 +295,9 @@ namespace TPIH.Gecco.WPF.Drivers
             // Read
             if (IsConnected)
             {
-                try
-                {
 #if !DEMO
+                try
+                { 
                     _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
 
                     using (MySqlCommand msqlcmd = new MySqlCommand(selectQuery, _connection) { CommandTimeout = 60 })
@@ -327,12 +312,14 @@ namespace TPIH.Gecco.WPF.Drivers
 
                     _isRetrieving.Release(1);
                     return true;
-#endif
                 }
                 catch (Exception)
                 {
                     return false;
                 }
+#else
+                return true;
+#endif
             }
             else
                 return false;                                            

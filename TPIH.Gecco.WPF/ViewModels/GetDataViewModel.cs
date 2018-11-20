@@ -16,7 +16,6 @@ namespace TPIH.Gecco.WPF.ViewModels
     class GetDataViewModel : ViewModelBase
     {
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
-        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
 
         private List<int> _timeIntervals;
         private int _selectedTimeInterval;
@@ -136,7 +135,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     }
                     catch (Exception e)
                     {
-                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error12"]));
+                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error12"]));
                     }
                 }
                 else
@@ -149,13 +148,13 @@ namespace TPIH.Gecco.WPF.ViewModels
                     }
                     catch (Exception e)
                     {
-                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error13"]));
+                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error13"]));
                     }
                 }
             }
             else
             {
-                GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error14"] + ""));
+                GlobalCommands.ShowError.Execute(new Exception(SharedResourceDictionary.SharedDictionary["M_Error14"] + ""));
             }
         }
 
@@ -168,12 +167,12 @@ namespace TPIH.Gecco.WPF.ViewModels
                 if (_mbData.Count() != 0)
                 {
                     // There is some shit
-                    Status = resourceDictionary["L_DataRetrieved"] + ": " + _mbData.Count().ToString() + " " + resourceDictionary["L_Entries"] + ".";
+                    Status = SharedResourceDictionary.SharedDictionary["L_DataRetrieved"] + ": " + _mbData.Count().ToString() + " " + SharedResourceDictionary.SharedDictionary["L_Entries"] + ".";
                 }
                 else
                 {
                     // There is no shit
-                    Status = resourceDictionary["M_Error11"] + "";
+                    Status = SharedResourceDictionary.SharedDictionary["M_Error11"] + "";
                 }
             }
             GetDataIsEnabled = true;

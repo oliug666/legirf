@@ -14,6 +14,7 @@
     <system:String x:Key="H_SelectData">Select Data</system:String>
     <system:String x:Key="H_ExportData">Export Data</system:String>
     <system:String x:Key="H_ConnectionProperties">Connection Properties</system:String>
+    <system:String x:Key="H_LanguageSelection">Language Selection</system:String>
     <!--Text Labels-->
     <system:String x:Key="L_TimeSpan">Time Span</system:String>
     <system:String x:Key="L_From">From</system:String>
@@ -40,6 +41,9 @@
     <system:String x:Key="L_Entries">entries</system:String>
     <system:String x:Key="L_Graph1">N3PR Data</system:String>
     <system:String x:Key="L_Graph2">N3PR Logic Data</system:String>
+    <system:String x:Key="L_Language">Language</system:String>
+    <system:String x:Key="L_English">English</system:String>
+    <system:String x:Key="L_Italian">Italian</system:String>
     <!--Buttons-->
     <system:String x:Key="B_GetData">Get Data</system:String>
     <system:String x:Key="B_Export">Export</system:String>

@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace TPIH.Gecco.WPF.Helpers
 {
     public static class SharedResourceDictionary
-    {
-        public static string language = "EN";
+    {                        
+        public const string dictionary_EN = "en-US";
+        public const string dictionary_IT = "it-IT";
 
-        public static string dictionary_IT = "..\\Resources\\Resources.it-IT.xaml";
-        public static string dictionary_EN = "..\\Resources\\Resources.en-US.xaml";
+        private static string language = dictionary_EN;
 
         public static string dictionary
         {
@@ -16,12 +17,12 @@ namespace TPIH.Gecco.WPF.Helpers
             {
                 switch (language)
                 {
-                    case "IT":
-                        return dictionary_IT;
-                    case "EN":
-                        return dictionary_EN;
+                    case dictionary_IT:
+                        return "..\\Resources\\Resources." + dictionary_IT + ".xaml";
+                    case dictionary_EN:
+                        return "..\\Resources\\Resources." + dictionary_EN + ".xaml";
                     default:
-                        return dictionary_EN;
+                        return "..\\Resources\\Resources." + dictionary_EN + ".xaml";
                 }
             }
         }
@@ -34,7 +35,7 @@ namespace TPIH.Gecco.WPF.Helpers
                 {
                     try
                     {
-                        System.Uri resourceLocater1 = new System.Uri(dictionary, System.UriKind.Relative);
+                        Uri resourceLocater1 = new Uri(dictionary, System.UriKind.Relative);
                         ResourceDictionary resourceDictionary = new ResourceDictionary
                         {
                             Source = resourceLocater1
@@ -51,11 +52,34 @@ namespace TPIH.Gecco.WPF.Helpers
             }
         }
 
-        public static void ChangeLocalization(string loc)
+        private static ResourceDictionary _sharedDictionary;
+
+        public static List<string> AvailableLanguages = new List<string>()
         {
-            language = loc;
+            (string)SharedDictionary["L_English"],
+            (string)SharedDictionary["L_Italian"]
+        };
+
+        public static void ChangeLanguage(string val)
+        {
+            language = val;
+            if (_sharedDictionary != null)
+            {
+                try
+                {
+                    Uri resourceLocater1 = new Uri(dictionary, System.UriKind.Relative);
+                    ResourceDictionary resourceDictionary = new ResourceDictionary
+                    {
+                        Source = resourceLocater1
+                    };
+                    _sharedDictionary = resourceDictionary;
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
         }
 
-        private static ResourceDictionary _sharedDictionary;
     }
 }

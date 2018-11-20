@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -12,9 +14,24 @@ namespace TPIH.Gecco.WPF.ViewModels
     public class SetPropertiesViewModel : ViewModelBase
     {
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
-        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
         private string _ipaddress, _port, _dbname, _tablename, _username, _password;
-        
+
+        /* To be activated on language change implementation
+        private List<string> _languageList;
+        public List<string> LanguageList { get { return _languageList; } set { _languageList = value; OnPropertyChanged(() => LanguageList); } }
+        private int _selectedLanguage;
+        public int SelectedLanguage
+        {
+            get { return _selectedLanguage; }
+            set
+            {
+                _selectedLanguage = value;
+                ChangeLanguage(_languageList[_selectedLanguage]);
+                OnPropertyChanged(() => SelectedLanguage);
+            }
+        }
+        */
+
         public string IPAddress
         {
             get { return _ipaddress; }
@@ -105,7 +122,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         #endregion
 
         // Quick fix to update the ports available and also the Connect button state.
-        private System.Timers.Timer _refreshPortsTimer = new Timer(1000);
+        private Timer _refreshPortsTimer = new Timer(1000);
 
         public SetPropertiesViewModel()
         {
@@ -118,6 +135,15 @@ namespace TPIH.Gecco.WPF.ViewModels
             _tablename = _settings.TableName;
             _username = _settings.Username;
             _password = _settings.Password;
+
+            /* Language change
+            LanguageList = new List<string>
+            {
+                SharedResourceDictionary.SharedDictionary["L_English"] + "",
+                SharedResourceDictionary.SharedDictionary["L_Italian"] + ""
+            };
+            SelectedLanguage = 0;
+            */
 
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
         }
@@ -157,32 +183,53 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 IsPropertiesEnabled = false;
                 OnPropertyChanged(() => IsConnected);
-                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error3"]));
+                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error3"]));
             }
 
             if (!DriverContainer.Driver.IsConnected)
             { 
-                GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error2"] + ""));
+                GlobalCommands.ShowError.Execute(new Exception(SharedResourceDictionary.SharedDictionary["M_Error2"] + ""));
             }
         }
 
         private void Disconnect()
         {
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(resourceDictionary["D_Closing"]+"", resourceDictionary["D_H_Closing"] + "", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(SharedResourceDictionary.SharedDictionary["D_Closing"]+"",
+                SharedResourceDictionary.SharedDictionary["D_H_Closing"] + "", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 try
                 {
                     DriverContainer.Driver.Disconnect();
-                    DriverContainer.Driver.Dispose();
                     IsPropertiesEnabled = DriverContainer.Driver.IsConnected;
                 }
                 catch (Exception e)
                 {
                     IsPropertiesEnabled = false;
-                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error1"]));
+                    GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error1"]));
                 }
             }            
+        }
+
+        private void ChangeLanguage(string val)
+        {
+            var resources = new ResourceDictionary();
+            if (val == SharedResourceDictionary.AvailableLanguages[0])
+            {
+                resources.Source = new Uri("..\\Resources\\Resources.en-US.xaml", System.UriKind.Relative);
+                SharedResourceDictionary.ChangeLanguage(SharedResourceDictionary.dictionary_EN);
+            }
+            else if (val == SharedResourceDictionary.AvailableLanguages[1])
+            {
+                resources.Source = new Uri("..\\Resources\\Resources.it-IT.xaml", System.UriKind.Relative);
+                SharedResourceDictionary.ChangeLanguage(SharedResourceDictionary.dictionary_IT);
+            }
+
+            var current = Application.Current.Resources.MergedDictionaries.FirstOrDefault(
+                    m => m.Source.OriginalString.Contains("Resources"));
+            if (current != null)
+                Application.Current.Resources.MergedDictionaries.Remove(current);
+            Application.Current.Resources.MergedDictionaries.Add(resources);
         }
     }
 }

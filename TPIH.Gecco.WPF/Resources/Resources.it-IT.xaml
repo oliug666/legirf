@@ -14,6 +14,7 @@
     <system:String x:Key="H_SelectData">Selezione Dati</system:String>
     <system:String x:Key="H_ExportData">Esporta Dati</system:String>
     <system:String x:Key="H_ConnectionProperties">Proprietà Connessione</system:String>
+    <system:String x:Key="H_LanguageSelection">Selezione Lingua</system:String>
     <!--Text Labels-->
     <system:String x:Key="L_TimeSpan">Intervallo</system:String>
     <system:String x:Key="L_From">Da</system:String>
@@ -29,7 +30,7 @@
     <system:String x:Key="L_Username">Utente</system:String>
     <system:String x:Key="L_Password">Password</system:String>
     <system:String x:Key="L_Connection">Connessione</system:String>
-    <system:String x:Key="L_LastUpdated">Ultimo aggiornameto</system:String>
+    <system:String x:Key="L_LastUpdated">Ultimo aggiornamento</system:String>
     <system:String x:Key="L_Version">Versione</system:String>
     <system:String x:Key="L_ComboBox_Custom">Custom</system:String>
     <system:String x:Key="L_ComboBox_Days">giorni</system:String>
@@ -40,6 +41,9 @@
     <system:String x:Key="L_Entries">valori</system:String>
     <system:String x:Key="L_Graph1">Dati N3PR</system:String>
     <system:String x:Key="L_Graph2">Dati Logici N3PR</system:String>
+    <system:String x:Key="L_Language">Lingua</system:String>
+    <system:String x:Key="L_English">Inglese</system:String>
+    <system:String x:Key="L_Italian">Italiano</system:String>
     <!--Buttons-->
     <system:String x:Key="B_GetData">Scarica Dati</system:String>
     <system:String x:Key="B_Export">Esporta</system:String>

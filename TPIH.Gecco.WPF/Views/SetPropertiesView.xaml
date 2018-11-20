@@ -52,6 +52,21 @@
                             w:PasswordHelper.Password="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected, Mode=OneWay, Converter={StaticResource InvertConverter}}" Grid.Column="1" Grid.Row="5" Height="23"/>
                 </Grid>
             </Border>
+            <!--
+            <StackPanel VerticalAlignment="Top" Height="23" HorizontalAlignment="Stretch" Background="{StaticResource ButtonGradientBrushBlueHover}">
+                <Label Content="{DynamicResource H_LanguageSelection}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </StackPanel>
+            <Border BorderBrush="{StaticResource TetraDarkBlueBrush05}"  BorderThickness="1,0,1,1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="{DynamicResource L_Language}"/>
+                    <ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedLanguage}" ItemsSource="{Binding LanguageList}"/>
+                </Grid>
+            </Border>
+            -->
         </StackPanel>
     </Grid>
 </UserControl>

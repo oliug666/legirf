@@ -16,7 +16,6 @@ namespace TPIH.Gecco.WPF.ViewModels
     public class CurrentStatusViewModel : ViewModelBase
     {        
         private readonly GlobalSettings _settings = new GlobalSettings(new AppSettings());
-        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
 
         private string _lastRefreshed;
         private Thread _loadLatestDataThread;
@@ -58,7 +57,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     }
                     catch (Exception e)
                     {
-                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error10"]));
+                        GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error10"]));
                     }
                     Thread.Sleep(30 * 1000);
                 }
@@ -86,7 +85,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         {            
             // Let's make a local copy (for thread safety)
             IList<MeasurePoint> _latestData = DriverContainer.Driver.LatestData;
-            LastRefreshed = resourceDictionary["M_Error11"] + "";
+            LastRefreshed = SharedResourceDictionary.SharedDictionary["M_Error11"] + "";
             if (_latestData != null)
             {                
                 if (_latestData.Count != 0)

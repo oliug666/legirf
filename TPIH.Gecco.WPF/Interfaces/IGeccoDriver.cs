@@ -21,7 +21,6 @@ namespace TPIH.Gecco.WPF.Interfaces
         void Connect(string ipa, int port, string dbname, string username, string password);
 
         void Disconnect();
-        void Dispose();
 
         void GetDataFromLastXDays(string tableName, int lastDays);
 

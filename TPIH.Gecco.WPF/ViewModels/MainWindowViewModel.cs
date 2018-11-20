@@ -13,8 +13,6 @@ namespace TPIH.Gecco.WPF.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly ResourceDictionary resourceDictionary = (ResourceDictionary)SharedResourceDictionary.SharedDictionary;
-
         private string _versionNr, _connectionStatusColor;
         private bool _isErrorVisible;        
         public bool IsErrorVisible
@@ -60,11 +58,10 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     DriverContainer.Driver.Disconnect();                    
                 }
-                DriverContainer.Driver.Dispose();
             }
             catch (Exception e)
             {
-                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + resourceDictionary["M_Error15"]));
+                GlobalCommands.ShowError.Execute(new Exception(e.Message + " - " + SharedResourceDictionary.SharedDictionary["M_Error15"]));
             }
         }
 
