@@ -12,7 +12,7 @@ namespace TPIH.Gecco.WPF.ViewModels
         private List<CheckedListItem> _availablePlottableObjects;
         private bool _enablePlottableObjects;
         public List<CheckedListItem> AvailablePlottableObjects { get { return _availablePlottableObjects; } set { _availablePlottableObjects = value; OnPropertyChanged(() => AvailablePlottableObjects); } }
-        public bool EnablePlottableObjects { get { return _enablePlottableObjects; } set { _enablePlottableObjects = value; OnPropertyChanged(() => EnablePlottableObjects); } }
+        public bool IsEnabledPlottableObjects { get { return _enablePlottableObjects; } set { _enablePlottableObjects = value; OnPropertyChanged(() => IsEnabledPlottableObjects); } }
 
         public SelectDataViewModel()
         {
@@ -30,13 +30,13 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void DataRetrievedEventHandler(object sender, System.EventArgs e)
         {
-            EnablePlottableObjects = false;
+            IsEnabledPlottableObjects = false;
             // Lets make a local copy (thread safety)
             IList<MeasurePoint> _mbData = DriverContainer.Driver.MbData;
             if (_mbData != null)
             {                             
                 if (_mbData.Count() != 0)
-                    EnablePlottableObjects = true;
+                    IsEnabledPlottableObjects = true;
             }                            
         }
 
@@ -47,7 +47,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             if (_mbData != null && DriverContainer.Driver.IsConnected)
             {
                 if (_mbData.Count() != 0)
-                    EnablePlottableObjects = true;
+                    IsEnabledPlottableObjects = true;
             }
             else
             {
@@ -56,16 +56,19 @@ namespace TPIH.Gecco.WPF.ViewModels
                 {
                     cli.IsChecked = false;
                 }
-                EnablePlottableObjects = false;
+                IsEnabledPlottableObjects = false;
             }            
         }
 
-        private void SignalIsRetrievingEventHandler(ItemCheckedEvent e)
+        private void SignalIsRetrievingEventHandler(EventWithMessage e)
         {
-            if (e.value)
-                EnablePlottableObjects = false;
-            else
-                EnablePlottableObjects = true;
+            if (e.value && e.name == DriverContainer.Driver.CUSTOM)
+            { 
+                // We block plotting only if get data was pressed and we are retrieving data
+                IsEnabledPlottableObjects = false;                
+            }
+            else // not CUSTOM or not RETRIEVING
+                IsEnabledPlottableObjects = true;
         }
     }
 }

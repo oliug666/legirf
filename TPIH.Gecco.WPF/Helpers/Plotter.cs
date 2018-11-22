@@ -226,6 +226,38 @@ namespace TPIH.Gecco.WPF.Helpers
             }
 
             return null;
-        }        
+        }
+
+        public static void OnMouseDown(object sender, OxyMouseEventArgs e, PlotModel pM)
+        {
+            // If we are inside the legend
+            OxyRect LegArea = pM.LegendArea;
+            if (LegArea.Contains(e.Position.X, e.Position.Y))
+            {
+                int selectedSerie = -1;
+                // Check the number of series
+                var sCount = pM.Series.Count();
+                double deltaY = (LegArea.Bottom - LegArea.Top) / sCount;
+                for (int i = 0; i < sCount; i++)
+                {
+                    // We selected the i-th series
+                    if (e.Position.Y >= (LegArea.Top + i * deltaY) && e.Position.Y < (LegArea.Top + (i + 1) * deltaY))
+                    {
+                        selectedSerie = i;
+                    }
+                }
+
+                if (selectedSerie != -1)
+                {
+                    var LineSerie = (LineSeries)pM.Series[selectedSerie];
+                    if (LineSerie.StrokeThickness == 2)
+                        LineSerie.StrokeThickness = 3;
+                    else
+                        LineSerie.StrokeThickness = 2;
+                }
+            }
+
+            pM.InvalidatePlot(true);
+        }
     }
 }

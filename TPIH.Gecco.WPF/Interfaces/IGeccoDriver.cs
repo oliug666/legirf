@@ -8,7 +8,10 @@ using TPIH.Gecco.WPF.Models;
 namespace TPIH.Gecco.WPF.Interfaces
 {
     public interface IGeccoDriver
-    {
+    {        
+        string LATEST { get; }
+        string CUSTOM { get; }
+
         bool IsConnected { get; }
         event EventHandler OnDataRetrievalCompleted;
         event EventHandler OnLatestDataRetrievalCompleted;

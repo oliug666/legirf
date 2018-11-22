@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using OxyPlot;
@@ -163,6 +164,9 @@ namespace TPIH.Gecco.WPF.Helpers
                         pM = new PlotModel(RegDescriptions[0]);
                     else
                         pM = new PlotModel("");
+
+                    pM.LegendBackground = OxyColors.White;
+                    pM.LegendBorder = OxyColors.Black;
                 }
                 else
                     return null;
@@ -206,10 +210,13 @@ namespace TPIH.Gecco.WPF.Helpers
                         IsZoomEnabled = true
                     });
             }
+
+            pM.MouseDown += new EventHandler<OxyMouseEventArgs>((sender, e) => Plotter.OnMouseDown(sender, e, pM));
+
             return pM;
         }
 
-        public void OnFlaggedAlarmMessageReceived(ItemCheckedEvent e)
+        public void OnFlaggedAlarmMessageReceived(EventWithMessage e)
         {
             // Let's make a local copy (thread safety)
             IList<MeasurePoint> _mbAlarms = DriverContainer.Driver.MbAlarm;

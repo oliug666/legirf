@@ -41,6 +41,9 @@ namespace TPIH.Gecco.WPF.Drivers
         public event EventHandler OnLatestDataRetrievalCompleted;
         public event EventHandler OnConnectionStatusChanged;
 
+        public string LATEST { get { return "latest"; } }
+        public string CUSTOM { get { return "custom"; } }
+
         public IList<MeasurePoint> MbData
         {
             get
@@ -175,7 +178,7 @@ namespace TPIH.Gecco.WPF.Drivers
             if (_isRetrieving != null)
                 _isRetrieving.Close();
 
-            EventAggregator.SignalIsRetrievingData(false);
+            EventAggregator.SignalIsRetrievingData("", false);
             OnConnectionStatusChanged?.Invoke(this, null);
         }        
 
@@ -188,7 +191,7 @@ namespace TPIH.Gecco.WPF.Drivers
             {
 #if !DEMO
                 _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
-                EventAggregator.SignalIsRetrievingData(true);
+                EventAggregator.SignalIsRetrievingData(LATEST, true);
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
                 try
@@ -230,7 +233,7 @@ namespace TPIH.Gecco.WPF.Drivers
             if (!_isRetrieving.SafeWaitHandle.IsClosed)
                 _isRetrieving.Release(1);
 
-            EventAggregator.SignalIsRetrievingData(false);
+            EventAggregator.SignalIsRetrievingData(LATEST, false);
 #else
                 LatestData = new List<MeasurePoint>();
                 for (int i = 0; i < N3PR_Data.REG_NAMES.Count(); i++)
@@ -304,7 +307,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 try
                 { 
                     _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
-                    EventAggregator.SignalIsRetrievingData(true);
+                    EventAggregator.SignalIsRetrievingData(CUSTOM, true);
 
                     using (MySqlCommand msqlcmd = new MySqlCommand(selectQuery, _connection) { CommandTimeout = 60 })
                     {
@@ -319,7 +322,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     if (!_isRetrieving.SafeWaitHandle.IsClosed)
                         _isRetrieving.Release(1);
 
-                    EventAggregator.SignalIsRetrievingData(false);
+                    EventAggregator.SignalIsRetrievingData(CUSTOM, false);
                     return true;
                 }
                 catch (Exception)

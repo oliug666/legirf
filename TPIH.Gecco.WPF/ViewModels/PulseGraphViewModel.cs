@@ -65,8 +65,12 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public PulseGraphViewModel()
         {
-            Plot = new PlotModel(SharedResourceDictionary.SharedDictionary["L_Graph1"] + "");
-            Plot.Axes.Clear();
+            Plot = new PlotModel(SharedResourceDictionary.SharedDictionary["L_Graph1"] + "")
+            {
+                LegendBackground = OxyColors.White,
+                LegendBorder = OxyColors.Black                
+            };            
+            Plot.Axes.Clear(); 
             var axis1 = new DateTimeAxis(AxisPosition.Bottom, SharedResourceDictionary.SharedDictionary["L_TimeAxis"] + "")
             {
                 Key = "X",
@@ -77,7 +81,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 IntervalType = DateTimeIntervalType.Days,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.None,
-                IsPanEnabled = false
+                IsPanEnabled = false                
             };
             Plot.Axes.Add(axis1);
             Plot.Axes.Add(new LinearAxis(AxisPosition.Left, SharedResourceDictionary.SharedDictionary["L_DataAxis"] + "")
@@ -100,8 +104,13 @@ namespace TPIH.Gecco.WPF.ViewModels
                 TextColor = OxyColors.Blue,
                 IsZoomEnabled = true
             });
+            Plot.MouseDown += new EventHandler<OxyMouseEventArgs>((sender, e) => Plotter.OnMouseDown(sender, e, Plot)); 
 
-            PlotBool = new PlotModel(SharedResourceDictionary.SharedDictionary["L_Graph2"] + "");
+            PlotBool = new PlotModel(SharedResourceDictionary.SharedDictionary["L_Graph2"] + "")
+            {
+                LegendBackground = OxyColors.White,
+                LegendBorder = OxyColors.Black
+            };
             PlotBool.Axes.Clear();
             var axis2 = new DateTimeAxis(AxisPosition.Bottom, "Time")
             {
@@ -125,6 +134,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 MajorTickSize = 0.5,
                 IsZoomEnabled = false
             });
+            PlotBool.MouseDown += new EventHandler<OxyMouseEventArgs>((sender, e) => Plotter.OnMouseDown(sender, e, PlotBool));
 
             // Couple axis (boolean and standard)           
             axis1.AxisChanged += (s, e) =>
@@ -168,8 +178,8 @@ namespace TPIH.Gecco.WPF.ViewModels
             EventAggregator.OnAlarmMessageTransmitted += OnFlaggedAlarmMessageReceived;            
             DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(RefreshPlotsEventHandler);
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
-        }        
-
+        }
+       
         public void ShowPoints(IList<MeasurePoint> points)
         {
             // Let's make a local copy (thread safety)
@@ -250,7 +260,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             PlotBool.InvalidatePlot(true);
         }        
 
-        public void OnCheckedItemMessageReceived(ItemCheckedEvent e)
+        public void OnCheckedItemMessageReceived(EventWithMessage e)
         {
             // Lets make a local copy (thread safety)
             IList<MeasurePoint> _mbData = DriverContainer.Driver.MbData;
@@ -289,7 +299,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
         }
 
-        public void OnFlaggedAlarmMessageReceived(ItemCheckedEvent e)
+        public void OnFlaggedAlarmMessageReceived(EventWithMessage e)
         {
             // Let's make a local copy (thread safety)
             IList<MeasurePoint> _mbAlarms = DriverContainer.Driver.MbAlarm;

@@ -22,7 +22,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ListBox ItemsSource="{Binding AvailablePlottableObjects}" Grid.Row="0" Grid.Column="0" Height="385" ScrollViewer.VerticalScrollBarVisibility="Visible" IsEnabled="{Binding EnablePlottableObjects}">
+                <ListBox ItemsSource="{Binding AvailablePlottableObjects}" Grid.Row="0" Grid.Column="0" Height="385" ScrollViewer.VerticalScrollBarVisibility="Visible" IsEnabled="{Binding IsEnabledPlottableObjects}">
                     <ListBox.ItemTemplate>
                         <HierarchicalDataTemplate>
                             <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>

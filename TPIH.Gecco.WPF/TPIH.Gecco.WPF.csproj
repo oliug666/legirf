@@ -74,7 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DEMO</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -137,7 +137,7 @@
     <Compile Include="Helpers\CheckedAlarmItem.cs" />
     <Compile Include="Helpers\CheckedListItem.cs" />
     <Compile Include="Helpers\EventAggregator.cs" />
-    <Compile Include="Helpers\ItemCheckedEvent.cs" />
+    <Compile Include="Helpers\EventWithMessage.cs" />
     <Compile Include="Helpers\MultiPlotViewModel.cs" />
     <Compile Include="Helpers\N3PR_Data.cs" />
     <Compile Include="Helpers\N3PR_DB.cs" />

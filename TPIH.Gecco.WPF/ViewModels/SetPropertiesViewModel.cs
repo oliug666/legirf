@@ -153,8 +153,9 @@ namespace TPIH.Gecco.WPF.ViewModels
             EventAggregator.OnSignalIsRetrievingTransmitted += SignalIsRetrievingEventHandler;
         }
 
-        private void SignalIsRetrievingEventHandler(ItemCheckedEvent e)
+        private void SignalIsRetrievingEventHandler(EventWithMessage e)
         {
+            // We block disconnection when retrieving data
             if (e.value)
                 IsConnectionToggleButtonEnabled = false;
             else
