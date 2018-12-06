@@ -3,16 +3,18 @@
 	<!-- Primo tab overview -->
     <Plot0>
     	<reg_name>STE_PTA</reg_name>
-    	<reg_name>STE_SPS</reg_name>   	
+    	<reg_name>STE_PTE</reg_name>
+		<reg_name>STE_PTR</reg_name>
     </Plot0>
     <Plot1>
-    	<reg_name>STE_PTE</reg_name> 
+    	<reg_name>STE_ASP</reg_name> 
     </Plot1>
 	<Plot2>
-    	<reg_name>STE_PTR</reg_name> 
+    	<reg_name>STE_TER</reg_name>
+		<reg_name>STE_TSR</reg_name>
     </Plot2>
 	<Plot3>
-    	<reg_name>STE_ASP</reg_name> 
+    	<reg_name>STE_PSR</reg_name> 
     </Plot3>
 
 	<!-- Rimuovere le righe con "AAA" e "BBB"
@@ -20,42 +22,48 @@
 	abilitare il tab -->
 	
 	<!-- Secondo tab overview -->	
-	<!-- AAA
+
 	<Plot4>
-		<reg_name>STE_PTA</reg_name>
-		<reg_name>STE_SPS</reg_name>
+		<reg_name>STE_SDS</reg_name>
+		<reg_name>STE_SD1</reg_name>
 	</Plot4>
 	<Plot5>
-		<reg_name>STE_PTE</reg_name>
+		<reg_name>STA_PTS</reg_name>
+		<reg_name>STA_RTR</reg_name>
 	</Plot5>
 	<Plot6>
-		<reg_name>STE_PTR</reg_name>
+		<reg_name>STA_DPS</reg_name>
+		<reg_name>STA_SPT</reg_name>
 	</Plot6>
 	<Plot7>
-		<reg_name>STE_ASP</reg_name>
+		<reg_name>STE_TLP</reg_name>
 	</Plot7>
-	BBB -->
+
 	
 	<!-- Terzo tab overview -->
-	<!-- AAA
+
 	<Plot8>
-		<reg_name>STE_PTA</reg_name>
-		<reg_name>STE_SPS</reg_name>
+		<reg_name>STA_PSP</reg_name>
+		<reg_name>STA_PMP</reg_name>
 	</Plot8>
 	<Plot9>
-		<reg_name>STE_PTE</reg_name>
+		<reg_name>STA_PP1</reg_name>
+		<reg_name>STA_PP2</reg_name>
+		<reg_name>STA_PP3</reg_name>
+		<reg_name>STA_PP4</reg_name>
 	</Plot9>
 	<Plot10>
-		<reg_name>STE_PTR</reg_name>
+		<reg_name>STA_FIN</reg_name>
+		<reg_name>STA_FOU</reg_name>
 	</Plot10>
 	<Plot11>
-		<reg_name>STE_ASP</reg_name>
+		<reg_name>STE_SPS</reg_name>
 	</Plot11>
-	BBB -->
+
 	
 	<PID_File>
-		<Filename>myPdf.pdf</Filename>
-		<Path>C:\Users\io\Desktop</Path> <!--Inserire il percorso cartella, se nella stessa cartella del programma lasciare vuoto-->
+		<Filename>1PS16138-13-00.pdf</Filename>
+		<Path></Path> <!--Inserire il percorso cartella, se nella stessa cartella del programma lasciare vuoto-->
 	</PID_File>
 	
 	<Auto_GetData>

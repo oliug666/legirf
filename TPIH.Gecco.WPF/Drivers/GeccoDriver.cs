@@ -190,7 +190,9 @@ namespace TPIH.Gecco.WPF.Drivers
             if (IsConnected)
             {
 #if !DEMO
-                _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
+                if (!_isRetrieving.WaitOne(5000)) // Pause if there is someone already retrieving data (after 5 secs, kill it)
+                     return;
+
                 EventAggregator.SignalIsRetrievingData(LATEST, true);
                 // First find the latest date            
                 string dateQuery = "SELECT MAX(" + N3PR_DB.DATE + ") FROM " + tableName;
@@ -309,7 +311,7 @@ namespace TPIH.Gecco.WPF.Drivers
                     _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
                     EventAggregator.SignalIsRetrievingData(CUSTOM, true);
 
-                    using (MySqlCommand msqlcmd = new MySqlCommand(selectQuery, _connection) { CommandTimeout = 60 })
+                    using (MySqlCommand msqlcmd = new MySqlCommand(selectQuery, _connection))
                     {
                         using (MySqlDataReader msqldatareader = msqlcmd.ExecuteReader())
                         {
