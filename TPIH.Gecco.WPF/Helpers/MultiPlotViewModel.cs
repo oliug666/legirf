@@ -221,7 +221,7 @@ namespace TPIH.Gecco.WPF.Helpers
             // Let's make a local copy (thread safety)
             IList<MeasurePoint> _mbAlarms = DriverContainer.Driver.MbAlarm;
 
-            if (e.value) // show annotations
+            if (e.value == 1) // show annotations
             {
                 _showAlarms = true;
                 // Refresh Annotations

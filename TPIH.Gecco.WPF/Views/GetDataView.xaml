@@ -54,7 +54,10 @@
                     <DatePicker Grid.Column="3" Width="95" HorizontalAlignment="Left" IsEnabled="{Binding IsCalendarEnabled}" SelectedDate="{Binding To}"/>
                 </Grid>
                 <TextBlock Grid.Column="0" Grid.Row="4" Text="{DynamicResource L_Status}" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+                <!--
                 <TextBlock Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding Status}" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+                -->
+                <ProgressBar Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" Value="{Binding ProgressBarValue}" Width="100" HorizontalAlignment="Right"/>
             </Grid>
         </Border>
     </StackPanel>

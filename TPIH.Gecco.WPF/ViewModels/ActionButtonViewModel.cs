@@ -56,7 +56,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             AlarmsEnabled = new CheckedAlarmItem(true);
 
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
-            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+            DriverContainer.Driver.OnDataRetrievalCompletedEventHandler += new EventHandler(DataRetrievedEventHandler);
         }
 
         private void DataRetrievedEventHandler(object sender, EventArgs e)

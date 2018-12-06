@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TPIH.Gecco.WPF.Drivers;
+using TPIH.Gecco.WPF.Helpers;
 using TPIH.Gecco.WPF.Models;
 
 namespace TPIH.Gecco.WPF.Interfaces
@@ -13,7 +14,8 @@ namespace TPIH.Gecco.WPF.Interfaces
         string CUSTOM { get; }
 
         bool IsConnected { get; }
-        event EventHandler OnDataRetrievalCompleted;
+        event EventHandler OnDataRetrievalCompletedEventHandler;
+        event Action<EventWithMessage> OnDataRetrievalEventHandler;
         event EventHandler OnLatestDataRetrievalCompleted;
         event EventHandler OnConnectionStatusChanged;
 

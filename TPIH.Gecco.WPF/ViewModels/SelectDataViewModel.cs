@@ -23,7 +23,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                     N3PR_Data.REG_NAMES[i], N3PR_Data.REG_MEASUNIT[i], false, N3PR_Data.REG_TYPES[i]));
             }
 
-            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+            DriverContainer.Driver.OnDataRetrievalCompletedEventHandler += new EventHandler(DataRetrievedEventHandler);
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
             EventAggregator.OnSignalIsRetrievingTransmitted += SignalIsRetrievingEventHandler;
         }
@@ -62,7 +62,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private void SignalIsRetrievingEventHandler(EventWithMessage e)
         {
-            if (e.value && e.name == DriverContainer.Driver.CUSTOM)
+            if (e.value == 1 && e.name == DriverContainer.Driver.CUSTOM)
             { 
                 // We block plotting only if get data was pressed and we are retrieving data
                 IsEnabledPlottableObjects = false;                

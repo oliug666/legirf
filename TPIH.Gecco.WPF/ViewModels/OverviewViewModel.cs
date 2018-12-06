@@ -65,7 +65,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 Plot11 = CreatePlotModel(RegDescriptions11, RegUnits11);
                 // Subscribe to event(s)
                 EventAggregator.OnAlarmMessageTransmitted += OnFlaggedAlarmMessageReceived;
-                DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+                DriverContainer.Driver.OnDataRetrievalCompletedEventHandler += new EventHandler(DataRetrievedEventHandler);
                 DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
             }
         }

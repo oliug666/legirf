@@ -176,7 +176,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             // Subscribe to event(s)
             EventAggregator.OnCheckedItemTransmitted += OnCheckedItemMessageReceived;
             EventAggregator.OnAlarmMessageTransmitted += OnFlaggedAlarmMessageReceived;            
-            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(RefreshPlotsEventHandler);
+            DriverContainer.Driver.OnDataRetrievalCompletedEventHandler += new EventHandler(RefreshPlotsEventHandler);
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(ConnectionStatusChangedEventHandler);
         }
        
@@ -268,7 +268,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             if (_mbData != null)
             {
                 // The item was checked
-                if (e.value)
+                if (e.value == 1)
                 {
                     myPoints = _mbData.Where(x => x.Reg_Name == e.name).ToList();
                     ShowPoints(myPoints);
@@ -304,7 +304,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             // Let's make a local copy (thread safety)
             IList<MeasurePoint> _mbAlarms = DriverContainer.Driver.MbAlarm;
 
-            if (e.value) // show annotations
+            if (e.value == 1) // show annotations
             {
                 _showAlarms = true;
                 // Refresh Annotations

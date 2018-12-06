@@ -25,9 +25,11 @@ namespace TPIH.Gecco.WPF.ViewModels
         private DateTime _to, _from;
         private bool _isAutoGetDataEnabled;
         private int _autoGetDataRefreshTime;
+        private double _progressBarValue;
         private bool _hasGetDataBeenExecuteOnce = false;
 
-        public bool GetDataIsEnabled { get { return _getDataCanExecute; } set { _getDataCanExecute = value; OnPropertyChanged(() => GetDataIsEnabled); } } 
+        public bool GetDataIsEnabled { get { return _getDataCanExecute; } set { _getDataCanExecute = value; OnPropertyChanged(() => GetDataIsEnabled); } }
+        public double ProgressBarValue { get { return _progressBarValue; } set { _progressBarValue = value; OnPropertyChanged(() => ProgressBarValue); } }
 
         public List<int> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
         public int SelectedTimeInterval
@@ -53,7 +55,8 @@ namespace TPIH.Gecco.WPF.ViewModels
         public GetDataViewModel()
         {
             GetDataCommand = new DelegateCommand(obj => GetDataCommand_Execution()); 
-            DriverContainer.Driver.OnDataRetrievalCompleted += new EventHandler(DataRetrievedEventHandler);
+            DriverContainer.Driver.OnDataRetrievalCompletedEventHandler += new EventHandler(DataRetrievalCompletedEventHandler);
+            DriverContainer.Driver.OnDataRetrievalEventHandler += DataRetrievedEventHandler;
             DriverContainer.Driver.OnConnectionStatusChanged += new EventHandler(OnConnectionStatusChangedEventHandler);
 
             TimeIntervals = new List<int>() { 2, 7, 15, 30, 60, -1}; // -1 = Custom
@@ -84,6 +87,11 @@ namespace TPIH.Gecco.WPF.ViewModels
                 AutoGetDataThread.IsBackground = true;
                 AutoGetDataThread.Start();
             }       
+        }
+
+        private void DataRetrievedEventHandler(EventWithMessage e)
+        {
+            ProgressBarValue = e.value;
         }
 
         private void OnConnectionStatusChangedEventHandler(object sender, EventArgs e)
@@ -157,7 +165,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             }
         }
 
-        private void DataRetrievedEventHandler(object sender, System.EventArgs e)
+        private void DataRetrievalCompletedEventHandler(object sender, System.EventArgs e)
         {
             // Lets make a local copy (thread safety)
             IList<MeasurePoint> _mbData = DriverContainer.Driver.MbData;
