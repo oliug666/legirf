@@ -19,7 +19,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         private List<int> _timeIntervals;
         private int _selectedTimeInterval;
-
+        private Visibility _isProgressBarVisible;
         private string _status;
         private bool _isCalendarEnabled, _getDataCanExecute;
         private DateTime _to, _from;
@@ -30,7 +30,7 @@ namespace TPIH.Gecco.WPF.ViewModels
 
         public bool GetDataIsEnabled { get { return _getDataCanExecute; } set { _getDataCanExecute = value; OnPropertyChanged(() => GetDataIsEnabled); } }
         public double ProgressBarValue { get { return _progressBarValue; } set { _progressBarValue = value; OnPropertyChanged(() => ProgressBarValue); } }
-
+        public Visibility IsProgressBarVisible { get { return _isProgressBarVisible; } set { _isProgressBarVisible = value; OnPropertyChanged(() => IsProgressBarVisible); } }
         public List<int> TimeIntervals { get { return _timeIntervals; } set { _timeIntervals = value; OnPropertyChanged(() => TimeIntervals); } }
         public int SelectedTimeInterval
         {
@@ -64,7 +64,8 @@ namespace TPIH.Gecco.WPF.ViewModels
             To = DateTime.Today;
             From = DateTime.Today.AddDays(-1);
             IsCalendarEnabled = false;
-  
+            IsProgressBarVisible = Visibility.Hidden;
+
             SelectedTimeInterval = 0;
 
             // Auto get-data
@@ -131,6 +132,8 @@ namespace TPIH.Gecco.WPF.ViewModels
             if (DriverContainer.Driver.IsConnected && GetDataIsEnabled)
             {
                 Status = "Loading...";
+                IsProgressBarVisible = Visibility.Visible;
+                ProgressBarValue = 0;
                 GetDataIsEnabled = false;
                 if (!_isCalendarEnabled)
                 {
@@ -182,7 +185,8 @@ namespace TPIH.Gecco.WPF.ViewModels
                     Status = SharedResourceDictionary.SharedDictionary["M_Error11"] + "";
                 }
             }
-            GetDataIsEnabled = true;            
+            GetDataIsEnabled = true;
+            IsProgressBarVisible = Visibility.Hidden;
         }        
     }
 }

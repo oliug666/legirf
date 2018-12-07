@@ -269,39 +269,28 @@ namespace TPIH.Gecco.WPF.Drivers
             lock (MbAlarm)
                 MbAlarm.Clear();
 
-            // If the interval is bigger than two days, split the queries
+            // If the interval is bigger than two days, split the queries            
             if ((right_now.Subtract(long_ago)).Days > 2)
             {
-                DateTime from = long_ago;
-                DateTime to = long_ago;
-                while ((right_now.Subtract(from)).Days >= 2)
+                if (!SplitQuery(long_ago, right_now, tableName, 2))
                 {
-                    from = to;
-                    to = from.AddDays(2);
-                    // Create query
-                    selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
-                        " BETWEEN '" + from.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + to.ToString(N3PR_Data.DATA_FORMAT) + "'";
-                    ExecuteQuery(selectQuery);
-                    OnDataRetrievalEventHandler?.Invoke(new EventWithMessage("", 100 * to.Subtract(long_ago).Days / right_now.Subtract(long_ago).Days));
-                }
-                if ((right_now.Subtract(from)).Days < 2)
-                {
-                    // Create query
-                    selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
-                        " BETWEEN '" + from.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + right_now.ToString(N3PR_Data.DATA_FORMAT) + "'";
-                    ExecuteQuery(selectQuery);
-                    OnDataRetrievalEventHandler?.Invoke(new EventWithMessage("", 100));
+                    GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error8"] + ""));
+                    DriverContainer.Driver.Disconnect();
+                    return;
                 }
             }
             else
             {
                 // Create query
-                selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
-                    " BETWEEN '" + long_ago.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + right_now.ToString(N3PR_Data.DATA_FORMAT) + "'";
-                ExecuteQuery(selectQuery);
+                if (!ExecuteQuery(long_ago, right_now, tableName))
+                {
+                    GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error8"] + ""));
+                    DriverContainer.Driver.Disconnect();
+                    return;
+                }                
                 OnDataRetrievalEventHandler?.Invoke(new EventWithMessage("", 100));
-            } 
-            
+            }
+
             /*
             // Create query
             selectQuery = "SELECT * FROM " + tableName + " WHERE "+ N3PR_DB.DATE +
@@ -322,13 +311,8 @@ namespace TPIH.Gecco.WPF.Drivers
 
         public void GetDataFromCalendarDays(string tableName, DateTime From, DateTime To)
         {
-            // Create query     
-            string selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE +
-                " BETWEEN '" + From.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + 
-                To.AddHours(23).AddMinutes(59).AddSeconds(59).ToString(N3PR_Data.DATA_FORMAT) + "'";
-
             // Read
-            if (!ExecuteQuery(selectQuery))            
+            if (!ExecuteQuery(From, To.AddHours(23).AddMinutes(59).AddSeconds(59), tableName))            
             {
                 GlobalCommands.ShowError.Execute(new Exception(resourceDictionary["M_Error9"] + ""));
                 DriverContainer.Driver.Disconnect();
@@ -339,7 +323,7 @@ namespace TPIH.Gecco.WPF.Drivers
             OnDataRetrievalCompletedEventHandler?.Invoke(this, null);
         }
 
-        private bool ExecuteQuery(string selectQuery)
+        private bool ExecuteQuery(DateTime long_ago, DateTime right_now, string tableName)
         {
             List<MeasurePoint> _allData = new List<MeasurePoint>();
             // Read
@@ -351,6 +335,8 @@ namespace TPIH.Gecco.WPF.Drivers
                     _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
                     EventAggregator.SignalIsRetrievingData(CUSTOM, true);
 
+                    string selectQuery = "SELECT * FROM " + tableName + " WHERE " + N3PR_DB.DATE + 
+                        " BETWEEN '" + long_ago.ToString(N3PR_Data.DATA_FORMAT) + "' AND '" + right_now.ToString(N3PR_Data.DATA_FORMAT) + "'";
                     using (MySqlCommand msqlcmd = new MySqlCommand(selectQuery, _connection))
                     {
                         using (MySqlDataReader msqldatareader = msqlcmd.ExecuteReader())
@@ -474,15 +460,9 @@ namespace TPIH.Gecco.WPF.Drivers
             if (aData.Count() > 0)
             {
                 // data
-                lock (MbData)
-                {
-                    MbData.Clear();
-                    foreach (MeasurePoint _mbp in aData)
-                    {
-                        if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
-                            MbData.Add(_mbp);
-                    }
-                }
+                foreach (MeasurePoint _mbp in aData)
+                    if (N3PR_Data.REG_NAMES.Contains(_mbp.Reg_Name))
+                        _data.Add(_mbp);
             }
 #else
             // Add 1000 datas
@@ -500,9 +480,9 @@ namespace TPIH.Gecco.WPF.Drivers
                     });
                 }
             }            
-            Thread.Sleep(2000);
-            return _data;
+            Thread.Sleep(2000);           
 #endif
+            return _data;
         }
 
         private List<MeasurePoint> SortRetrievedAlarms(List<MeasurePoint> aData)
@@ -512,16 +492,10 @@ namespace TPIH.Gecco.WPF.Drivers
             // Sort the retrieved alarms
             if (aData.Count() > 0)
             {
-                lock (MbAlarm)
-                {
-                    MbAlarm.Clear();
-                    // alarms
-                    foreach (MeasurePoint _mbp in aData)
-                    {
-                        if (N3PR_Data.ALARM_WARNING_NAMES.Contains(_mbp.Reg_Name))
-                            MbAlarm.Add(_mbp);
-                    }
-                }
+                // alarms
+                foreach (MeasurePoint _mbp in aData)
+                    if (N3PR_Data.ALARM_WARNING_NAMES.Contains(_mbp.Reg_Name))
+                        _alarms.Add(_mbp);
             }
 #else
             // Add 20 datas
@@ -538,9 +512,36 @@ namespace TPIH.Gecco.WPF.Drivers
                     });
                 }
             }
-            Thread.Sleep(500);
-            return _alarms;
+            Thread.Sleep(500);           
 #endif
+            return _alarms;
+        }
+
+        private bool SplitQuery(DateTime origin, DateTime end, string tableName, int split_days)
+        {
+            DateTime moving_origin = origin;
+            DateTime moving_end = origin;
+
+            while ((end.Subtract(moving_origin)).Days >= split_days)
+            {
+                moving_origin = moving_end;
+                moving_end = moving_origin.AddDays(split_days);
+                // Execute query
+                if (!ExecuteQuery(moving_origin, moving_end, tableName))                                  
+                    return false;                                
+                OnDataRetrievalEventHandler?.Invoke(new EventWithMessage("", 100 * moving_end.Subtract(origin).Days / end.Subtract(origin).Days));
+            }
+
+            // Last query
+            if ((end.Subtract(moving_origin)).Days < split_days)
+            {
+                // Execute query                
+                if (!ExecuteQuery(moving_origin, end, tableName))
+                    return false;
+                OnDataRetrievalEventHandler?.Invoke(new EventWithMessage("", 100));
+            }
+
+            return true;
         }
     }    
 }
