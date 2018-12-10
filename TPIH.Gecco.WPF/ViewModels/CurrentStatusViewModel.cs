@@ -104,8 +104,6 @@ namespace TPIH.Gecco.WPF.ViewModels
                     }
                 }                
             }
-
-            _loadLatestDataThread.Abort();
         }
     }
 }

@@ -101,6 +101,7 @@ namespace TPIH.Gecco.WPF.ViewModels
             {
                 GetDataIsEnabled = false;
                 IsCalendarEnabled = false;
+                IsProgressBarVisible = Visibility.Hidden;
                 Status = "";
             }
             else
