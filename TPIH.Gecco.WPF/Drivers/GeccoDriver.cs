@@ -212,11 +212,6 @@ namespace TPIH.Gecco.WPF.Drivers
                     return;
                 }
 
-                /*
-                string selectQuery = "SELECT " + N3PR_DB.DATE + "," + N3PR_DB.REG_NAME + "," + N3PR_DB.BVAL + "," + N3PR_DB.IVAL + " FROM " + 
-                    tableName + " WHERE " + tableName + "." + N3PR_DB.DATE + " >= '" +
-                    LatestDate.AddSeconds(-10).ToString(N3PR_Data.DATA_FORMAT) + "'";
-                    */
                 string selectQuery = "SELECT " + N3PR_DB.DATE + ", " + N3PR_DB.REG_NAME + ", " + N3PR_DB.IVAL
                     + " FROM ( SELECT * FROM "+tableName+" ORDER BY "+ N3PR_DB.ID + " DESC LIMIT 2000 ) as top_subset " +
                     " WHERE top_subset." + N3PR_DB.DATE + " >= '" + LatestDate.AddSeconds(-10).ToString(N3PR_Data.DATA_FORMAT) + "'";
@@ -338,15 +333,9 @@ namespace TPIH.Gecco.WPF.Drivers
                 { 
                     _isRetrieving.WaitOne(); // Pause if there is someone already retrieving data
                     EventAggregator.SignalIsRetrievingData(CUSTOM, true);
-                    /*
-                    string selectQuery = "SELECT " + N3PR_DB.DATE + "," + N3PR_DB.REG_NAME + "," + N3PR_DB.BVAL + "," + N3PR_DB.IVAL + " FROM " +
-                        tableName + " WHERE " + N3PR_DB.DATE + " BETWEEN '" + long_ago.ToString(N3PR_Data.DATA_FORMAT) +
-                        "' AND '" + right_now.ToString(N3PR_Data.DATA_FORMAT) + "'";
-                        */
-                    string selectQuery = "SELECT " + N3PR_DB.DATE + "," + N3PR_DB.REG_NAME + "," + N3PR_DB.IVAL + " FROM " +
-                        tableName + " WHERE " + N3PR_DB.DATE + " BETWEEN '" + long_ago.ToString(N3PR_Data.DATA_FORMAT) +
-                        "' AND '" + right_now.ToString(N3PR_Data.DATA_FORMAT) + "'";
-                    using (MySqlCommand msqlcmd = new MySqlCommand(selectQuery, _connection))
+
+                    string selectDataQuery = BuildQueryString(long_ago, right_now, tableName, N3PR_Data.REG_NAMES);
+                    using (MySqlCommand msqlcmd = new MySqlCommand(selectDataQuery, _connection))
                     {
                         msqlcmd.CommandTimeout = 1000;
                         using (MySqlDataReader msqldatareader = msqlcmd.ExecuteReader())
@@ -354,7 +343,18 @@ namespace TPIH.Gecco.WPF.Drivers
                             // Parse data reader                            
                             _allData = ParseDataReader(msqldatareader);
                             lock (MbData)
-                                MbData = MbData.Concat(SortRetrievedData(_allData)).ToList(); // Sort query (data)    
+                                MbData = MbData.Concat(SortRetrievedData(_allData)).ToList(); // Sort query (data)                                
+                        }
+                    }
+
+                    string selectAlarmQuery = BuildQueryString(long_ago, right_now, tableName, N3PR_Data.ALARM_NAMES);
+                    using (MySqlCommand msqlcmd = new MySqlCommand(selectAlarmQuery, _connection))
+                    {
+                        msqlcmd.CommandTimeout = 1000;
+                        using (MySqlDataReader msqldatareader = msqlcmd.ExecuteReader())
+                        {
+                            // Parse data reader
+                            _allData = ParseAlarmReader(msqldatareader);
                             lock (MbAlarm)
                                 MbAlarm = MbAlarm.Concat(SortRetrievedAlarms(_allData)).ToList(); // Sort query (alarms)    
                         }
@@ -391,7 +391,6 @@ namespace TPIH.Gecco.WPF.Drivers
             while (_dataReader.Read())
             {
                 int idxD = N3PR_Data.REG_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
-                int idxA = N3PR_Data.ALARM_WARNING_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");
 
                 if (_dataReader[N3PR_DB.REG_NAME] + "" == "STE_IPS" || _dataReader[N3PR_DB.REG_NAME] + "" == "STE_OPS")
                     digits = 3;
@@ -401,25 +400,9 @@ namespace TPIH.Gecco.WPF.Drivers
                 double value;
                 if (idxD != -1)
                 {
-                    value = Math.Round(_dataReader.GetInt32(2) / 
+                    value = Math.Round(Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / 
                         Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
-                    //switch (N3PR_Data.REG_TYPES[idxD])
-                    //{
-                    //    
-                    //    case N3PR_Data.UINT:
-                    //        value = Math.Round(Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
-                    //        break;
-                    //    case N3PR_Data.INT:
-                    //        value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
-                    //        break;
-                    //    case N3PR_Data.BOOL:
-                    //        //value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
-                    //        value = Convert.ToDouble(_dataReader[N3PR_DB.IVAL] + "");
-                    //        break;
-                    //    default:
-                    //        value = Math.Round(Convert.ToInt32(_dataReader[N3PR_DB.IVAL] + "") / Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
-                    //        break;
-                    //}
+                    
                     _allData.Add(new MeasurePoint
                     {
                         Date = ParseDate(_dataReader[N3PR_DB.DATE] + ""),
@@ -428,10 +411,21 @@ namespace TPIH.Gecco.WPF.Drivers
                         data_type = N3PR_Data.REG_TYPES[idxD],
                         unit = N3PR_Data.REG_MEASUNIT[idxD]
                     });
-                }
-                else if (idxA != -1)
+                }                
+            }
+            return _allData;
+        }
+
+        private List<MeasurePoint> ParseAlarmReader(IDataReader _dataReader)
+        {
+            List<MeasurePoint> _allData = new List<MeasurePoint>();
+            while (_dataReader.Read())
+            {
+                int idxA = N3PR_Data.ALARM_WARNING_NAMES.IndexOf(_dataReader[N3PR_DB.REG_NAME] + "");                
+
+                double value;
+                if (idxA != -1)
                 {
-                    //value = Convert.ToDouble(_dataReader[N3PR_DB.BVAL] + "");
                     value = Convert.ToDouble(_dataReader[N3PR_DB.IVAL] + "");
                     _allData.Add(new MeasurePoint
                     {
@@ -552,6 +546,25 @@ namespace TPIH.Gecco.WPF.Drivers
             }
 
             return true;
+        }
+
+        private string BuildQueryString(DateTime from, DateTime to, string tableName)
+        {
+            return "SELECT " + N3PR_DB.DATE + "," + N3PR_DB.REG_NAME + "," + N3PR_DB.IVAL + " FROM " +
+                tableName + " WHERE " + N3PR_DB.DATE + " BETWEEN '" + from.ToString(N3PR_Data.DATA_FORMAT) +
+                "' AND '" + to.ToString(N3PR_Data.DATA_FORMAT) + "'";
+        }
+
+        private string BuildQueryString(DateTime from, DateTime to, string tableName, List<string> regNames)
+        {
+            string regNamesJoinedOr = "";
+            for (int i = 0; i < regNames.Count() - 1; i++)
+                regNamesJoinedOr += N3PR_DB.REG_NAME + " = '" + regNames[i] + "' OR ";
+            regNamesJoinedOr += N3PR_DB.REG_NAME + " = '" + regNames.Last() + "'";
+
+            return "SELECT " + N3PR_DB.DATE + "," + N3PR_DB.REG_NAME + "," + N3PR_DB.IVAL + " FROM " +
+                tableName + " WHERE " + N3PR_DB.DATE + " BETWEEN '" + from.ToString(N3PR_Data.DATA_FORMAT) +
+                "' AND '" + to.ToString(N3PR_Data.DATA_FORMAT) + "' AND (" + regNamesJoinedOr + ")";
         }
     }    
 }
