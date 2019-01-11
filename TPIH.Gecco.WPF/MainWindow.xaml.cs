@@ -49,7 +49,9 @@ namespace TPIH.Gecco.WPF
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 // Signal write to view-model
-                _mainViewModel.TerminateExecutionAndCloseConnections();
+                // ** TRY **
+                // _mainViewModel.TerminateExecutionAndCloseConnections();
+
                 // Close the window
                 Application.Current.Shutdown();
             }
