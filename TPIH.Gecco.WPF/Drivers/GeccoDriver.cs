@@ -346,7 +346,7 @@ namespace TPIH.Gecco.WPF.Drivers
                                 MbData = MbData.Concat(SortRetrievedData(_allData)).ToList(); // Sort query (data)                                
                         }
                     }
-
+                    
                     string selectAlarmQuery = BuildQueryString(long_ago, right_now, tableName, N3PR_Data.ALARM_NAMES);
                     using (MySqlCommand msqlcmd = new MySqlCommand(selectAlarmQuery, _connection))
                     {
@@ -359,7 +359,7 @@ namespace TPIH.Gecco.WPF.Drivers
                                 MbAlarm = MbAlarm.Concat(SortRetrievedAlarms(_allData)).ToList(); // Sort query (alarms)    
                         }
                     }
-
+                    
                     if (!_isRetrieving.SafeWaitHandle.IsClosed)
                         _isRetrieving.Release(1);
 
@@ -400,7 +400,7 @@ namespace TPIH.Gecco.WPF.Drivers
                 double value;
                 if (idxD != -1)
                 {
-                    value = Math.Round(Convert.ToUInt32(_dataReader[N3PR_DB.UIVAL] + "") / 
+                    value = Math.Round(Convert.ToDouble(_dataReader[N3PR_DB.IVAL] + "") / 
                         Convert.ToDouble(N3PR_Data.REG_DIVFACTORS[idxD], CultureInfo.InvariantCulture), digits);
                     
                     _allData.Add(new MeasurePoint
@@ -565,6 +565,18 @@ namespace TPIH.Gecco.WPF.Drivers
             return "SELECT " + N3PR_DB.DATE + "," + N3PR_DB.REG_NAME + "," + N3PR_DB.IVAL + " FROM " +
                 tableName + " WHERE " + N3PR_DB.DATE + " BETWEEN '" + from.ToString(N3PR_Data.DATA_FORMAT) +
                 "' AND '" + to.ToString(N3PR_Data.DATA_FORMAT) + "' AND (" + regNamesJoinedOr + ")";
+        }
+
+        private string BuildNegativeQueryString(DateTime from, DateTime to, string tableName, List<string> regNames)
+        {
+            string regNamesJoinedAnd = "";
+            for (int i = 0; i < regNames.Count() - 1; i++)
+                regNamesJoinedAnd += N3PR_DB.REG_NAME + " != '" + regNames[i] + "' AND ";
+            regNamesJoinedAnd += N3PR_DB.REG_NAME + " != '" + regNames.Last() + "'";
+
+            return "SELECT " + N3PR_DB.DATE + "," + N3PR_DB.REG_NAME + "," + N3PR_DB.IVAL + " FROM " +
+                tableName + " WHERE " + N3PR_DB.DATE + " BETWEEN '" + from.ToString(N3PR_Data.DATA_FORMAT) +
+                "' AND '" + to.ToString(N3PR_Data.DATA_FORMAT) + "' AND (" + regNamesJoinedAnd + ")";
         }
     }    
 }
