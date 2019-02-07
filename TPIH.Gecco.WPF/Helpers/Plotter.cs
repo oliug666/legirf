@@ -70,12 +70,8 @@ namespace TPIH.Gecco.WPF.Helpers
                     {
                         foreach (string name in alarmNames)
                         {
-                            string annotationText = "";
-                            if (description)
-                                annotationText = N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_WARNING_NAMES.IndexOf(name)];
-
                             ShowAlarms(pM, mbAlarms.Where(x => x.Reg_Name == name).ToList(),
-                            annotationText);
+                                N3PR_Data.ALARM_DESCRIPTION[N3PR_Data.ALARM_WARNING_NAMES.IndexOf(name)], description);
                         }
                     }
                 }
@@ -98,7 +94,7 @@ namespace TPIH.Gecco.WPF.Helpers
             }
         }
 
-        private static void ShowAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation)
+        private static void ShowAlarms(PlotModel WPlot, List<MeasurePoint> AlarmValueList, string Annotation, bool Description)
         {
             List<DateTime> WhereAlreadyAnnotated = new List<DateTime>();
             foreach (Annotation ann in WPlot.Annotations.ToList())
@@ -107,71 +103,46 @@ namespace TPIH.Gecco.WPF.Helpers
                 WhereAlreadyAnnotated.Add(DateTimeAxis.ToDateTime(tann.X));
             }
 
-            VerticalAlignment va;
             // Check when the alarm was triggered and when it was gone
             // var toPlot = DriverContainer.Driver.MbAlarm.Where(x => x.Reg_Name == name).ToList();
             var where_active = AlarmValueList.Where(x => x.val == 1).ToList();
             var where_inactive = AlarmValueList.Where(x => x.val == 0).ToList();
             foreach (MeasurePoint MP in where_active)
             {
-                if (WhereAlreadyAnnotated.Contains(MP.Date))
-                    va = VerticalAlignment.Bottom;
-                else
-                    va = VerticalAlignment.Top;
-
-                if (N3PR_Data.ALARM_NAMES.Contains(MP.Reg_Name))
-                {
-                    WPlot.Annotations.Add(new TooltipAnnotation
-                    {
-                        Type = LineAnnotationType.Vertical,
-                        X = DateTimeAxis.ToDouble(MP.Date),
-                        Color = OxyPlot.OxyColors.Red,
-                        StrokeThickness = 2,
-                        Text = Annotation,
-                        ClipByXAxis = true,
-                        TextVerticalAlignment = va,
-                        Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
-                        + "\nValue: 1"
-                    });
-                }
-                else
-                {
-                    WPlot.Annotations.Add(new TooltipAnnotation
-                    {
-                        Type = LineAnnotationType.Vertical,
-                        X = DateTimeAxis.ToDouble(MP.Date),
-                        Color = OxyPlot.OxyColors.Orange,
-                        StrokeThickness = 2,
-                        Text = Annotation,
-                        ClipByXAxis = true,
-                        TextVerticalAlignment = va,
-                        Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
-                        + "\nValue: 1"
-                    });
-                }
-
-                WhereAlreadyAnnotated.Add(MP.Date);
-            }
-            foreach (MeasurePoint MP in where_inactive)
-            {
-                if (WhereAlreadyAnnotated.Contains(MP.Date))
-                    va = VerticalAlignment.Bottom;
-                else
-                    va = VerticalAlignment.Top;
-
-                WPlot.Annotations.Add(new TooltipAnnotation
+                TooltipAnnotation myA = new TooltipAnnotation
                 {
                     Type = LineAnnotationType.Vertical,
                     X = DateTimeAxis.ToDouble(MP.Date),
-                    Color = OxyColors.Green,
                     StrokeThickness = 2,
-                    Text = Annotation,
                     ClipByXAxis = true,
-                    TextVerticalAlignment = va,
+                    TextVerticalAlignment = WhereAlreadyAnnotated.Contains(MP.Date) ? VerticalAlignment.Bottom : VerticalAlignment.Top,
                     Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
-                    + "\nValue: 0"
-                });
+                        + "\nValue: 1"
+                };
+                myA.Text = Description ? Annotation : "";
+                myA.AuxText = Annotation;
+                // Alarm, Warning?
+                myA.Color = N3PR_Data.ALARM_NAMES.Contains(MP.Reg_Name) ? OxyPlot.OxyColors.Red : OxyPlot.OxyColors.Orange;
+                WPlot.Annotations.Add(myA);
+                WhereAlreadyAnnotated.Add(MP.Date);
+            }
 
+            foreach (MeasurePoint MP in where_inactive)
+            {
+                TooltipAnnotation myA = new TooltipAnnotation
+                {
+                    Type = LineAnnotationType.Vertical,
+                    X = DateTimeAxis.ToDouble(MP.Date),
+                    StrokeThickness = 2,
+                    Color = OxyColors.Green,
+                    ClipByXAxis = true,
+                    TextVerticalAlignment = WhereAlreadyAnnotated.Contains(MP.Date) ? VerticalAlignment.Bottom : VerticalAlignment.Top,
+                    Tooltip = Annotation + "\nTime: " + MP.Date.ToString(N3PR_Data.DATA_FORMAT)
+                        + "\nValue: 1"
+                };
+                myA.Text = Description ? Annotation : "";
+                myA.AuxText = Annotation;
+                WPlot.Annotations.Add(myA);
                 WhereAlreadyAnnotated.Add(MP.Date);
             }
         }

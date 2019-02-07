@@ -347,7 +347,7 @@ namespace TPIH.Gecco.WPF.Drivers
                         }
                     }
                     
-                    string selectAlarmQuery = BuildQueryString(long_ago, right_now, tableName, N3PR_Data.ALARM_NAMES);
+                    string selectAlarmQuery = BuildQueryString(long_ago, right_now, tableName, N3PR_Data.ALARM_WARNING_NAMES);
                     using (MySqlCommand msqlcmd = new MySqlCommand(selectAlarmQuery, _connection))
                     {
                         msqlcmd.CommandTimeout = 1000;

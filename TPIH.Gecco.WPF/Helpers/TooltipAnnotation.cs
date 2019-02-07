@@ -6,6 +6,7 @@ namespace TPIH.Gecco.WPF.Helpers
     public class TooltipAnnotation : LineAnnotation
     {
         public string Tooltip { get; set; }
+        public string AuxText { get; set; }
         public override void Render(IRenderContext rc, PlotModel model)
         {
             OxyPlot.Wpf.ShapesRenderContext src = rc as OxyPlot.Wpf.ShapesRenderContext;

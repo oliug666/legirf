@@ -387,7 +387,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                 using (ExcelPackage p = new ExcelPackage(fileInfo))
                 {
                     ExcelWorkbook wb = p.Workbook;
-                    ExcelWorksheet ws = wb.Worksheets.Add("N3PR-" + DateTime.Now.ToString("dd_MM_yyyy"));                    
+                    ExcelWorksheet ws = wb.Worksheets.Add("N3PR-" + DateTime.Now.ToString("dd_MM_yyyy"));
 
                     // Get the data on the plot                    
                     int seriesOffset = 0;
@@ -396,7 +396,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                         LineSeries _ls = (LineSeries)_plot.Series[j];
                         // Headers
                         ws.Cells[1, 1 + 2 * seriesOffset].Value = "Date";
-                        ws.Cells[1, 2 + 2 * seriesOffset].Value = _ls.Title;                                                
+                        ws.Cells[1, 2 + 2 * seriesOffset].Value = _ls.Title;
                         for (int i = 0; i < _ls.Points.Count(); i++)
                         {
                             ws.Cells[i + 2, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_ls.Points[i].X).ToString("dd/MM/yyyy, HH: mm:ss");
@@ -417,6 +417,7 @@ namespace TPIH.Gecco.WPF.ViewModels
                         }
                         seriesOffset++;
                     }
+
                     if (_plot.Annotations.Count() != 0)
                     {
                         ws.Cells[1, 1 + 2 * seriesOffset].Value = "Alarm Date";
@@ -424,16 +425,37 @@ namespace TPIH.Gecco.WPF.ViewModels
                         ws.Cells[1, 3 + 2 * seriesOffset].Value = "Alarm Description";
                         for (int j = 0; j < _plot.Annotations.Count(); j++)
                         {
-                            LineAnnotation _as = (LineAnnotation)_plot.Annotations[j];
+                            TooltipAnnotation _as = (TooltipAnnotation)_plot.Annotations[j];
                             // Headers                        
                             ws.Cells[2 + j, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_as.X).ToString("dd/MM/yyyy, HH: mm:ss");
                             if (_as.Color.Equals(OxyColors.Green))
                                 ws.Cells[2 + j, 2 + 2 * seriesOffset].Value = 0;
                             else
                                 ws.Cells[2 + j, 2 + 2 * seriesOffset].Value = 1;
-                            ws.Cells[2 + j, 3 + 2 * seriesOffset].Value = _as.Text;
+                            ws.Cells[2 + j, 3 + 2 * seriesOffset].Value = _as.AuxText;
                         }
                     }
+                    else
+                    {
+                        if (_plotBool.Annotations.Count() != 0)
+                        {
+                            ws.Cells[1, 1 + 2 * seriesOffset].Value = "Alarm Date";
+                            ws.Cells[1, 2 + 2 * seriesOffset].Value = "Alarm Value";
+                            ws.Cells[1, 3 + 2 * seriesOffset].Value = "Alarm Description";
+                            for (int j = 0; j < _plotBool.Annotations.Count(); j++)
+                            {
+                                TooltipAnnotation _as = (TooltipAnnotation)_plotBool.Annotations[j];
+                                // Headers                        
+                                ws.Cells[2 + j, 1 + 2 * seriesOffset].Value = DateTimeAxis.ToDateTime(_as.X).ToString("dd/MM/yyyy, HH: mm:ss");
+                                if (_as.Color.Equals(OxyColors.Green))
+                                    ws.Cells[2 + j, 2 + 2 * seriesOffset].Value = 0;
+                                else
+                                    ws.Cells[2 + j, 2 + 2 * seriesOffset].Value = 1;
+                                ws.Cells[2 + j, 3 + 2 * seriesOffset].Value = _as.AuxText;
+                            }
+                        }
+                    }
+
                     seriesOffset++;
 
                     p.Save();
@@ -505,17 +527,39 @@ namespace TPIH.Gecco.WPF.ViewModels
                         fs.Flush();
                     }
                 }
-                foreach (Annotation _as in _plot.Annotations)
-                {
-                    var _aas = (LineAnnotation)_as;
-                    string line;
-                    if (_aas.Color.Equals(OxyColors.Green))
-                        line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.Text, (0).ToString());
-                    else
-                        line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.Text, (1).ToString());
 
-                    fs.WriteLine(line);
-                    fs.Flush();                    
+                if (_plot.Annotations.Count() != 0)
+                {
+                    foreach (Annotation _as in _plot.Annotations)
+                    {
+                        var _aas = (TooltipAnnotation)_as;
+                        string line;
+                        if (_aas.Color.Equals(OxyColors.Green))
+                            line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.AuxText, (0).ToString());
+                        else
+                            line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.AuxText, (1).ToString());
+
+                        fs.WriteLine(line);
+                        fs.Flush();
+                    }
+                }
+                else
+                {
+                    if (_plotBool.Annotations.Count() != 0)
+                    {
+                        foreach (Annotation _as in _plotBool.Annotations)
+                        {
+                            var _aas = (TooltipAnnotation)_as;
+                            string line;
+                            if (_aas.Color.Equals(OxyColors.Green))
+                                line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.AuxText, (0).ToString());
+                            else
+                                line = string.Format("{0},{1},{2}", DateTimeAxis.ToDateTime(_aas.X).ToString("dd/MM/yyyy, HH: mm:ss"), _aas.AuxText, (1).ToString());
+
+                            fs.WriteLine(line);
+                            fs.Flush();
+                        }
+                    }
                 }
 
                 fs.Close();
